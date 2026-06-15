@@ -3,7 +3,6 @@
  * Digunakan saat: Halaman hasil pencarian.
  */
 import React from 'react';
-import { Button } from '../common/Button';
 import { QuestCard } from './QuestCard';
 
 interface ResultCardProps {
@@ -21,11 +20,6 @@ export const ResultCard: React.FC<ResultCardProps> = (props) => {
     <QuestCard
       {...props}
       variant="result"
-      footer={
-        <Button fullWidth onClick={props.onClick}>
-          Lihat Detail
-        </Button>
-      }
     />
   );
 };

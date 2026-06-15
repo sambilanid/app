@@ -2,7 +2,6 @@
  * Komponen navigasi bawah utama.
  * Digunakan saat: Menyediakan akses cepat ke halaman utama seperti Beranda, Cari, Aktivitas, dan Profil.
  */
-import { motion } from 'framer-motion';
 import { Home, Search, Plus, Clock, User } from 'lucide-react';
 
 interface NavItemProps {
@@ -13,13 +12,11 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ icon, label, active, onClick }) => (
-  <motion.div 
+  <div 
     onClick={(e) => {
       e.stopPropagation();
       onClick?.();
     }}
-    whileHover={{ scale: 1.1 }}
-    whileTap={{ scale: 0.9 }}
     className="flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors"
   >
     <div className={`${active ? 'text-primary' : 'text-[#5a5c5e]'}`}>
@@ -28,7 +25,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, active, onClick }) => (
     <span className={`text-[12px] font-bold tracking-tight ${active ? 'text-primary' : 'text-[#5a5c5e]'}`}>
       {label}
     </span>
-  </motion.div>
+  </div>
 );
 
 export const BottomNavigationBar: React.FC<{ 
@@ -51,14 +48,12 @@ export const BottomNavigationBar: React.FC<{
         onClick={() => onNavigate?.('search')}
       />
       
-      <motion.div 
+      <div 
         className="flex flex-col items-center justify-center relative -top-3 cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           onCreateQuest?.();
         }}
-        whileHover={{ scale: 1.1, y: -4 }}
-        whileTap={{ scale: 0.95 }}
       >
         <div className="bg-primary w-[48px] h-[48px] rounded-full flex items-center justify-center text-white">
           <Plus size={24} strokeWidth={3} />
@@ -66,7 +61,7 @@ export const BottomNavigationBar: React.FC<{
         <span className="text-[11px] font-bold tracking-tight mt-1 text-[#5a5c5e]">
           Buat Quest
         </span>
-      </motion.div>
+      </div>
 
       <NavItem 
         icon={<Clock size={20} />} 

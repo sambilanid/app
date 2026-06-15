@@ -3,8 +3,6 @@
  * Digunakan saat: Halaman Home atau Profile.
  */
 import React from 'react';
-import { Wallet } from 'lucide-react';
-import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { useApp } from '../../store/AppContext';
 
@@ -17,25 +15,39 @@ export const WalletSection: React.FC<{
 
   return (
     <div className="px-[20px] mt-4">
-      <Card className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg text-primary">
-            <Wallet size={24} />
-          </div>
-          <div>
-            <p className="text-[#3e4943] text-[10px] font-bold tracking-[0.8px] uppercase">SALDO</p>
-            <p className="text-dark text-[20px] font-bold">Rp {user.balance.toLocaleString('id-ID')}</p>
-          </div>
+      <div className="bg-primary rounded-[16px] p-[20px] text-white flex flex-col gap-[20px]">
+        <div className="flex flex-col gap-[4px]">
+          <p className="text-[12px] opacity-80 font-medium">Saldo Tersedia</p>
+          <p className="text-[24px] font-bold">
+            {new Intl.NumberFormat('id-ID', { 
+              style: 'currency', 
+              currency: 'IDR', 
+              minimumFractionDigits: 0 
+            }).format(user.balance)}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={onWithdraw}>
-            Tarik
-          </Button>
-          <Button variant="secondary" size="sm" onClick={onTopUp}>
+        
+        <div className="flex gap-[12px]">
+          <Button 
+            variant="secondary" 
+            fullWidth 
+            size="md"
+            onClick={onTopUp}
+            className="!bg-white !text-primary"
+          >
             Top Up
           </Button>
+          <Button 
+            variant="secondary" 
+            fullWidth 
+            size="md"
+            onClick={onWithdraw}
+            className="!bg-white/20 !text-white !border-none hover:!bg-white/30"
+          >
+            Tarik
+          </Button>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

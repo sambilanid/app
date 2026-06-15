@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import type { ReactNode } from 'react';
 import { AppContext } from './AppContext';
-import type { User, Quest, AppState, AppNotification } from '../types';
+import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message } from '../types';
 
 import avatarAde from '../assets/avatar-ade.svg';
 import questFood from '../assets/quest-food.png';
@@ -127,11 +127,41 @@ const initialQuests: Quest[] = [
     fromLocation: 'Mie Ayam Pak Di',
     toLocation: 'Kantor Bupati',
     deadline: '30 mnt',
+    messages: [
+      { id: 'm1', text: 'Halo kak, saya sudah di depan Mie Ayam Pak Di ya.', sender: 'other', time: '10:40 AM' },
+      { id: 'm2', text: 'Oke sebentar ya, saya transfer uangnya.', sender: 'me', time: '10:41 AM' },
+      { id: 'm4', text: 'Sudah saya transfer ya kak Rp35.000 (mie + ongkir).', sender: 'me', time: '10:43 AM' },
+      { id: 'm5', text: 'Masuk kak. Ini lagi antre, lumayan ramai ya hari ini.', sender: 'other', time: '10:45 AM' },
+      { id: 'm6', text: 'Siap, santai aja kak. Jangan lupa sambalnya dipisah ya.', sender: 'me', time: '10:46 AM' },
+    ],
     creator: {
       name: 'Reza Kurniawan',
       initials: 'RK',
       rating: 4.7,
       questsCreated: 8
+    }
+  },
+  {
+    id: 'q5',
+    category: 'JASA TITIP',
+    title: 'Antar Galon ke Kamar',
+    price: 'Rp5.000',
+    distance: '0.1 km',
+    image: questShopping,
+    description: 'Tolong anterin galon yang udah didepan pintu ke dalem kamar.',
+    status: 'active',
+    location: 'Kost Mawar',
+    fromLocation: 'Depan Pintu',
+    toLocation: 'Kamar 102',
+    deadline: '15 mnt',
+    messages: [
+      { id: 'm3', text: 'Permisi kak, galonnya sudah saya taruh di dalam ya.', sender: 'other', time: '11:20 AM' },
+    ],
+    creator: {
+      name: 'Budi Santoso',
+      initials: 'BS',
+      rating: 4.5,
+      questsCreated: 5
     }
   }
 ];
@@ -140,6 +170,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [user, setUser] = useState<User>(initialUser);
   const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [notifications, setNotifications] = useState<AppNotification[]>(initialNotifications);
+  const [withdrawalPresets, setWithdrawalPresets] = useState<WithdrawalPreset[]>([]);
 
   const state: AppState = {
     user,
@@ -147,6 +178,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     activeQuests: quests.filter(q => q.status === 'active'),
     completedQuests: quests.filter(q => q.status === 'completed'),
     notifications,
+    withdrawalPresets,
+    categories: ['Jasa Titip', 'Antar/Jemput', 'Belanja', 'Makanan', 'Servis', 'Lainnya'],
   };
 
   const topUp = (amount: number) => {
@@ -159,6 +192,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const addQuest = (quest: Quest) => {
     setQuests(prev => [...prev, quest]);
+  };
+
+  const sendMessage = (questId: string, text: string) => {
+    setQuests(prev => prev.map(q => {
+      if (q.id === questId) {
+        const newMessage: Message = {
+          id: `m${Date.now()}`,
+          text,
+          sender: 'me',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        return {
+          ...q,
+          messages: [...(q.messages || []), newMessage]
+        };
+      }
+      return q;
+    }));
+  };
+
+  const completeQuest = (questId: string) => {
+    setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'completed' } : q));
   };
 
   const addNotification = (notif: Omit<AppNotification, 'id' | 'unread' | 'time'>) => {
@@ -179,6 +234,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n));
   };
 
+  const addWithdrawalPreset = (preset: Omit<WithdrawalPreset, 'id'>) => {
+    const newPreset: WithdrawalPreset = {
+      ...preset,
+      id: Date.now().toString(),
+    };
+    setWithdrawalPresets(prev => [...prev, newPreset]);
+  };
+
+  const removeWithdrawalPreset = (id: string) => {
+    setWithdrawalPresets(prev => prev.filter(p => p.id !== id));
+  };
+
   return (
     <AppContext.Provider value={{ 
       state, 
@@ -187,7 +254,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       addQuest, 
       addNotification,
       markAllNotificationsAsRead,
-      markNotificationAsRead 
+      markNotificationAsRead,
+      sendMessage,
+      completeQuest,
+      addWithdrawalPreset,
+      removeWithdrawalPreset
     }}>
       {children}
     </AppContext.Provider>

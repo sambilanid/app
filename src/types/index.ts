@@ -16,6 +16,13 @@ export interface User {
   balance: number;
 }
 
+export interface Message {
+  id: string;
+  text: string;
+  sender: 'me' | 'other';
+  time: string;
+}
+
 export interface Quest {
   id: string;
   category: string;
@@ -30,6 +37,7 @@ export interface Quest {
   fromLocation?: string;
   toLocation?: string;
   deadline?: string;
+  messages?: Message[];
   creator?: {
     name: string;
     initials: string;
@@ -48,10 +56,20 @@ export interface AppNotification {
   unread: boolean;
 }
 
+export interface WithdrawalPreset {
+  id: string;
+  name: string;
+  method: 'bank' | 'wallet';
+  accountNumber: string;
+  bankName?: string;
+}
+
 export interface AppState {
   user: User;
   availableQuests: Quest[];
   activeQuests: Quest[];
   completedQuests: Quest[];
   notifications: AppNotification[];
+  withdrawalPresets: WithdrawalPreset[];
+  categories: string[];
 }

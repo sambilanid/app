@@ -11,17 +11,23 @@ import { PageLayout } from '../components/common/PageLayout';
 
 interface SearchPageProps {
   onBack: () => void;
-  onSearch: () => void;
+  onSearch: (query: string) => void;
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSearch }) => {
+  const [query, setQuery] = React.useState('');
+
+  const handleSearch = (q: string) => {
+    onSearch(q || query);
+  };
+
   return (
-    <PageLayout hasNavbar header={<PageHeader title="Cari" onBack={onBack} />}>
-      <div onClick={onSearch}>
-        <SearchSection />
+    <PageLayout header={<PageHeader title="Cari" onBack={onBack} />}>
+      <div onKeyPress={(e) => e.key === 'Enter' && handleSearch(query)}>
+        <SearchSection value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
-      <SuggestionSection />
-      <AIAssistantSection />
+      <SuggestionSection onSelect={handleSearch} />
+      <AIAssistantSection onSearch={handleSearch} />
     </PageLayout>
   );
 };

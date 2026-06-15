@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -17,6 +18,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   fullWidth = false,
   leftIcon,
+  rightIcon,
   className = '',
   onClick,
   ...props 
@@ -41,9 +43,16 @@ export const Button: React.FC<ButtonProps> = ({
     lg: 'px-6 py-4 text-[16px]',
   };
 
+  const handleInteraction = (e: React.MouseEvent | React.PointerEvent | React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <button 
       onClick={handleClick}
+      onPointerDown={handleInteraction}
+      onMouseDown={handleInteraction}
+      onTouchStart={handleInteraction}
       className={`
         ${baseStyles} 
         ${variants[variant]} 
@@ -55,6 +64,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {leftIcon && <span className="mr-2">{leftIcon}</span>}
       {children}
+      {rightIcon && <span className="ml-2">{rightIcon}</span>}
     </button>
   );
 };

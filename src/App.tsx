@@ -1,157 +1,276 @@
 /**
  * Root component aplikasi.
- * Digunakan saat: Entry point utama yang mengatur navigasi antar halaman.
+ * Digunakan saat: Entry point utama yang mengatur navigasi antar halaman dengan sistem stack.
  */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import HomePage from './pages/HomePage';
-import SearchPage from './pages/SearchPage';
-import SearchResultsPage from './pages/SearchResultsPage';
-import QuestDetailPage from './pages/QuestDetailPage';
-import TopUpPage from './pages/TopUpPage';
-import ProfilePage from './pages/ProfilePage';
-import ActivityPage from './pages/ActivityPage';
-import CreateQuestPage from './pages/CreateQuestPage';
-import NotificationsPage from './pages/NotificationsPage';
-import ChatListPage from './pages/ChatListPage';
-import QuestEvidencePage from './pages/QuestEvidencePage';
-import WithdrawPage from './pages/WithdrawPage';
-import { BottomNavigationBar } from './components/common/BottomNavigationBar';
-import { AppProvider } from './store/AppProvider';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import HomePage from "./pages/HomePage";
+import SearchPage from "./pages/SearchPage";
+import SearchResultsPage from "./pages/SearchResultsPage";
+import QuestDetailPage from "./pages/QuestDetailPage";
+import TopUpPage from "./pages/TopUpPage";
+import ProfilePage from "./pages/ProfilePage";
+import ActivityPage from "./pages/ActivityPage";
+import CreateQuestPage from "./pages/CreateQuestPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import ChatListPage from "./pages/ChatListPage";
+import ChatDetailPage from "./pages/ChatDetailPage";
+import QuestEvidencePage from "./pages/QuestEvidencePage";
+import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
+import WithdrawPage from "./pages/WithdrawPage";
+import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
+import { BottomNavigationBar } from "./components/common/BottomNavigationBar";
+import { AppProvider } from "./store/AppProvider";
 
-type Page = 'home' | 'search' | 'results' | 'detail' | 'topup' | 'profile' | 'activity' | 'create' | 'notifications' | 'chatList' | 'evidence' | 'withdraw';
+type Page =
+  | "home"
+  | "search"
+  | "results"
+  | "detail"
+  | "topup"
+  | "profile"
+  | "activity"
+  | "create"
+  | "notifications"
+  | "chatList"
+  | "chatDetail"
+  | "evidence"
+  | "evidenceSuccess"
+  | "withdraw"
+  | "withdrawSuccess";
+
+interface StackItem {
+  id: string;
+  page: Page;
+  params?: {
+    questId?: string;
+    chatId?: string;
+    searchQuery?: string;
+    withdrawSuccessData?: { amount: string; method: string; destination: string };
+  };
+}
+
+const TAB_ORDER: Page[] = ["home", "search", "activity", "profile"];
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [previousPage, setPreviousPage] = useState<Page | null>(null);
-  const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
+  const [stack, setStack] = useState<StackItem[]>([
+    { id: "home", page: "home" }
+  ]);
+  const [direction, setDirection] = useState(0);
 
-  const navigateTo = (page: Page, questId?: string) => {
-    if (page !== currentPage) {
-      setPreviousPage(currentPage);
+  const push = (page: Page, params?: StackItem["params"]) => {
+    // Jika menavigasi ke tab utama, reset stack
+    if (TAB_ORDER.includes(page) && !params?.searchQuery && !params?.questId) {
+      const currentIndex = TAB_ORDER.indexOf(stack[stack.length - 1].page);
+      const nextIndex = TAB_ORDER.indexOf(page);
+      
+      if (currentIndex !== -1 && nextIndex !== -1) {
+        setDirection(nextIndex > currentIndex ? 1 : -1);
+      } else {
+        setDirection(0);
+      }
+
+      setStack([{ id: page, page }]);
+      return;
     }
-    if (questId) {
-      setSelectedQuestId(questId);
-    }
-    setCurrentPage(page);
+    
+    setDirection(1);
+    setStack(prev => [...prev, { 
+      id: `${page}-${Date.now()}`, 
+      page, 
+      params 
+    }]);
   };
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
+  const pop = () => {
+    if (stack.length > 1) {
+      setDirection(-1);
+      setStack(prev => prev.slice(0, -1));
+    }
+  };
+
+  const replace = (page: Page, params?: StackItem["params"]) => {
+    setDirection(0);
+    setStack(prev => {
+      const newStack = [...prev];
+      newStack[newStack.length - 1] = { 
+        id: `${page}-${Date.now()}`, 
+        page, 
+        params 
+      };
+      return newStack;
+    });
+  };
+
+  const renderPage = (item: StackItem) => {
+    const { page, params } = item;
+    
+    switch (page) {
+      case "home":
         return (
-          <HomePage 
-            onTopUp={() => navigateTo('topup')} 
-            onWithdraw={() => navigateTo('withdraw')}
-            onNavigate={(p, qId) => navigateTo(p, qId)}
-            onNotifications={() => navigateTo('notifications')}
-            onChat={() => navigateTo('chatList')}
-            onFinish={() => navigateTo('evidence')}
+          <HomePage
+            onTopUp={() => push("topup")}
+            onWithdraw={() => push("withdraw")}
+            onNavigate={(p, qId, query) => push(p, { questId: qId, searchQuery: query })}
+            onNotifications={() => push("notifications")}
+            onChat={(qId) =>
+              qId
+                ? push("chatDetail", { chatId: qId })
+                : push("chatList")
+            }
+            onFinish={(qId) => push("evidence", { questId: qId })}
           />
         );
-      case 'search':
+      case "search":
         return (
-          <SearchPage 
-            onBack={() => navigateTo('home')}
-            onSearch={() => navigateTo('results')}
+          <SearchPage
+            onBack={() => push("home")}
+            onSearch={(query) => push("results", { searchQuery: query })}
           />
         );
-      case 'results':
+      case "results":
         return (
-          <SearchResultsPage 
-            onBack={() => navigateTo('search')}
-            onSelectQuest={(qId) => navigateTo('detail', qId)}
+          <SearchResultsPage
+            searchQuery={params?.searchQuery || ""}
+            onBack={pop}
+            onSelectQuest={(qId) => push("detail", { questId: qId })}
+            onSearch={(query) => replace("results", { searchQuery: query })}
           />
         );
-      case 'detail':
+      case "detail":
         return (
-          <QuestDetailPage 
-            questId={selectedQuestId}
-            onBack={() => navigateTo(previousPage === 'detail' ? 'home' : (previousPage || 'home'))}
+          <QuestDetailPage
+            questId={params?.questId || null}
+            onBack={pop}
+            onChat={(qId) => push("chatDetail", { chatId: qId })}
+            onFinish={(qId) => push("evidence", { questId: qId })}
           />
         );
-      case 'topup':
+      case "topup":
+        return <TopUpPage onBack={pop} />;
+      case "profile":
         return (
-          <TopUpPage onBack={() => navigateTo('home')} />
-        );
-      case 'profile':
-        return (
-          <ProfilePage 
-            onBack={() => navigateTo('home')}
-            onTopUp={() => navigateTo('topup')}
-            onWithdraw={() => navigateTo('withdraw')}
+          <ProfilePage
+            onBack={() => push("home")}
+            onTopUp={() => push("topup")}
+            onWithdraw={() => push("withdraw")}
           />
         );
-      case 'activity':
+      case "activity":
         return (
-          <ActivityPage 
-            onBack={() => navigateTo('home')}
-            onSelectQuest={(qId) => navigateTo('detail', qId)}
+          <ActivityPage
+            onBack={() => push("home")}
+            onSelectQuest={(qId) => push("detail", { questId: qId })}
+            onFinish={(qId) => push("evidence", { questId: qId })}
           />
         );
-      case 'create':
+      case "create":
+        return <CreateQuestPage onBack={pop} />;
+      case "notifications":
+        return <NotificationsPage onBack={pop} />;
+      case "chatList":
         return (
-          <CreateQuestPage onBack={() => navigateTo('home')} />
-        );
-      case 'notifications':
-        return (
-          <NotificationsPage onBack={() => navigateTo('home')} />
-        );
-      case 'chatList':
-        return (
-          <ChatListPage 
-            onBack={() => navigateTo('home')} 
-            onSelectChat={() => {}} // Could lead to chat detail
+          <ChatListPage
+            onBack={pop}
+            onSelectChat={(chatId) =>
+              push("chatDetail", { chatId: chatId })
+            }
           />
         );
-      case 'evidence':
+      case 'chatDetail':
         return (
-          <QuestEvidencePage 
-            onBack={() => navigateTo('home')}
-            onFinish={() => navigateTo('activity')}
+          <ChatDetailPage 
+            chatId={params?.chatId}
+            onBack={pop}
           />
         );
-      case 'withdraw':
+      case "evidence":
         return (
-          <WithdrawPage onBack={() => navigateTo('home')} />
+          <QuestEvidencePage
+            questId={params?.questId || null}
+            onBack={pop}
+            onFinish={() => replace("evidenceSuccess")}
+          />
+        );
+      case "evidenceSuccess":
+        return (
+          <QuestEvidenceSuccessPage
+            onActivity={() => push("activity")}
+            onBack={pop}
+          />
+        );
+      case "withdraw":
+        return (
+          <WithdrawPage 
+            onBack={pop} 
+            onSuccess={(data) => {
+              replace("withdrawSuccess", { withdrawSuccessData: data });
+            }}
+          />
+        );
+      case "withdrawSuccess":
+        return (
+          <WithdrawSuccessPage 
+            amount={params?.withdrawSuccessData?.amount || "0"}
+            method={params?.withdrawSuccessData?.method || ""}
+            destination={params?.withdrawSuccessData?.destination || ""}
+            onHome={() => push("home")}
+          />
         );
       default:
-        return <HomePage 
-          onTopUp={() => navigateTo('topup')} 
-          onWithdraw={() => navigateTo('withdraw')}
-          onNavigate={(p) => navigateTo(p)}
-          onNotifications={() => navigateTo('notifications')}
-          onChat={() => navigateTo('chatList')}
-          onFinish={() => navigateTo('evidence')}
-        />;
+        return null;
     }
   };
 
-  const showNavbar = ['home', 'search', 'results', 'activity', 'profile'].includes(currentPage);
-  const activeTab = (currentPage === 'results' ? 'search' : currentPage) as 'home' | 'search' | 'activity' | 'profile';
+  const topPage = stack[stack.length - 1];
+  const showNavbar = TAB_ORDER.includes(topPage.page) || topPage.page === "results";
+  
+  const activeTab = (topPage.page === "results" ? "search" : topPage.page) as
+    | "home"
+    | "search"
+    | "activity"
+    | "profile";
 
   return (
-    <div className="h-screen bg-gray-100 flex justify-center">
+    <div className="h-screen bg-black flex justify-center">
       <div className="w-full max-w-screen-md bg-white relative h-screen overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPage}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="h-full"
-          >
-            {renderPage()}
-          </motion.div>
+        <AnimatePresence initial={false} custom={direction}>
+          {stack.map((item, index) => {
+            const isTop = index === stack.length - 1;
+            return (
+              <motion.div
+                key={item.id}
+                custom={direction}
+                initial={{ x: direction > 0 ? "100%" : "-100%" }}
+                animate={{ 
+                  x: isTop ? 0 : (direction > 0 ? "-20%" : "20%"),
+                  scale: isTop ? 1 : 0.96,
+                  opacity: isTop ? 1 : 0.5,
+                }}
+                exit={{ x: direction > 0 ? "-100%" : "100%", opacity: 0 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 400, 
+                  damping: 40,
+                  mass: 1
+                }}
+                className="absolute inset-0 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)]"
+                style={{ zIndex: index }}
+              >
+                {renderPage(item)}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
         {showNavbar && (
-          <BottomNavigationBar 
-            activeTab={activeTab} 
-            onNavigate={(p) => navigateTo(p)} 
-            onCreateQuest={() => navigateTo('create')} 
-          />
+          <div className="absolute bottom-0 left-0 right-0 z-[9999]">
+            <BottomNavigationBar
+              activeTab={activeTab}
+              onNavigate={(p) => push(p)}
+              onCreateQuest={() => push("create")}
+            />
+          </div>
         )}
       </div>
     </div>

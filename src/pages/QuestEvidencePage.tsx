@@ -6,13 +6,37 @@ import React from 'react';
 import { ShoppingBag, Camera, AlertCircle, Info, Send } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
+import { useApp } from '../store/AppContext';
 
 interface QuestEvidencePageProps {
+  questId: string | null;
   onBack: () => void;
   onFinish: () => void;
 }
 
-const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ onBack, onFinish }) => {
+const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, onFinish }) => {
+  const { state, completeQuest } = useApp();
+  const quest = state.activeQuests.find(q => q.id === questId);
+
+  const handleFinish = () => {
+    if (questId) {
+      completeQuest(questId);
+    }
+    onFinish();
+  };
+
+  if (!quest) {
+    return (
+      <PageLayout
+        header={<PageHeader title="Selesaikan Quest" onBack={onBack} variant="primary" />}
+      >
+        <div className="flex flex-col items-center justify-center h-[50vh] text-gray-text p-10 text-center">
+          <p>Data quest tidak ditemukan atau quest sudah tidak aktif.</p>
+        </div>
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout
       header={
@@ -31,7 +55,7 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ onBack, onFinish 
             <ShoppingBag size={20} className="text-primary" />
           </div>
           <div className="flex flex-col gap-1">
-            <h2 className="text-[#141d23] font-semibold text-[14px]">Quest: Nitip beli galon</h2>
+            <h2 className="text-[#141d23] font-semibold text-[14px]">Quest: {quest.title}</h2>
             <span className="text-primary text-[10px] font-bold tracking-[0.6px] uppercase">DALAM PROSES PENGERJAAN</span>
           </div>
         </div>
@@ -72,13 +96,13 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ onBack, onFinish 
           </div>
           <div className="flex flex-col">
             <p className="text-[#141d23] text-[14px] font-semibold leading-tight">Reward akan cair setelah konfirmasi</p>
-            <p className="text-[#3e4943] text-[14px] font-medium opacity-80">Rp 13.500 (dipotong biaya admin)</p>
+            <p className="text-[#3e4943] text-[14px] font-medium opacity-80">{quest.price} (dipotong biaya admin)</p>
           </div>
         </div>
 
         {/* Action Button */}
         <button 
-          onClick={onFinish}
+          onClick={handleFinish}
           className="w-full bg-primary text-white py-4 rounded-[16px] font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-primary/90 transition-all active:scale-[0.98]"
         >
           <Send size={18} />

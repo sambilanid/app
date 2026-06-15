@@ -6,7 +6,13 @@ import React from 'react';
 import { Sparkles, Send } from 'lucide-react';
 import { Card } from '../common/Card';
 
-export const AIAssistantSection: React.FC<{ onSearch?: () => void }> = ({ onSearch }) => {
+export const AIAssistantSection: React.FC<{ onSearch?: (query: string) => void }> = ({ onSearch }) => {
+  const [input, setInput] = React.useState('');
+
+  const handleSearch = () => {
+    onSearch?.(input);
+  };
+
   return (
     <div className="px-[20px] mt-6">
       <Card className="p-4">
@@ -27,10 +33,13 @@ export const AIAssistantSection: React.FC<{ onSearch?: () => void }> = ({ onSear
               type="text" 
               placeholder="Ceritakan kondisimu..." 
               className="w-full bg-transparent outline-none text-[16px] text-gray-text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
           <button 
-            onClick={onSearch}
+            onClick={handleSearch}
             className="bg-primary p-3 rounded-[12px] text-white active:scale-95 transition-transform"
           >
             <Send size={22} />

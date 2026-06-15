@@ -57,21 +57,23 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           </button>
         )}
         
-        <div className="flex flex-col min-w-0 flex-1">
-          {typeof title === 'string' ? (
-            <h1 className={`${textColor} font-bold text-[18px] leading-tight truncate`}>{title}</h1>
-          ) : title}
-          
-          {subtitle && (
-            <div className="mt-0.5">
-              {typeof subtitle === 'string' ? (
-                <p className={`${isPrimary ? 'text-white/80' : 'text-[#3e4943]'} text-[12px] font-bold tracking-[0.36px]`}>
-                  {subtitle}
-                </p>
-              ) : subtitle}
-            </div>
-          )}
-        </div>
+        {(title || subtitle) && (
+          <div className="flex flex-col min-w-0 flex-1">
+            {typeof title === 'string' ? (
+              <h1 className={`${textColor} font-bold text-[18px] leading-tight truncate`}>{title}</h1>
+            ) : title}
+            
+            {subtitle && (
+              <div className="mt-0.5">
+                {typeof subtitle === 'string' ? (
+                  <p className={`${isPrimary ? 'text-white/80' : 'text-[#3e4943]'} text-[12px] font-bold tracking-[0.36px]`}>
+                    {subtitle}
+                  </p>
+                ) : subtitle}
+              </div>
+            )}
+          </div>
+        )}
         
         {centerContent}
       </div>

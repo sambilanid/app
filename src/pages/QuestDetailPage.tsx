@@ -18,9 +18,11 @@ import { useApp } from '../store/AppContext';
 interface QuestDetailPageProps {
   questId: string | null;
   onBack: () => void;
+  onChat: (questId: string) => void;
+  onFinish: (questId: string) => void;
 }
 
-const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack }) => {
+const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish }) => {
   const { state } = useApp();
   const allQuests = [...state.availableQuests, ...state.activeQuests, ...state.completedQuests];
   const quest = allQuests.find(q => q.id === questId);
@@ -65,9 +67,30 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack }) =>
               </div>
             </div>
           </div>
-          <Button fullWidth size="lg">
-            Ambil quest ini
-          </Button>
+          {quest.status === 'active' ? (
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                fullWidth 
+                size="lg"
+                leftIcon={<MessageCircle size={20} />}
+                onClick={() => onChat(quest.id)}
+              >
+                Chat
+              </Button>
+              <Button 
+                fullWidth 
+                size="lg"
+                onClick={() => onFinish(quest.id)}
+              >
+                Selesaikan
+              </Button>
+            </div>
+          ) : (
+            <Button fullWidth size="lg">
+              Ambil quest ini
+            </Button>
+          )}
         </div>
       }
     >

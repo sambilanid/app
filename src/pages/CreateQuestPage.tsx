@@ -7,12 +7,15 @@ import { Image as ImageIcon, MapPin, Clock } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
+import { useApp } from '../store/AppContext';
 
 interface CreateQuestPageProps {
   onBack: () => void;
 }
 
 const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack }) => {
+  const { state } = useApp();
+
   return (
     <PageLayout
       header={
@@ -53,10 +56,9 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack }) => {
           <div className="flex flex-col gap-2">
             <label className="text-[#3e4943] text-[14px] font-bold">Kategori</label>
             <select className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[14px] focus:outline-none focus:border-primary transition-colors appearance-none">
-              <option>Jasa Titip</option>
-              <option>Angkut Barang</option>
-              <option>Bantu-bantu</option>
-              <option>Lainnya</option>
+              {state.categories.map(category => (
+                <option key={category}>{category}</option>
+              ))}
             </select>
           </div>
 

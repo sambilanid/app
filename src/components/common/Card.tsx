@@ -2,7 +2,7 @@
  * Komponen kontainer dasar dengan bayangan dan border.
  * Digunakan saat: Sebagai dasar untuk berbagai elemen UI berbasis kartu.
  */
-import React from 'react';
+import React, { useState } from 'react';
 
 interface CardProps {
   children: React.ReactNode;
@@ -11,10 +11,24 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  const handlePointerDown = () => {
+    if (onClick) setIsPressed(true);
+  };
+
+  const handlePointerUpOrCancel = () => {
+    setIsPressed(false);
+  };
+
   return (
     <div 
       onClick={onClick}
-      className={`bg-white border border-gray-100 rounded-[16px] ${onClick ? 'cursor-pointer active:scale-[0.99] transition-transform' : ''} ${className}`}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUpOrCancel}
+      onPointerLeave={handlePointerUpOrCancel}
+      onPointerCancel={handlePointerUpOrCancel}
+      className={`bg-white border border-gray-100 rounded-[16px] ${onClick ? 'cursor-pointer transition-transform' : ''} ${isPressed ? 'scale-[0.99]' : ''} ${className}`}
     >
       {children}
     </div>

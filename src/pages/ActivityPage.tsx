@@ -6,7 +6,8 @@ import React, { useState } from 'react';
 import { 
   Search, 
   MapPin, 
-  MessageCircle 
+  MessageCircle,
+  X 
 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { Badge } from '../components/common/Badge';
@@ -15,14 +16,18 @@ import { QuestPrice } from '../components/quest/QuestPrice';
 import { Card } from '../components/common/Card';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
+import { SearchInput } from '../components/common/SearchInput';
 
 interface ActivityPageProps {
   onBack: () => void;
   onSelectQuest: (questId: string) => void;
+  onFinish: (questId: string) => void;
 }
 
-const ActivityPage: React.FC<ActivityPageProps> = ({ onBack, onSelectQuest }) => {
+const ActivityPage: React.FC<ActivityPageProps> = ({ onBack, onSelectQuest, onFinish }) => {
   const [activeTab, setActiveTab] = useState<'made' | 'done'>('done');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { state } = useApp();
   const { activeQuests, completedQuests } = state;
 
@@ -30,18 +35,48 @@ const ActivityPage: React.FC<ActivityPageProps> = ({ onBack, onSelectQuest }) =>
     ? [...activeQuests, ...completedQuests]
     : []; // For now, handle 'made' as empty or separate state if needed
 
+  const filteredActivities = activities.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <PageLayout
       hasNavbar
       header={
         <PageHeader 
-          title="Aktivitas" 
-          onBack={onBack}
+          title={!isSearching ? "Aktivitas" : undefined}
+          onBack={isSearching ? () => { setIsSearching(false); setSearchQuery(''); } : onBack}
+          centerContent={isSearching ? (
+            <div className="flex-1">
+              <SearchInput 
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                containerClassName="h-[40px] bg-[#e6eff8] border-[rgba(189,202,193,0.3)]" 
+                placeholder="Cari aktivitas..."
+              />
+            </div>
+          ) : undefined}
           rightAction={
             <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Search size={20} className="text-[#3e4943]" />
-              </button>
+              {!isSearching ? (
+                <button 
+                  onClick={() => setIsSearching(true)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <Search size={20} className="text-[#3e4943]" />
+                </button>
+              ) : (
+                searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <X size={20} className="text-[#3e4943]" />
+                  </button>
+                )
+              )}
             </div>
           }
         />
@@ -74,9 +109,11 @@ const ActivityPage: React.FC<ActivityPageProps> = ({ onBack, onSelectQuest }) =>
 
         {/* Activity List */}
         <div className="px-[20px] mt-[24px] flex flex-col gap-[16px]">
-          {activities.length === 0 ? (
-            <div className="text-center py-10 text-gray-text">Belum ada aktivitas.</div>
-          ) : activities.map((item) => (
+          {filteredActivities.length === 0 ? (
+            <div className="text-center py-10 text-gray-text">
+              {searchQuery ? 'Tidak ada aktivitas yang cocok.' : 'Belum ada aktivitas.'}
+            </div>
+          ) : filteredActivities.map((item) => (
             <Card 
               key={item.id} 
               className="p-[16px] flex flex-col gap-[12px]"
@@ -115,8 +152,14 @@ const ActivityPage: React.FC<ActivityPageProps> = ({ onBack, onSelectQuest }) =>
                     <MessageCircle size={18} />
                   </button>
                   {item.status === 'active' && (
-                    <button className="bg-primary px-4 py-2 rounded-full text-white text-[12px] font-bold">
-                      Update
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFinish(item.id);
+                      }}
+                      className="bg-primary px-4 py-2 rounded-full text-white text-[12px] font-bold"
+                    >
+                      Selesaikan
                     </button>
                   )}
                 </div>
