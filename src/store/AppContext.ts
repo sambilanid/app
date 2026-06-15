@@ -7,14 +7,19 @@ import type { AppState, Quest, AppNotification, WithdrawalPreset } from '../type
 
 export interface AppContextType {
   state: AppState;
+  switchUser: (userId: string) => void;
   topUp: (amount: number) => void;
   withdraw: (amount: number) => void;
   addQuest: (quest: Quest) => void;
+  applyForQuest: (questId: string) => void;
+  cancelApplication: (questId: string) => void;
   addNotification: (notification: Omit<AppNotification, 'id' | 'unread' | 'time'>) => void;
   markAllNotificationsAsRead: () => void;
   markNotificationAsRead: (id: number) => void;
-  sendMessage: (questId: string, text: string) => void;
+  sendMessage: (chatId: string, text: string) => void;
+  findOrCreateChat: (userIds: string[], questId?: string) => string;
   completeQuest: (questId: string) => void;
+  submitQuestEvidence: (questId: string) => void;
   addWithdrawalPreset: (preset: Omit<WithdrawalPreset, 'id'>) => void;
   removeWithdrawalPreset: (id: string) => void;
 }

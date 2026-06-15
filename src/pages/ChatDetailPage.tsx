@@ -18,9 +18,13 @@ const ChatDetailPage: React.FC<ChatDetailPageProps> = ({ chatId, onBack }) => {
   const [inputText, setInputText] = useState("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const quest = state.activeQuests.find((q) => q.id === chatId);
+  const chat = state.chats.find((c) => c.id === chatId);
+  const quest = chat ? state.allQuests.find(q => q.id === chat.questId) : null;
+  const otherUserId = chat?.participants.find(id => id !== state.currentUserId);
+  const otherUser = otherUserId ? state.users.find(u => u.id === otherUserId) : null;
 
-  const messages = [...(quest?.messages || [])].reverse();
+  const chatMessages = state.messages.filter(m => m.chatId === chatId);
+  const messages = [...chatMessages].reverse();
 
   const handleSend = () => {
     if (!inputText.trim() || !chatId) return;
@@ -28,7 +32,7 @@ const ChatDetailPage: React.FC<ChatDetailPageProps> = ({ chatId, onBack }) => {
     setInputText("");
   };
 
-  if (!quest) {
+  if (!chat) {
     return (
       <PageLayout header={<PageHeader onBack={onBack} title="Chat" />}>
         <div className="flex items-center justify-center h-full">
@@ -46,10 +50,10 @@ const ChatDetailPage: React.FC<ChatDetailPageProps> = ({ chatId, onBack }) => {
           title={
             <div className="flex flex-col">
               <span className="text-[16px] font-bold text-black leading-tight truncate max-w-[200px]">
-                {quest.title}
+                {quest?.title || 'Chat'}
               </span>
               <span className="text-[12px] text-gray-500 font-medium">
-                {quest.creator?.name} • Online
+                {otherUser?.name} • Online
               </span>
             </div>
           }
@@ -104,29 +108,32 @@ const ChatDetailPage: React.FC<ChatDetailPageProps> = ({ chatId, onBack }) => {
         ref={scrollContainerRef}
         className="flex-1 flex flex-col-reverse p-4 space-y-4 space-y-reverse overflow-y-auto"
       >
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
-          >
+        {messages.map((msg) => {
+          const isMe = msg.senderId === state.currentUserId;
+          return (
             <div
-              className={`max-w-[80%] flex flex-col ${msg.sender === "me" ? "items-end" : "items-start"}`}
+              key={msg.id}
+              className={`flex ${isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-2.5 rounded-[18px] text-[15px] leading-[20px] shadow-sm ${
-                  msg.sender === "me"
-                    ? "bg-primary text-white rounded-tr-none"
-                    : "bg-white text-black rounded-tl-none border border-gray-100"
-                }`}
+                className={`max-w-[80%] flex flex-col ${isMe ? "items-end" : "items-start"}`}
               >
-                {msg.text}
+                <div
+                  className={`px-4 py-2.5 rounded-[18px] text-[15px] leading-[20px] shadow-sm ${
+                    isMe
+                      ? "bg-primary text-white rounded-tr-none"
+                      : "bg-white text-black rounded-tl-none border border-gray-100"
+                  }`}
+                >
+                  {msg.text}
+                </div>
+                <span className="text-[11px] text-gray-400 mt-1 px-1">
+                  {msg.time}
+                </span>
               </div>
-              <span className="text-[11px] text-gray-400 mt-1 px-1">
-                {msg.time}
-              </span>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {messages.length === 0 && (
           <div className="text-center py-10">
             <p className="text-gray-400 text-sm italic">

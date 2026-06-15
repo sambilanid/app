@@ -6,7 +6,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
-import SearchResultsPage from "./pages/SearchResultsPage";
 import QuestDetailPage from "./pages/QuestDetailPage";
 import TopUpPage from "./pages/TopUpPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -20,12 +19,12 @@ import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
 import { BottomNavigationBar } from "./components/common/BottomNavigationBar";
+import { useApp } from "./store/AppContext";
 import { AppProvider } from "./store/AppProvider";
 
 type Page =
   | "home"
   | "search"
-  | "results"
   | "detail"
   | "topup"
   | "profile"
@@ -53,6 +52,7 @@ interface StackItem {
 const TAB_ORDER: Page[] = ["home", "search", "activity", "profile"];
 
 function AppContent() {
+  const { state, findOrCreateChat } = useApp();
   const [stack, setStack] = useState<StackItem[]>([
     { id: "home", page: "home" }
   ]);
@@ -113,11 +113,17 @@ function AppContent() {
             onWithdraw={() => push("withdraw")}
             onNavigate={(p, qId, query) => push(p, { questId: qId, searchQuery: query })}
             onNotifications={() => push("notifications")}
-            onChat={(qId) =>
-              qId
-                ? push("chatDetail", { chatId: qId })
-                : push("chatList")
-            }
+            onChat={(qId) => {
+              if (qId) {
+                const quest = state.allQuests.find(q => q.id === qId);
+                if (quest) {
+                  const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                  push("chatDetail", { chatId });
+                }
+              } else {
+                push("chatList");
+              }
+            }}
             onFinish={(qId) => push("evidence", { questId: qId })}
           />
         );
@@ -125,16 +131,7 @@ function AppContent() {
         return (
           <SearchPage
             onBack={() => push("home")}
-            onSearch={(query) => push("results", { searchQuery: query })}
-          />
-        );
-      case "results":
-        return (
-          <SearchResultsPage
-            searchQuery={params?.searchQuery || ""}
-            onBack={pop}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
-            onSearch={(query) => replace("results", { searchQuery: query })}
           />
         );
       case "detail":
@@ -142,7 +139,13 @@ function AppContent() {
           <QuestDetailPage
             questId={params?.questId || null}
             onBack={pop}
-            onChat={(qId) => push("chatDetail", { chatId: qId })}
+            onChat={(qId) => {
+              const quest = state.allQuests.find(q => q.id === qId);
+              if (quest) {
+                const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                push("chatDetail", { chatId });
+              }
+            }}
             onFinish={(qId) => push("evidence", { questId: qId })}
           />
         );
@@ -162,6 +165,13 @@ function AppContent() {
             onBack={() => push("home")}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
             onFinish={(qId) => push("evidence", { questId: qId })}
+            onChat={(qId) => {
+              const quest = state.allQuests.find(q => q.id === qId);
+              if (quest) {
+                const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                push("chatDetail", { chatId });
+              }
+            }}
           />
         );
       case "create":
@@ -223,9 +233,9 @@ function AppContent() {
   };
 
   const topPage = stack[stack.length - 1];
-  const showNavbar = TAB_ORDER.includes(topPage.page) || topPage.page === "results";
+  const showNavbar = TAB_ORDER.includes(topPage.page);
   
-  const activeTab = (topPage.page === "results" ? "search" : topPage.page) as
+  const activeTab = topPage.page as
     | "home"
     | "search"
     | "activity"

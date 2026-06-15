@@ -14,13 +14,22 @@ export interface User {
   isVerified: boolean;
   hasSkck: boolean;
   balance: number;
+  notifications: AppNotification[];
+  withdrawalPresets: WithdrawalPreset[];
 }
 
 export interface Message {
   id: string;
+  chatId: string;
+  senderId: string;
   text: string;
-  sender: 'me' | 'other';
   time: string;
+}
+
+export interface Chat {
+  id: string;
+  participants: string[]; // User IDs
+  questId?: string; // Optional link to a quest
 }
 
 export interface Quest {
@@ -31,20 +40,16 @@ export interface Quest {
   distance: string;
   image: string;
   description: string;
-  status: 'active' | 'completed' | 'available';
+  status: 'active' | 'completed' | 'available' | 'pending';
   date?: string;
+  createdAt?: string;
   location?: string;
   fromLocation?: string;
   toLocation?: string;
   deadline?: string;
-  messages?: Message[];
-  creator?: {
-    name: string;
-    initials: string;
-    avatar?: string;
-    rating: number;
-    questsCreated: number;
-  };
+  creatorId: string;
+  takerId?: string;
+  applicantIds?: string[];
 }
 
 export interface AppNotification {
@@ -65,11 +70,15 @@ export interface WithdrawalPreset {
 }
 
 export interface AppState {
-  user: User;
+  users: User[];
+  currentUserId: string;
+  user: User; // Current logged in user
+  allQuests: Quest[];
   availableQuests: Quest[];
   activeQuests: Quest[];
+  pendingQuests: Quest[];
   completedQuests: Quest[];
-  notifications: AppNotification[];
-  withdrawalPresets: WithdrawalPreset[];
   categories: string[];
+  chats: Chat[];
+  messages: Message[];
 }
