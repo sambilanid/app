@@ -1,0 +1,60 @@
+/**
+ * Komponen tombol utama.
+ * Digunakan saat: Untuk semua aksi klik user.
+ */
+import React from 'react';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'outline' | 'ghost' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  leftIcon?: React.ReactNode;
+}
+
+export const Button: React.FC<ButtonProps> = ({ 
+  children, 
+  variant = 'primary', 
+  size = 'md',
+  fullWidth = false,
+  leftIcon,
+  className = '',
+  onClick,
+  ...props 
+}) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onClick?.(e);
+  };
+
+  const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all active:scale-[0.98] rounded-[12px]';
+  
+  const variants = {
+    primary: 'bg-primary text-white hover:bg-primary/90',
+    outline: 'border border-[#bdcac1] text-dark hover:bg-gray-50',
+    ghost: 'text-primary hover:bg-primary/5',
+    secondary: 'bg-[#f6faff] text-primary hover:bg-primary/10',
+  };
+
+  const sizes = {
+    sm: 'px-3 py-1.5 text-[12px]',
+    md: 'px-4 py-3 text-[14px]',
+    lg: 'px-6 py-4 text-[16px]',
+  };
+
+  return (
+    <button 
+      onClick={handleClick}
+      className={`
+        ${baseStyles} 
+        ${variants[variant]} 
+        ${sizes[size]} 
+        ${fullWidth ? 'w-full' : ''} 
+        ${className}
+      `}
+      {...props}
+    >
+      {leftIcon && <span className="mr-2">{leftIcon}</span>}
+      {children}
+    </button>
+  );
+};
