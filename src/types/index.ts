@@ -7,6 +7,9 @@ export interface User {
   name: string;
   initials: string;
   avatar?: string;
+  email: string;
+  phone: string;
+  password?: string; // Optional for security or demo purposes
   rating: number;
   reviewCount: number;
   questsCreated: number;

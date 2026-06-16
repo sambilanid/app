@@ -36,7 +36,7 @@ const WithdrawSuccessPage: React.FC<WithdrawSuccessPageProps> = ({
         />
       }
       footer={
-        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+        <div className="bg-white border-t border-[#dbe4ed] px-5 py-4 pb-8">
           <Button 
             fullWidth 
             onClick={onHome}
@@ -47,31 +47,31 @@ const WithdrawSuccessPage: React.FC<WithdrawSuccessPageProps> = ({
         </div>
       }
     >
-      <div className="flex flex-col px-[20px] py-[60px] items-center text-center">
+      <div className="flex flex-col px-5 py-15 items-center text-center">
         {/* Success Icon */}
-        <div className="w-[80px] h-[80px] bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 animate-in zoom-in duration-500">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 animate-in zoom-in duration-500">
           <CheckCircle2 size={48} />
         </div>
 
         {/* Success Message */}
-        <h1 className="text-[#141d23] text-[24px] font-bold mb-2">Penarikan Diajukan!</h1>
-        <p className="text-[#3e4943] text-[16px] mb-8 leading-relaxed">
+        <h1 className="text-[#141d23] text-2xl font-bold mb-2">Penarikan Diajukan!</h1>
+        <p className="text-[#3e4943] text-base mb-8 leading-relaxed">
           Permintaan penarikan dana kamu sedang diproses dan akan masuk dalam maksimal 1x24 jam.
         </p>
 
         {/* Transaction Summary Card */}
-        <div className="w-full bg-[#f6faff] border border-[#dbe4ed] rounded-[20px] p-[24px] flex flex-col gap-4 mb-10 text-left">
+        <div className="w-full bg-[#f6faff] border border-[#dbe4ed] rounded-2xl p-6 flex flex-col gap-4 mb-10 text-left">
           <div className="flex justify-between items-center pb-3 border-b border-[#dbe4ed]">
-            <span className="text-[#3e4943] text-[14px]">Nominal Penarikan</span>
-            <span className="text-primary font-bold text-[18px]">{formattedAmount}</span>
+            <span className="text-[#3e4943] text-sm">Nominal Penarikan</span>
+            <span className="text-primary font-bold text-lg">{formattedAmount}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-[#3e4943] text-[14px]">Metode</span>
-            <span className="text-[#141d23] font-bold text-[14px] capitalize">{method}</span>
+            <span className="text-[#3e4943] text-sm">Metode</span>
+            <span className="text-[#141d23] font-bold text-sm capitalize">{method}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-[#3e4943] text-[14px]">Tujuan</span>
-            <span className="text-[#141d23] font-bold text-[14px]">{destination}</span>
+            <span className="text-[#3e4943] text-sm">Tujuan</span>
+            <span className="text-[#141d23] font-bold text-sm">{destination}</span>
           </div>
         </div>
       </div>

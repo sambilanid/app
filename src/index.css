@@ -6,6 +6,18 @@
   --color-secondary: #f6faff;
   --color-dark: #141d23;
   --color-gray-text: #6b7280;
+  
+  --breakpoint-xs: 375px;
+}
+
+:root {
+  font-size: 14px;
+}
+
+@media (min-width: 390px) {
+  :root {
+    font-size: 16px;
+  }
 }
 
 body {

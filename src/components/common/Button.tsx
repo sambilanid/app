@@ -39,9 +39,9 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-[12px]',
-    md: 'px-4 py-3 text-[14px]',
-    lg: 'px-6 py-4 text-[16px]',
+    sm: 'px-3 py-1.5 text-xs',
+    md: 'px-4 py-3 text-sm',
+    lg: 'px-6 py-4 text-base',
   };
 
   const handleInteraction = (e: React.MouseEvent | React.PointerEvent | React.TouchEvent) => {

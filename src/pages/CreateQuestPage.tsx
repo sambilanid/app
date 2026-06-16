@@ -78,40 +78,40 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack, onSuccess }) 
         />
       }
       footer={
-        <div className="bg-white p-[20px] border-t border-gray-100">
+        <div className="bg-white p-5 border-t border-gray-100">
           <Button fullWidth size="lg" onClick={handlePublish}>
             Publish Quest
           </Button>
         </div>
       }
     >
-      <div className="px-[20px] pt-[24px] pb-[100px] flex flex-col gap-[20px]">
+      <div className="px-5 pt-6 pb-24 flex flex-col gap-5">
         {/* Upload Image Section */}
-        <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-[16px] py-[40px] flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-          <div className="w-[48px] h-[48px] bg-primary/10 rounded-full flex items-center justify-center mb-3">
+        <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
             <ImageIcon size={24} className="text-primary" />
           </div>
-          <p className="text-[#141d23] font-bold text-[14px]">Tambah Foto Quest</p>
-          <p className="text-[#3e4943] text-[12px] opacity-60">Opsional, tapi membantu adventurer</p>
+          <p className="text-[#141d23] font-bold text-sm">Tambah Foto Quest</p>
+          <p className="text-[#3e4943] text-xs opacity-60">Opsional, tapi membantu adventurer</p>
         </div>
 
         {/* Form Sections */}
-        <div className="flex flex-col gap-[16px]">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-[#3e4943] text-[14px] font-bold">Judul Quest</label>
+            <label className="text-[#3e4943] text-sm font-bold">Judul Quest</label>
             <input 
               type="text" 
               placeholder="Contoh: Jastip Seblak Rafael"
-              className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[14px] focus:outline-none focus:border-primary transition-colors"
+              className="bg-white border border-[#bdcac1] rounded-xl p-4 text-sm focus:outline-none focus:border-primary transition-colors"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[#3e4943] text-[14px] font-bold">Kategori</label>
+            <label className="text-[#3e4943] text-sm font-bold">Kategori</label>
             <select 
-              className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[14px] focus:outline-none focus:border-primary transition-colors appearance-none"
+              className="bg-white border border-[#bdcac1] rounded-xl p-4 text-sm focus:outline-none focus:border-primary transition-colors appearance-none"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
@@ -122,41 +122,41 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack, onSuccess }) 
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[#3e4943] text-[14px] font-bold">Lokasi</label>
+            <label className="text-[#3e4943] text-sm font-bold">Lokasi</label>
             <div className="relative">
               <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary" />
               <input 
                 type="text" 
                 placeholder="Pilih Lokasi"
-                className="w-full bg-white border border-[#bdcac1] rounded-[12px] p-4 pl-12 text-[14px] focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 text-sm focus:outline-none focus:border-primary transition-colors"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-[12px]">
+          <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <label className="text-[#3e4943] text-[14px] font-bold">Budget</label>
+              <label className="text-[#3e4943] text-sm font-bold">Budget</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">Rp</span>
                 <input 
                   type="number" 
                   placeholder="0"
-                  className="w-full bg-white border border-[#bdcac1] rounded-[12px] p-4 pl-10 text-[14px] focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-10 text-sm focus:outline-none focus:border-primary transition-colors"
                   value={formData.budget}
                   onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                 />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[#3e4943] text-[14px] font-bold">Deadline</label>
+              <label className="text-[#3e4943] text-sm font-bold">Deadline</label>
               <div className="relative">
                 <Clock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary" />
                 <input 
                   type="text" 
                   placeholder="Hari ini"
-                  className="w-full bg-white border border-[#bdcac1] rounded-[12px] p-4 pl-12 text-[14px] focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 text-sm focus:outline-none focus:border-primary transition-colors"
                   value={formData.deadline}
                   onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 />
@@ -165,11 +165,11 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack, onSuccess }) 
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[#3e4943] text-[14px] font-bold">Deskripsi Lengkap</label>
+            <label className="text-[#3e4943] text-sm font-bold">Deskripsi Lengkap</label>
             <textarea 
               placeholder="Jelaskan detail apa yang harus dilakukan..."
               rows={4}
-              className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[14px] focus:outline-none focus:border-primary transition-colors resize-none"
+              className="bg-white border border-[#bdcac1] rounded-xl p-4 text-sm focus:outline-none focus:border-primary transition-colors resize-none"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />

@@ -21,7 +21,7 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   return (
-    <div className={`px-2 py-0.5 rounded-full border text-[10px] font-bold tracking-[0.5px] uppercase inline-block ${variants[variant]} ${className}`}>
+    <div className={`px-2 py-0.5 rounded-full border text-[0.625rem] font-bold tracking-tight uppercase inline-block ${variants[variant]} ${className}`}>
       {children}
     </div>
   );

@@ -28,7 +28,7 @@ export const Card: React.FC<CardProps> = ({ children, className = '', onClick })
       onPointerUp={handlePointerUpOrCancel}
       onPointerLeave={handlePointerUpOrCancel}
       onPointerCancel={handlePointerUpOrCancel}
-      className={`bg-white border border-gray-100 rounded-[16px] ${onClick ? 'cursor-pointer transition-transform' : ''} ${isPressed ? 'scale-[0.99]' : ''} ${className}`}
+      className={`bg-white border border-gray-100 rounded-2xl ${onClick ? 'cursor-pointer transition-transform' : ''} ${isPressed ? 'scale-[0.99]' : ''} ${className}`}
     >
       {children}
     </div>

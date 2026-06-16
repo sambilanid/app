@@ -101,11 +101,11 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
         <div className="backdrop-blur-[6px] bg-[rgba(246,250,255,0.9)] border-t border-[#bdcac1] p-4 max-w-screen-md mx-auto">
           <div className="flex justify-between items-center mb-4 px-2">
             <div>
-              <p className="text-[#3e4943] text-[12px] font-bold uppercase tracking-wider">Reward ditawarkan</p>
-              <p className="text-primary text-[20px] font-bold">{quest.price}</p>
+              <p className="text-[#3e4943] text-xs font-bold uppercase tracking-wider">Reward ditawarkan</p>
+              <p className="text-primary text-xl font-bold">{quest.price}</p>
             </div>
             <div className="text-right">
-              <p className="text-[#3e4943] text-[12px] font-bold uppercase tracking-wider">Status Quest</p>
+              <p className="text-[#3e4943] text-xs font-bold uppercase tracking-wider">Status Quest</p>
               <Badge variant={displayInfo?.status === 'waiting_adventurer' ? 'primary' : 'secondary'}>
                 {displayInfo?.label}
               </Badge>
@@ -125,32 +125,32 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
     >
       <div className="pb-40">
         {/* Hero Image */}
-        <div className="bg-[#8af7c8] h-[192px] w-full flex items-center justify-center overflow-hidden">
+        <div className="bg-[#8af7c8] h-48 w-full flex items-center justify-center overflow-hidden">
           <img src={quest.image} alt={quest.title} className="w-full h-full object-cover opacity-80" />
         </div>
 
-        <div className="px-[20px] py-[16px] flex flex-col gap-6">
+        <div className="px-5 py-4 flex flex-col gap-6">
           {/* Header Info */}
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <Badge variant="secondary" className="w-fit">{quest.category}</Badge>
-              <span className="text-[#141d23] text-[12px] font-semibold opacity-60">
+              <span className="text-[#141d23] text-xs font-semibold opacity-60">
                 Dibuat {getRelativeTime(quest.createdAt)}
               </span>
             </div>
-            <h2 className="text-[#141d23] text-[24px] font-bold">{quest.title}</h2>
+            <h2 className="text-[#141d23] text-2xl font-bold">{quest.title}</h2>
             
             <div className="flex flex-col gap-1 mt-2">
               <div className="flex items-center gap-2 text-[#3e4943]">
                 <MapPin size={16} className="text-primary" />
                 <div>
-                  <p className="text-[14px] font-semibold">{quest.location}</p>
-                  <p className="text-[12px]">{quest.distance} dari lokasi</p>
+                  <p className="text-sm font-semibold">{quest.location}</p>
+                  <p className="text-xs">{quest.distance} dari lokasi</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-[#3e4943]">
                 <Clock size={16} className="text-primary" />
-                <p className="text-[14px] font-semibold">Deadline {quest.deadline || 'Hari ini'}</p>
+                <p className="text-sm font-semibold">Deadline {quest.deadline || 'Hari ini'}</p>
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           {/* Evidence Section */}
           {quest.status === 'pending' && (
             <div className="flex flex-col gap-4">
-              <h3 className="text-[#141d23] text-[16px] font-bold uppercase tracking-wider">Bukti Penyelesaian</h3>
+              <h3 className="text-[#141d23] text-base font-bold uppercase tracking-wider">Bukti Penyelesaian</h3>
               <Card className="p-4 flex flex-col gap-4 bg-orange-50 border-orange-100">
                 {quest.evidenceImage && (
                   <div className="rounded-xl overflow-hidden h-48">
@@ -167,12 +167,12 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
                 )}
                 {quest.evidenceNotes && (
                   <div className="flex flex-col gap-1">
-                    <p className="text-[12px] font-bold text-orange-800 uppercase">Catatan Adventurer:</p>
-                    <p className="text-[#3e4943] text-[14px]">{quest.evidenceNotes}</p>
+                    <p className="text-xs font-bold text-orange-800 uppercase">Catatan Adventurer:</p>
+                    <p className="text-[#3e4943] text-sm">{quest.evidenceNotes}</p>
                   </div>
                 )}
                 {!quest.evidenceImage && !quest.evidenceNotes && (
-                  <p className="text-[#3e4943] text-[14px] italic">Tidak ada bukti yang dilampirkan.</p>
+                  <p className="text-[#3e4943] text-sm italic">Tidak ada bukti yang dilampirkan.</p>
                 )}
               </Card>
             </div>
@@ -180,8 +180,8 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
 
           {/* Description */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-[#141d23] text-[16px] font-bold">Deskripsi</h3>
-            <p className="text-[#3e4943] text-[16px] leading-[24px]">
+            <h3 className="text-[#141d23] text-base font-bold">Deskripsi</h3>
+            <p className="text-[#3e4943] text-base leading-6">
               {quest.description}
             </p>
           </div>
@@ -189,10 +189,10 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           {/* Applicants Management Section */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between px-1">
-              <h3 className="text-[#141d23] text-[16px] font-bold">
+              <h3 className="text-[#141d23] text-base font-bold">
                 {['active', 'pending', 'completed'].includes(quest.status) ? 'Dikerjakan oleh' : `Daftar Pemohon (${applicants.length})`}
               </h3>
-              {!['active', 'pending', 'completed'].includes(quest.status) && applicants.length > 0 && <span className="text-primary text-[12px] font-bold">Lihat Semua</span>}
+              {!['active', 'pending', 'completed'].includes(quest.status) && applicants.length > 0 && <span className="text-primary text-xs font-bold">Lihat Semua</span>}
             </div>
             
             {['active', 'pending', 'completed'].includes(quest.status) && quest.takerId ? (
@@ -204,7 +204,7 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
                       <div className="flex items-center gap-3">
                         <Avatar initials={taker.initials} src={taker.avatar} size="sm" />
                         <div>
-                          <p className="text-[#141d23] text-[14px] font-bold">{taker.name}</p>
+                          <p className="text-[#141d23] text-sm font-bold">{taker.name}</p>
                           <div className="flex items-center gap-1 text-[#3e4943] text-[11px] font-bold">
                             <span>★ {taker.rating}</span>
                             <span>•</span>
@@ -232,7 +232,7 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
                       <div className="flex items-center gap-3">
                         <Avatar initials={applicant.initials} src={applicant.avatar} size="sm" />
                         <div>
-                          <p className="text-[#141d23] text-[14px] font-bold">{applicant.name}</p>
+                          <p className="text-[#141d23] text-sm font-bold">{applicant.name}</p>
                           <div className="flex items-center gap-1 text-[#3e4943] text-[11px] font-bold">
                             <span>★ {applicant.rating}</span>
                             <span>•</span>
@@ -271,13 +271,13 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
               </div>
             ) : (
               <div className="bg-gray-50 rounded-2xl p-8 border border-dashed border-gray-200 flex flex-col items-center justify-center text-center">
-                <p className="text-gray-400 text-[14px]">Belum ada yang mendaftar untuk quest ini.</p>
+                <p className="text-gray-400 text-sm">Belum ada yang mendaftar untuk quest ini.</p>
               </div>
             )}
           </div>
 
           {/* Map Preview */}
-          <div className="bg-[#e0e9f2] border border-[#bdcac1] h-[128px] rounded-[16px] overflow-hidden relative">
+          <div className="bg-[#e0e9f2] border border-[#bdcac1] h-32 rounded-2xl overflow-hidden relative">
              <img 
                src={mapPreview} 
                alt="map" 

@@ -50,12 +50,12 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
         />
       }
       footer={
-        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+        <div className="bg-white border-t border-[#dbe4ed] px-5 py-4 pb-8">
           <Button 
             onClick={handleFinish}
             fullWidth
             size="lg"
-            className="rounded-[16px] !font-bold flex items-center justify-center gap-2"
+            className="rounded-2xl !font-bold flex items-center justify-center gap-2"
           >
             <Send size={18} />
             Kirim bukti & selesaikan
@@ -63,28 +63,28 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
         </div>
       }
     >
-      <div className="px-[20px] pt-[24px] pb-[40px] flex flex-col gap-[24px]">
+      <div className="px-5 pt-6 pb-10 flex flex-col gap-6">
         {/* Quest Info Card */}
-        <div className="bg-[#ecf5fe] border border-[#dbe4ed] rounded-[16px] p-[16px] flex gap-[16px] relative overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-[6px] bg-primary" />
+        <div className="bg-[#ecf5fe] border border-[#dbe4ed] rounded-2xl p-4 flex gap-4 relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary" />
           <div className="flex flex-col gap-1 pl-2">
-            <h2 className="text-[#141d23] font-semibold text-[14px]">Quest: {quest.title}</h2>
+            <h2 className="text-[#141d23] font-semibold text-sm">Quest: {quest.title}</h2>
             <span className="text-primary text-[10px] font-bold tracking-[0.6px] uppercase">DALAM PROSES PENGERJAAN</span>
           </div>
         </div>
 
         {/* Upload Section */}
-        <div className="flex flex-col gap-[12px]">
-          <h3 className="text-[#3e4943] text-[12px] font-bold tracking-[0.6px] uppercase">UPLOAD BUKTI KERJA</h3>
-          <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-[16px] py-[32px] flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-            <div className="w-[56px] h-[56px] bg-gray-100 rounded-full flex items-center justify-center mb-3">
+        <div className="flex flex-col gap-3">
+          <h3 className="text-[#3e4943] text-xs font-bold tracking-[0.6px] uppercase">UPLOAD BUKTI KERJA</h3>
+          <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
+            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
               <Camera size={28} className="text-[#3e4943]" />
             </div>
-            <p className="text-[#141d23] font-semibold text-[14px]">Foto dari kamera aplikasi</p>
-            <p className="text-[#3e4943] text-[12px] opacity-60">(tidak bisa dari galeri)</p>
+            <p className="text-[#141d23] font-semibold text-sm">Foto dari kamera aplikasi</p>
+            <p className="text-[#3e4943] text-xs opacity-60">(tidak bisa dari galeri)</p>
           </div>
           
-          <div className="bg-[#dbe4ed]/30 border border-[#dbe4ed]/50 p-4 rounded-[12px] flex gap-3">
+          <div className="bg-[#dbe4ed]/30 border border-[#dbe4ed]/50 p-4 rounded-xl flex gap-3">
             <AlertCircle size={18} className="text-[#3e4943] flex-shrink-0 mt-0.5" />
             <p className="text-[#3e4943] text-[13px] leading-relaxed">
               Foto harus diambil langsung dari kamera aplikasi ini untuk mencegah bukti palsu. Pastikan barang & lokasi terlihat jelas.
@@ -93,25 +93,25 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
         </div>
 
         {/* Notes Section */}
-        <div className="flex flex-col gap-[12px]">
-          <h3 className="text-[#3e4943] text-[12px] font-bold tracking-[0.6px] uppercase">CATATAN TAMBAHAN</h3>
+        <div className="flex flex-col gap-3">
+          <h3 className="text-[#3e4943] text-xs font-bold tracking-[0.6px] uppercase">CATATAN TAMBAHAN</h3>
           <textarea 
             placeholder="Tulis catatan penyelesaian..."
             rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[15px] focus:outline-none focus:border-primary transition-colors resize-none"
+            className="bg-white border border-[#bdcac1] rounded-xl p-4 text-[15px] focus:outline-none focus:border-primary transition-colors resize-none"
           />
         </div>
 
         {/* Reward Info */}
-        <div className="bg-[#fff3e0]/30 border border-[#fff3e0] p-4 rounded-[12px] flex gap-4 items-center">
+        <div className="bg-[#fff3e0]/30 border border-[#fff3e0] p-4 rounded-xl flex gap-4 items-center">
           <div className="bg-[#fff3e0] p-2 rounded-full">
             <Info size={20} className="text-orange-500" />
           </div>
           <div className="flex flex-col">
-            <p className="text-[#141d23] text-[14px] font-semibold leading-tight">Reward akan cair setelah konfirmasi</p>
-            <p className="text-[#3e4943] text-[14px] font-medium opacity-80">{quest.price} (dipotong biaya admin)</p>
+            <p className="text-[#141d23] text-sm font-semibold leading-tight">Reward akan cair setelah konfirmasi</p>
+            <p className="text-[#3e4943] text-sm font-medium opacity-80">{quest.price} (dipotong biaya admin)</p>
           </div>
         </div>
       </div>

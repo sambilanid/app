@@ -18,16 +18,16 @@ export const QuestThumbnail: React.FC<QuestThumbnailProps> = ({
   className = '' 
 }) => {
   const sizes = {
-    sm: 'w-[48px] h-[48px]',
-    md: 'w-[64px] h-[64px]',
-    lg: 'w-[80px] h-[80px]',
+    sm: 'w-12 h-12',
+    md: 'w-16 h-16',
+    lg: 'w-20 h-20',
   };
 
   return (
     <img 
       src={src} 
       alt={alt} 
-      className={`${sizes[size]} rounded-[8px] object-cover shrink-0 ${className}`} 
+      className={`${sizes[size]} rounded-lg object-cover shrink-0 ${className}`} 
     />
   );
 };

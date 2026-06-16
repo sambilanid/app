@@ -31,7 +31,9 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }) => {
   const { state, logout } = useApp();
-  const user = state.user!;
+  const user = state.user;
+
+  if (!user) return null;
 
   const menuItems = [
     { icon: <UserCircle size={20} className="text-[#00694b]" />, label: 'Edit Profil' },
@@ -53,7 +55,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
     >
       <div>
         {/* Profile Info Section */}
-        <section className="px-[20px] pt-[24px] flex gap-[16px] items-center">
+        <section className="px-5 pt-6 flex gap-4 items-center">
           <Avatar 
             initials={user.initials} 
             src={user.avatar}
@@ -61,13 +63,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
             className="border-4 border-white !bg-[#ffdad6] !text-[#93000a]" 
           />
           <div className="flex flex-col gap-1">
-            <h2 className="text-[#141d23] text-[18px] font-bold leading-tight">{user.name}</h2>
+            <h2 className="text-[#141d23] text-lg font-bold leading-tight">{user.name}</h2>
             <div className="flex items-center gap-1">
               <Star size={14} className="text-orange-400 fill-orange-400" />
-              <span className="text-[#141d23] text-[14px] font-bold">{user.rating.toFixed(1)}</span>
-              <span className="text-[#5a5c5e] text-[14px]">({user.reviewCount} reviews)</span>
+              <span className="text-[#141d23] text-sm font-bold">{user.rating.toFixed(1)}</span>
+              <span className="text-[#5a5c5e] text-sm">({user.reviewCount} reviews)</span>
             </div>
-            <p className="text-primary text-[11px] font-semibold">{user.questsCreated} Quest Dibuat - {user.questsCompleted} Quest Dikerjakan</p>
+            <p className="text-primary text-[0.6875rem] font-semibold">{user.questsCreated} Quest Dibuat - {user.questsCompleted} Quest Dikerjakan</p>
             <div className="flex gap-2 mt-1">
               {!user.isVerified && <Badge variant="primary" className="!bg-[#dbe4ed] !text-[#3e4943] !border-[#bdcac1]">BELUM VERIFIKASI</Badge>}
             </div>
@@ -75,11 +77,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
         </section>
 
         {/* Balance Card */}
-        <section className="px-[20px] mt-[24px]">
-          <div className="bg-primary p-6 rounded-[24px] text-white relative overflow-hidden">
+        <section className="px-5 mt-6">
+          <div className="bg-primary p-6 rounded-3xl text-white relative overflow-hidden">
             <div className="relative z-10">
-              <p className="text-[12px] font-bold tracking-[1.2px] opacity-80 uppercase">SALDO</p>
-              <h3 className="text-[32px] font-extrabold mt-1">Rp {user.balance.toLocaleString('id-ID')}</h3>
+              <p className="text-xs font-bold tracking-widest opacity-80 uppercase">SALDO</p>
+              <h3 className="text-3xl font-extrabold mt-1">Rp {user.balance.toLocaleString('id-ID')}</h3>
               <div className="flex gap-4 mt-6">
                 <Button 
                   variant="secondary" 
@@ -107,25 +109,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
         </section>
 
         {/* Reviews Section */}
-        <section className="px-[20px] mt-[32px]">
+        <section className="px-5 mt-8">
           <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-[#141d23] text-[20px] font-bold">Review Terbaru</h3>
+            <h3 className="text-[#141d23] text-xl font-bold">Review Terbaru</h3>
             <div className="bg-gray-100 p-1 rounded-md">
               <Star size={14} className="text-gray-400" />
             </div>
           </div>
-          <Card className="border-2 border-[#bdcac1] border-dashed py-[40px] flex flex-col items-center justify-center text-center px-6">
-            <div className="w-[64px] h-[64px] bg-[#e6eff8] rounded-full flex items-center justify-center mb-4">
+          <Card className="border-2 border-[#bdcac1] border-dashed py-10 flex flex-col items-center justify-center text-center px-6">
+            <div className="w-16 h-16 bg-[#e6eff8] rounded-full flex items-center justify-center mb-4">
               <UserCircle size={30} className="text-[#00694b]" />
             </div>
             <p className="text-[#3e4943] font-medium">Belum ada review.</p>
-            <p className="text-[12px] text-gray-400 mt-1">Selesaikan quest pertama Anda untuk mendapatkan feedback!</p>
+            <p className="text-xs text-gray-400 mt-1">Selesaikan quest pertama Anda untuk mendapatkan feedback!</p>
           </Card>
         </section>
 
         {/* Settings Section */}
-        <section className="px-[20px] mt-[32px]">
-          <h3 className="text-[#141d23] text-[20px] font-bold mb-4">Settings</h3>
+        <section className="px-5 mt-8">
+          <h3 className="text-[#141d23] text-xl font-bold mb-4">Settings</h3>
           <Card className="overflow-hidden">
             {menuItems.map((item, idx) => (
               <button 
@@ -133,7 +135,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
                 className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors ${idx !== menuItems.length - 1 ? 'border-b border-gray-50' : ''}`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#e0e9f2] rounded-[8px] flex items-center justify-center">
+                  <div className="w-10 h-10 bg-[#e0e9f2] rounded-lg flex items-center justify-center">
                     {item.icon}
                   </div>
                   <span className="text-[#141d23] font-bold">{item.label}</span>
@@ -146,7 +148,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
               onClick={logout}
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-red-50 rounded-[8px] flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
                   <LogOut size={20} className="text-[#ba1a1a]" />
                 </div>
                 <span className="text-[#ba1a1a] font-bold">Keluar Akun</span>

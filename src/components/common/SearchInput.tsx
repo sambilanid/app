@@ -11,11 +11,11 @@ interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const SearchInput: React.FC<SearchInputProps> = ({ containerClassName = '', ...props }) => {
   return (
-    <div className={`bg-white border border-[#bdcac1] flex gap-[10px] h-[53px] items-center px-[17px] rounded-[12px] w-full ${containerClassName}`}>
+    <div className={`bg-white border border-[#bdcac1] flex gap-3 h-12 items-center px-4 rounded-xl w-full ${containerClassName}`}>
       <Search size={18} className="text-gray-text" />
       <input 
         type="text" 
-        className="flex-1 text-[16px] text-gray-text outline-none bg-transparent"
+        className="flex-1 text-base text-gray-text outline-none bg-transparent"
         {...props}
       />
     </div>

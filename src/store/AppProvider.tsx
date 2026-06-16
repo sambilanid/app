@@ -2,7 +2,7 @@
  * Provider untuk AppContext.
  * Digunakan saat: Membungkus seluruh aplikasi untuk menyediakan state global seperti data user dan daftar quest.
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { AppContext } from './AppContext';
 import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message, Chat } from '../types';
@@ -25,6 +25,9 @@ const initialUsers: User[] = [
     name: 'ADE YAHYA HENDRIAWAN',
     initials: 'AY',
     avatar: avatarAde,
+    email: 'ade@sambilan.id',
+    phone: '081234567890',
+    password: 'password123',
     rating: 0.0,
     reviewCount: 0,
     questsCreated: 0,
@@ -64,6 +67,9 @@ const initialUsers: User[] = [
     name: 'Reza Kurniawan',
     initials: 'RK',
     avatar: avatarReza,
+    email: 'reza@gmail.com',
+    phone: '082112233445',
+    password: 'password123',
     rating: 4.7,
     reviewCount: 25,
     questsCreated: 8,
@@ -78,6 +84,9 @@ const initialUsers: User[] = [
     name: 'Sari Nur Aini',
     initials: 'SA',
     avatar: avatarSari,
+    email: 'sari@yahoo.com',
+    phone: '085776655443',
+    password: 'password123',
     rating: 4.9,
     reviewCount: 42,
     questsCreated: 12,
@@ -92,6 +101,9 @@ const initialUsers: User[] = [
     name: 'Budi Santoso',
     initials: 'BS',
     avatar: avatarBudi,
+    email: 'budi@outlook.com',
+    phone: '089988776655',
+    password: 'password123',
     rating: 4.5,
     reviewCount: 18,
     questsCreated: 5,
@@ -269,17 +281,35 @@ const initialMessages: Message[] = [
   { id: 'm1', chatId: 'c1', senderId: '2', text: 'Halo kak, saya sudah di depan Mie Ayam Pak Di ya.', time: '10:40 AM' },
   { id: 'm2', chatId: 'c1', senderId: '1', text: 'Oke sebentar ya, saya transfer uangnya.', time: '10:41 AM' },
   { id: 'm4', chatId: 'c1', senderId: '1', text: 'Sudah saya transfer ya kak Rp35.000 (mie + ongkir).', time: '10:43 AM' },
-  { id: 'm5', chatId: 'c1', senderId: '2', text: 'Masuk kak. Ini lagi antre, lumayan ramai ya hari ini.', time: '10:45 AM' },
+  { id: 'm5', chatId: 'c1', senderId: '1', text: 'Masuk kak. Ini lagi antre, lumayan ramai ya hari ini.', time: '10:45 AM' },
   { id: 'm6', chatId: 'c1', senderId: '1', text: 'Siap, santai aja kak. Jangan lupa sambalnya dipisah ya.', time: '10:46 AM' },
   { id: 'm3', chatId: 'c2', senderId: '4', text: 'Permisi kak, galonnya sudah saya taruh di dalam ya.', time: '11:20 AM' },
 ];
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>(() => {
+    const savedUsers = localStorage.getItem('sambilan_users');
+    return savedUsers ? JSON.parse(savedUsers) : initialUsers;
+  });
+  const [currentUserId, setCurrentUserId] = useState<string | null>(() => {
+    return localStorage.getItem('sambilan_session');
+  });
   const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+
+  // Persistence
+  useEffect(() => {
+    localStorage.setItem('sambilan_users', JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    if (currentUserId) {
+      localStorage.setItem('sambilan_session', currentUserId);
+    } else {
+      localStorage.removeItem('sambilan_session');
+    }
+  }, [currentUserId]);
 
   const currentUser = useMemo(() => 
     currentUserId ? users.find(u => u.id === currentUserId) || null : null, 
@@ -316,6 +346,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const login = (userId: string) => {
     setCurrentUserId(userId);
+  };
+
+  const register = (userData: Pick<User, 'name' | 'email' | 'phone' | 'password'>) => {
+    const names = userData.name.trim().split(/\s+/);
+    const initials = names.length > 1 
+      ? (names[0][0] + names[names.length - 1][0]).toUpperCase()
+      : names[0].substring(0, 2).toUpperCase();
+
+    const newUser: User = {
+      id: `u${Date.now()}`,
+      name: userData.name,
+      initials,
+      email: userData.email,
+      phone: userData.phone,
+      password: userData.password,
+      rating: 0.0,
+      reviewCount: 0,
+      questsCreated: 0,
+      questsCompleted: 0,
+      isVerified: false,
+      balance: 0,
+      notifications: [],
+      withdrawalPresets: [],
+    };
+
+    setUsers(prev => [...prev, newUser]);
+    setCurrentUserId(newUser.id);
   };
 
   const logout = () => {
@@ -520,6 +577,7 @@ const applyForQuest = (questId: string) => {
       state, 
       switchUser,
       login,
+      register,
       logout,
       topUp, 
       withdraw, 
@@ -544,4 +602,3 @@ const applyForQuest = (questId: string) => {
     </AppContext.Provider>
   );
 };
-

@@ -14,11 +14,11 @@ export const WalletSection: React.FC<{
   const { user } = state;
 
   return (
-    <div className="px-[20px] mt-4">
-      <div className="bg-primary rounded-[16px] p-[20px] text-white flex flex-col gap-[20px]">
-        <div className="flex flex-col gap-[4px]">
-          <p className="text-[12px] opacity-80 font-medium">Saldo Tersedia</p>
-          <p className="text-[24px] font-bold">
+    <div className="px-5 mt-4">
+      <div className="bg-primary rounded-2xl p-5 text-white flex flex-col gap-5">
+        <div className="flex flex-col gap-1">
+          <p className="text-xs opacity-80 font-medium">Saldo Tersedia</p>
+          <p className="text-2xl font-bold">
             {new Intl.NumberFormat('id-ID', { 
               style: 'currency', 
               currency: 'IDR', 
@@ -27,7 +27,7 @@ export const WalletSection: React.FC<{
           </p>
         </div>
         
-        <div className="flex gap-[12px]">
+        <div className="flex gap-3">
           <Button 
             variant="secondary" 
             fullWidth 

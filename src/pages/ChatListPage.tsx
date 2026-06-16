@@ -57,23 +57,23 @@ const ChatListPage: React.FC<ChatListPageProps> = ({ onBack, onSelectChat }) => 
                   <img 
                     src={otherUser.avatar} 
                     alt={otherUser.name} 
-                    className="w-[56px] h-[56px] rounded-full object-cover"
+                    className="w-14 h-14 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-[56px] h-[56px] rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
+                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
                     {otherUser?.initials || '?'}
                   </div>
                 )}
-                <div className="absolute -top-1 -right-1 w-[16px] h-[16px] rounded-full border-2 border-white bg-[#00694b]" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white bg-[#00694b]" />
               </div>
 
               {/* Chat Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-0.5">
-                  <h3 className="text-[16px] font-bold text-black truncate">
+                  <h3 className="text-base font-bold text-black truncate">
                     {quest?.title || 'Percakapan'}
                   </h3>
-                  <span className="text-[12px] text-gray-400">
+                  <span className="text-xs text-gray-400">
                     {lastMessage?.time || ''}
                   </span>
                 </div>
@@ -83,7 +83,7 @@ const ChatListPage: React.FC<ChatListPageProps> = ({ onBack, onSelectChat }) => 
                   </p>
                 </div>
                 <div className="flex justify-between items-center">
-                  <p className="text-[14px] truncate flex-1 text-gray-400">
+                  <p className="text-sm truncate flex-1 text-gray-400">
                     {lastMessage?.text || 'Mulai percakapan...'}
                   </p>
                 </div>

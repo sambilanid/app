@@ -13,9 +13,9 @@ interface AvatarProps {
 
 export const Avatar: React.FC<AvatarProps> = ({ src, initials, size = 'md', className = '' }) => {
   const sizes = {
-    sm: 'w-8 h-8 text-[12px]',
-    md: 'w-12 h-12 text-[16px]',
-    lg: 'w-16 h-16 text-[20px]',
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-12 h-12 text-base',
+    lg: 'w-16 h-16 text-xl',
   };
 
   return (

@@ -21,7 +21,7 @@ const QuestEvidenceSuccessPage: React.FC<QuestEvidenceSuccessPageProps> = ({
     <PageLayout
       header={<PageHeader title="Bukti Quest" onBack={onBack} />}
       footer={
-        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+        <div className="bg-white border-t border-[#dbe4ed] px-5 py-4 pb-8">
           <Button
             fullWidth
             size="lg"
@@ -33,17 +33,17 @@ const QuestEvidenceSuccessPage: React.FC<QuestEvidenceSuccessPageProps> = ({
         </div>
       }
     >
-      <div className="h-full flex flex-col px-[20px] py-[60px] items-center text-center">
+      <div className="h-full flex flex-col px-5 py-15 items-center text-center">
         {/* Success Icon */}
-        <div className="w-[80px] h-[80px] bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 animate-in zoom-in duration-500">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 animate-in zoom-in duration-500">
           <CheckCircle2 size={48} />
         </div>
 
         {/* Success Message */}
-        <h1 className="text-[#141d23] text-[24px] font-bold mb-2">
+        <h1 className="text-[#141d23] text-2xl font-bold mb-2">
           Bukti Berhasil Dikirim!
         </h1>
-        <p className="text-[#3e4943] text-[16px] mb-8 leading-relaxed">
+        <p className="text-[#3e4943] text-base mb-8 leading-relaxed">
           Tunggu konfirmasi dari pemberi quest. Saldo akan otomatis masuk ke
           dompetmu setelah quest dikonfirmasi.
         </p>

@@ -46,7 +46,7 @@ const HomePage: React.FC<HomePageProps> = ({
           title={`Selamat Pagi, ${user!.name.split(" ")[0]}!`}
           subtitle="Apa yang kamu butuhin hari ini?"
           rightAction={
-            <div className="flex items-center gap-[4px]">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => onChat()}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -81,36 +81,34 @@ const HomePage: React.FC<HomePageProps> = ({
       <div>
         <WalletSection onTopUp={onTopUp} onWithdraw={onWithdraw} />
 
-        <div className="px-[20px] mt-6 flex flex-col gap-4">
-          <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Quest aktif</h2>
+        <div className="px-5 mt-6 flex flex-col gap-4">
+          <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest aktif</h2>
           {activeQuests.length > 0 ? (
             activeQuests.map((quest) => (
               <ActiveQuestCard 
                 key={quest.id}
                 quest={quest}
-                onChat={() => onChat(quest.id)} 
                 onFinish={() => onFinish(quest.id)} 
                 onClick={() => onNavigate('detail', quest.id)}
               />
             ))
           ) : (
-            <div className="bg-white border border-gray-100 rounded-[16px] p-8 flex flex-col items-center justify-center text-center">
+            <div className="bg-white border border-gray-100 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
               <div className="bg-gray-50 p-4 rounded-full mb-3">
                 <Clock size={24} className="text-gray-300" />
               </div>
-              <p className="text-[#3e4943] text-[14px] font-medium opacity-60">Belum ada quest aktif yang sedang dikerjakan.</p>
+              <p className="text-[#3e4943] text-sm font-medium opacity-60">Belum ada quest aktif yang sedang dikerjakan.</p>
             </div>
           )}
         </div>
 
         {pendingQuests.length > 0 && (
-          <div className="px-[20px] mt-8 flex flex-col gap-4">
-            <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Menunggu persetujuan</h2>
+          <div className="px-5 mt-8 flex flex-col gap-4">
+            <h2 className="text-[#3e4943] text-base px-1 font-bold">Menunggu persetujuan</h2>
             {pendingQuests.map((quest) => (
               <ActiveQuestCard 
                 key={quest.id}
                 quest={quest}
-                onChat={() => onChat(quest.id)}
                 onClick={() => onNavigate('detail', quest.id)}
               />
             ))}
@@ -118,8 +116,8 @@ const HomePage: React.FC<HomePageProps> = ({
         )}
 
         {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active')).length > 0 && (
-          <div className="px-[20px] mt-8 flex flex-col gap-4">
-            <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Quest buatanmu</h2>
+          <div className="px-5 mt-8 flex flex-col gap-4">
+            <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest buatanmu</h2>
             {state.allQuests
               .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active'))
               .sort((a, b) => {
@@ -140,11 +138,11 @@ const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => onNavigate('manage', quest.id)}
                   footer={
                     quest.status === 'active' ? (
-                      <span className="text-[12px] font-bold text-[#7ea400] bg-[#7ea400]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-bold text-[#7ea400] bg-[#7ea400]/10 px-2 py-0.5 rounded-full">
                         Sedang dikerjakan
                       </span>
                     ) : (
-                      <span className={`text-[12px] font-bold ${quest.applicantIds && quest.applicantIds.length > 0 ? 'text-primary' : 'text-gray-400'}`}>
+                      <span className={`text-xs font-bold ${quest.applicantIds && quest.applicantIds.length > 0 ? 'text-primary' : 'text-gray-400'}`}>
                         {quest.applicantIds && quest.applicantIds.length > 0 
                           ? `${quest.applicantIds.length} pemohon` 
                           : 'Belum ada pemohon'}
@@ -157,8 +155,8 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
 
-        <div className="px-[20px] mt-8 flex flex-col gap-4 pb-8">
-          <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Quest di sekitarmu</h2>
+        <div className="px-5 mt-8 flex flex-col gap-4 pb-8">
+          <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest di sekitarmu</h2>
           {availableQuests.length > 0 ? (
             availableQuests.map((quest) => (
               <StandardQuestCard 
@@ -168,11 +166,11 @@ const HomePage: React.FC<HomePageProps> = ({
               />
             ))
           ) : (
-            <div className="bg-white border border-gray-100 rounded-[16px] p-8 flex flex-col items-center justify-center text-center">
+            <div className="bg-white border border-gray-100 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
               <div className="bg-gray-50 p-4 rounded-full mb-3">
                 <Search size={24} className="text-gray-300" />
               </div>
-              <p className="text-[#3e4943] text-[14px] font-medium opacity-60">Tidak ada quest tersedia di sekitarmu saat ini.</p>
+              <p className="text-[#3e4943] text-sm font-medium opacity-60">Tidak ada quest tersedia di sekitarmu saat ini.</p>
             </div>
           )}
         </div>

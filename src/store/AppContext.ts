@@ -3,12 +3,13 @@
  * Digunakan saat: Mengakses atau mengubah state global di berbagai komponen melalui hook useApp.
  */
 import { createContext, useContext } from 'react';
-import type { AppState, Quest, AppNotification, WithdrawalPreset } from '../types';
+import type { AppState, Quest, AppNotification, WithdrawalPreset, User } from '../types';
 
 export interface AppContextType {
   state: AppState;
   switchUser: (userId: string) => void;
   login: (userId: string) => void;
+  register: (userData: Pick<User, 'name' | 'email' | 'phone' | 'password'>) => void;
   logout: () => void;
   topUp: (amount: number) => void;
   withdraw: (amount: number) => void;

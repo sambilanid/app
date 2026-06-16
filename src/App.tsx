@@ -21,7 +21,10 @@ import CreateQuestSuccessPage from "./pages/CreateQuestSuccessPage";
 import TopUpSuccessPage from "./pages/TopUpSuccessPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
-import LoginPage from "./pages/LoginPage";
+import WelcomePage from "./pages/WelcomePage";
+import AccountSwitcherPage from "./pages/AccountSwitcherPage";
+import AuthLoginPage from "./pages/AuthLoginPage";
+import AuthRegisterPage from "./pages/AuthRegisterPage";
 import { BottomNavigationBar } from "./components/common/BottomNavigationBar";
 import { DialogProvider } from "./components/common/Dialog";
 import { useApp } from "./store/AppContext";
@@ -66,19 +69,65 @@ function AppContent() {
     { id: "home", page: "home" }
   ]);
   const [direction, setDirection] = useState(0);
+  const [authView, setAuthView] = useState<"welcome" | "switcher" | "login" | "register">("welcome");
 
   useEffect(() => {
     if (!state.user) {
       setStack([{ id: "home", page: "home" }]);
       setDirection(0);
+      setAuthView("welcome");
     }
   }, [state.user]);
 
   if (!state.user) {
+    const renderAuthView = () => {
+      switch (authView) {
+        case "welcome":
+          return (
+            <WelcomePage 
+              onLogin={() => setAuthView("login")}
+              onRegister={() => setAuthView("register")}
+              onSwitchAccount={() => setAuthView("switcher")}
+            />
+          );
+        case "login":
+          return (
+            <AuthLoginPage 
+              onBack={() => setAuthView("welcome")}
+              onRegister={() => setAuthView("register")}
+              onSuccess={() => {}} // login is handled inside AuthLoginPage
+            />
+          );
+        case "register":
+          return (
+            <AuthRegisterPage 
+              onBack={() => setAuthView("welcome")}
+              onLogin={() => setAuthView("login")}
+              onSuccess={() => setAuthView("switcher")}
+            />
+          );
+        case "switcher":
+          return <AccountSwitcherPage onBack={() => setAuthView("welcome")} />;
+        default:
+          return null;
+      }
+    };
+
     return (
       <div className="h-screen bg-black flex justify-center">
-        <div className="w-full max-w-screen-md bg-white relative h-screen overflow-hidden">
-          <LoginPage />
+        <div className="w-full max-w-screen-md bg-[#f6faff] relative h-screen overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={authView}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="h-full"
+            >
+              {renderAuthView()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     );

@@ -55,7 +55,7 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                containerClassName="h-[40px] bg-[#e6eff8] border-[rgba(189,202,193,0.3)]" 
+                containerClassName="h-10 bg-[#e6eff8] border-[rgba(189,202,193,0.3)]" 
                 placeholder="Cari aktivitas..."
               />
             </div>
@@ -86,10 +86,10 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
     >
       <div>
         {/* Navigation Tabs */}
-        <div className="px-[20px] pt-[24px] flex gap-[8px] overflow-x-auto no-scrollbar">
+        <div className="px-5 pt-6 flex gap-2 overflow-x-auto no-scrollbar">
           <button 
             onClick={() => setActiveTab('made')}
-            className={`px-[20px] py-[10px] rounded-full text-[14px] font-semibold whitespace-nowrap transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
               activeTab === 'made' 
                 ? 'bg-primary text-white' 
                 : 'bg-[#e1e3e4] text-[#5c5f60]'
@@ -99,7 +99,7 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
           </button>
           <button 
             onClick={() => setActiveTab('done')}
-            className={`px-[20px] py-[10px] rounded-full text-[14px] font-semibold whitespace-nowrap transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
               activeTab === 'done' 
                 ? 'bg-primary text-white' 
                 : 'bg-[#e1e3e4] text-[#5c5f60]'
@@ -110,7 +110,7 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
         </div>
 
         {/* Activity List */}
-        <div className="px-[20px] mt-[24px] flex flex-col gap-[16px]">
+        <div className="px-5 mt-6 flex flex-col gap-4">
           {filteredActivities.length === 0 ? (
             <div className="text-center py-10 text-gray-text">
               {searchQuery ? 'Tidak ada aktivitas yang cocok.' : 'Belum ada aktivitas.'}

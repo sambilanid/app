@@ -67,7 +67,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest }) => {
               <SearchInput 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                containerClassName="h-[40px] bg-[#e6eff8] border-[rgba(189,202,193,0.3)]" 
+                containerClassName="h-10 bg-[#e6eff8] border-[rgba(189,202,193,0.3)]" 
                 placeholder="Cari quest di sekitarmu..."
               />
             </div>
@@ -94,7 +94,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest }) => {
         </div>
 
         {/* Results List */}
-        <div className="px-[20px] mt-6 flex flex-col gap-4">
+        <div className="px-5 mt-6 flex flex-col gap-4">
           {filteredAndSortedQuests.map((quest) => (
             <StandardQuestCard 
               key={quest.id}
