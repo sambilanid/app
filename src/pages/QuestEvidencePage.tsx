@@ -2,7 +2,7 @@
  * Halaman pengunggahan bukti penyelesaian quest.
  * Digunakan saat: Adventurer telah menyelesaikan tugas dan perlu mengirimkan bukti foto atau catatan.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { Camera, AlertCircle, Info, Send } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
@@ -17,11 +17,14 @@ interface QuestEvidencePageProps {
 
 const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, onFinish }) => {
   const { state, submitQuestEvidence } = useApp();
+  const [notes, setNotes] = useState('');
   const quest = state.activeQuests.find(q => q.id === questId);
 
   const handleFinish = () => {
     if (questId) {
-      submitQuestEvidence(questId);
+      // Mock image URL for demo
+      const mockImage = 'https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=1000&auto=format&fit=crop';
+      submitQuestEvidence(questId, mockImage, notes);
     }
     onFinish();
   };
@@ -95,6 +98,8 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
           <textarea 
             placeholder="Tulis catatan penyelesaian..."
             rows={4}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             className="bg-white border border-[#bdcac1] rounded-[12px] p-4 text-[15px] focus:outline-none focus:border-primary transition-colors resize-none"
           />
         </div>

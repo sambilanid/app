@@ -5,6 +5,7 @@
 import React from 'react';
 import { CheckCircle2, Home } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
+import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
 
 interface WithdrawSuccessPageProps {
@@ -27,8 +28,26 @@ const WithdrawSuccessPage: React.FC<WithdrawSuccessPageProps> = ({
   }).format(parseInt(amount) || 0);
 
   return (
-    <PageLayout>
-      <div className="h-full flex flex-col px-[20px] py-[60px] items-center text-center">
+    <PageLayout
+      header={
+        <PageHeader 
+          title="Status Penarikan" 
+          onBack={onHome}
+        />
+      }
+      footer={
+        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+          <Button 
+            fullWidth 
+            onClick={onHome}
+            leftIcon={<Home size={18} />}
+          >
+            Kembali ke Beranda
+          </Button>
+        </div>
+      }
+    >
+      <div className="flex flex-col px-[20px] py-[60px] items-center text-center">
         {/* Success Icon */}
         <div className="w-[80px] h-[80px] bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 animate-in zoom-in duration-500">
           <CheckCircle2 size={48} />
@@ -54,17 +73,6 @@ const WithdrawSuccessPage: React.FC<WithdrawSuccessPageProps> = ({
             <span className="text-[#3e4943] text-[14px]">Tujuan</span>
             <span className="text-[#141d23] font-bold text-[14px]">{destination}</span>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="w-full flex flex-col gap-3 mt-auto">
-          <Button 
-            fullWidth 
-            onClick={onHome}
-            leftIcon={<Home size={18} />}
-          >
-            Kembali ke Beranda
-          </Button>
         </div>
       </div>
     </PageLayout>

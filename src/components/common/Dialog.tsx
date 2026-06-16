@@ -60,25 +60,25 @@ export const DialogProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 <p className="text-[#3e4943] text-[16px] leading-[24px] opacity-70">{dialog.message}</p>
               </div>
               
-              <div className="flex flex-col gap-2 mt-2">
-                <Button 
-                  fullWidth 
-                  size="lg"
-                  variant={dialog.variant === 'danger' ? 'danger' : 'primary'}
-                  onClick={handleConfirm}
-                >
-                  {dialog.confirmLabel || 'OK'}
-                </Button>
+              <div className="flex gap-3 mt-2">
                 {dialog.cancelLabel && (
                   <Button 
-                    fullWidth 
                     size="lg"
                     variant="outline"
                     onClick={handleCancel}
+                    className="flex-1"
                   >
                     {dialog.cancelLabel}
                   </Button>
                 )}
+                <Button 
+                  size="lg"
+                  variant={dialog.variant === 'danger' ? 'danger' : 'primary'}
+                  onClick={handleConfirm}
+                  className="flex-1"
+                >
+                  {dialog.confirmLabel || 'OK'}
+                </Button>
               </div>
             </motion.div>
           </div>

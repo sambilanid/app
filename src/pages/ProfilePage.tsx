@@ -70,11 +70,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
             <p className="text-primary text-[11px] font-semibold">{user.questsCreated} Quest Dibuat - {user.questsCompleted} Quest Dikerjakan</p>
             <div className="flex gap-2 mt-1">
               {!user.isVerified && <Badge variant="primary" className="!bg-[#dbe4ed] !text-[#3e4943] !border-[#bdcac1]">BELUM VERIFIKASI</Badge>}
-              {!user.hasSkck && (
-                <Badge variant="primary" className="!bg-[#dbe4ed] !text-[#3e4943] !border-[#bdcac1] flex items-center gap-1">
-                  <ShieldCheck size={10} /> Belum ada SKCK
-                </Badge>
-              )}
             </div>
           </div>
         </section>

@@ -15,6 +15,7 @@ import { ActivityQuestCard } from '../components/quest/ActivityQuestCard';
 interface ActivityPageProps {
   onBack: () => void;
   onSelectQuest: (questId: string) => void;
+  onManageQuest: (questId: string) => void;
   onFinish: (questId: string) => void;
   onChat: (questId: string) => void;
 }
@@ -22,6 +23,7 @@ interface ActivityPageProps {
 const ActivityPage: React.FC<ActivityPageProps> = ({ 
   onBack, 
   onSelectQuest, 
+  onManageQuest,
   onFinish,
   onChat 
 }) => {
@@ -119,7 +121,7 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
               quest={item}
               onChat={() => onChat(item.id)}
               onFinish={() => onFinish(item.id)}
-              onClick={() => onSelectQuest(item.id)}
+              onClick={() => activeTab === 'made' ? onManageQuest(item.id) : onSelectQuest(item.id)}
             />
           ))}
         </div>

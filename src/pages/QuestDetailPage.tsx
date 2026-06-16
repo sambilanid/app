@@ -14,7 +14,9 @@ import { Button } from '../components/common/Button';
 import mapPreview from '../assets/map-preview.png';
 
 import { useApp } from '../store/AppContext';
+import { useDialog } from '../components/common/Dialog';
 import { getRelativeTime } from '../utils/dateUtils';
+import { getQuestDisplayInfo } from '../utils/questUtils';
 
 interface QuestDetailPageProps {
   questId: string | null;
@@ -25,8 +27,37 @@ interface QuestDetailPageProps {
 
 const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish }) => {
   const { state, applyForQuest, cancelApplication } = useApp();
+  const { showDialog } = useDialog();
   const quest = state.allQuests.find(q => q.id === questId);
+  const displayInfo = quest ? getQuestDisplayInfo(quest, state.currentUserId) : null;
   const creator = quest ? state.users.find(u => u.id === quest.creatorId) : null;
+
+  const handleApplyQuest = () => {
+    if (!quest) return;
+    showDialog({
+      title: 'Ambil Quest?',
+      message: 'Pastikan Anda sanggup menyelesaikan quest ini sebelum deadline.',
+      confirmLabel: 'Ya, Ambil',
+      cancelLabel: 'Batal',
+      onConfirm: () => {
+        applyForQuest(quest.id);
+      }
+    });
+  };
+
+  const handleCancelApplication = () => {
+    if (!quest) return;
+    showDialog({
+      title: 'Batalkan Permohonan?',
+      message: '',
+      confirmLabel: 'Ya, Batalkan',
+      cancelLabel: 'Kembali',
+      variant: 'danger',
+      onConfirm: () => {
+        cancelApplication(quest.id);
+      }
+    });
+  };
 
   if (!quest) {
     return (
@@ -39,8 +70,6 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
       </PageLayout>
     );
   }
-
-  const isApplicant = quest.applicantIds?.includes(state.currentUserId!);
 
   return (
     <PageLayout
@@ -80,7 +109,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
             >
               Chat
             </Button>
-            {quest.status === 'active' ? (
+            {displayInfo?.status === 'on_going' ? (
               <Button 
                 fullWidth 
                 size="lg"
@@ -88,11 +117,13 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               >
                 Selesaikan
               </Button>
-            ) : isApplicant ? (
+            ) : displayInfo?.status === 'applying' ? (
               <Button 
+                variant="outline"
                 fullWidth 
                 size="lg" 
-                onClick={() => cancelApplication(quest.id)}
+                className="border-red-200 text-red-500 hover:bg-red-50"
+                onClick={handleCancelApplication}
               >
                 Batalkan permohonan
               </Button>
@@ -100,7 +131,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               <Button 
                 fullWidth 
                 size="lg"
-                onClick={() => applyForQuest(quest.id)}
+                onClick={handleApplyQuest}
               >
                 Ambil quest ini
               </Button>

@@ -17,6 +17,8 @@ import ChatListPage from "./pages/ChatListPage";
 import ChatDetailPage from "./pages/ChatDetailPage";
 import QuestEvidencePage from "./pages/QuestEvidencePage";
 import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
+import CreateQuestSuccessPage from "./pages/CreateQuestSuccessPage";
+import TopUpSuccessPage from "./pages/TopUpSuccessPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
 import LoginPage from "./pages/LoginPage";
@@ -30,6 +32,7 @@ type Page =
   | "search"
   | "detail"
   | "topup"
+  | "topupSuccess"
   | "profile"
   | "activity"
   | "create"
@@ -39,6 +42,7 @@ type Page =
   | "chatDetail"
   | "evidence"
   | "evidenceSuccess"
+  | "createSuccess"
   | "withdraw"
   | "withdrawSuccess";
 
@@ -50,6 +54,7 @@ interface StackItem {
     chatId?: string;
     searchQuery?: string;
     withdrawSuccessData?: { amount: string; method: string; destination: string };
+    topupAmount?: string;
   };
 }
 
@@ -171,7 +176,19 @@ function AppContent() {
           />
         );
       case "topup":
-        return <TopUpPage onBack={pop} />;
+        return (
+          <TopUpPage 
+            onBack={pop} 
+            onSuccess={(amt) => replace("topupSuccess", { topupAmount: amt })}
+          />
+        );
+      case "topupSuccess":
+        return (
+          <TopUpSuccessPage
+            amount={params?.topupAmount || "0"}
+            onDone={() => push("home")}
+          />
+        );
       case "profile":
         return (
           <ProfilePage
@@ -185,6 +202,7 @@ function AppContent() {
           <ActivityPage
             onBack={() => push("home")}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
+            onManageQuest={(qId) => push("manage", { questId: qId })}
             onFinish={(qId) => push("evidence", { questId: qId })}
             onChat={(qId) => {
               const quest = state.allQuests.find(q => q.id === qId);
@@ -196,12 +214,29 @@ function AppContent() {
           />
         );
       case "create":
-        return <CreateQuestPage onBack={pop} />;
+        return (
+          <CreateQuestPage 
+            onBack={pop} 
+            onSuccess={() => replace("createSuccess")}
+          />
+        );
+      case "createSuccess":
+        return (
+          <CreateQuestSuccessPage
+            onActivity={() => push("activity")}
+            onHome={() => push("home")}
+            onBack={pop}
+          />
+        );
       case "manage":
         return (
           <ManageQuestPage 
             questId={params?.questId || null} 
             onBack={pop} 
+            onChatWithApplicant={(applicantId) => {
+              const chatId = findOrCreateChat([state.currentUserId!, applicantId], params?.questId);
+              push("chatDetail", { chatId });
+            }}
           />
         );
       case "notifications":

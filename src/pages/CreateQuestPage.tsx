@@ -13,9 +13,10 @@ import questFood from '../assets/quest-food.png';
 
 interface CreateQuestPageProps {
   onBack: () => void;
+  onSuccess?: () => void;
 }
 
-const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack }) => {
+const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack, onSuccess }) => {
   const { state, addQuest, addNotification } = useApp();
   const { showDialog } = useDialog();
   
@@ -60,7 +61,12 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({ onBack }) => {
       title: 'Quest Berhasil Dibuat',
       message: `Quest "${formData.title}" Anda telah dipublikasikan dan dapat dilihat oleh Adventurer lain.`
     });
-    onBack();
+    
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      onBack();
+    }
   };
 
   return (

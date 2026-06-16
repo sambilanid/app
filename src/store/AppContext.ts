@@ -25,7 +25,7 @@ export interface AppContextType {
   sendMessage: (chatId: string, text: string) => void;
   findOrCreateChat: (userIds: string[], questId?: string) => string;
   completeQuest: (questId: string) => void;
-  submitQuestEvidence: (questId: string) => void;
+  submitQuestEvidence: (questId: string, image?: string, notes?: string) => void;
   addWithdrawalPreset: (preset: Omit<WithdrawalPreset, 'id'>) => void;
   removeWithdrawalPreset: (id: string) => void;
 }

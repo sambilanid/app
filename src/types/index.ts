@@ -12,7 +12,6 @@ export interface User {
   questsCreated: number;
   questsCompleted: number;
   isVerified: boolean;
-  hasSkck: boolean;
   balance: number;
   notifications: AppNotification[];
   withdrawalPresets: WithdrawalPreset[];
@@ -50,6 +49,8 @@ export interface Quest {
   creatorId: string;
   takerId?: string;
   applicantIds?: string[];
+  evidenceImage?: string;
+  evidenceNotes?: string;
 }
 
 export interface AppNotification {

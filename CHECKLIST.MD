@@ -1,0 +1,2 @@
+- [x] Hapus keterangan "Belum ada SKCK" dan properti penentunya dari state aplikasi.
+- [x] Tambahkan logika adapter yang menerjemahkan state quest global yang user-agnostic ke dalam representasi sederhana berdasarkan perspektif user yang sedang login saat ini. Misalnya, menerjemahkan state quest yang dibuat oleh user saat ini namun belum memiliki applicant sebagai "Menunggu adventurer". Ini dilakukan agar UI hanya fokus menampilkan berdasarkan state quest sederhana yang sudah terproses dan logika bisa di-decouple di modul non-UI.

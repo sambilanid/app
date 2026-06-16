@@ -30,7 +30,6 @@ const initialUsers: User[] = [
     questsCreated: 0,
     questsCompleted: 0,
     isVerified: true,
-    hasSkck: false,
     balance: 271000000,
     notifications: [
       {
@@ -70,7 +69,6 @@ const initialUsers: User[] = [
     questsCreated: 8,
     questsCompleted: 15,
     isVerified: true,
-    hasSkck: true,
     balance: 500000,
     notifications: [],
     withdrawalPresets: [],
@@ -85,7 +83,6 @@ const initialUsers: User[] = [
     questsCreated: 12,
     questsCompleted: 30,
     isVerified: true,
-    hasSkck: true,
     balance: 750000,
     notifications: [],
     withdrawalPresets: [],
@@ -100,7 +97,6 @@ const initialUsers: User[] = [
     questsCreated: 5,
     questsCompleted: 10,
     isVerified: true,
-    hasSkck: false,
     balance: 300000,
     notifications: [],
     withdrawalPresets: [],
@@ -452,8 +448,13 @@ const applyForQuest = (questId: string) => {
     setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'completed' } : q));
   };
 
-  const submitQuestEvidence = (questId: string) => {
-    setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'pending' } : q));
+  const submitQuestEvidence = (questId: string, image?: string, notes?: string) => {
+    setQuests(prev => prev.map(q => q.id === questId ? { 
+      ...q, 
+      status: 'pending',
+      evidenceImage: image,
+      evidenceNotes: notes
+    } : q));
   };
 
   const addNotificationToUser = (userId: string, notif: Omit<AppNotification, 'id' | 'unread' | 'time'>) => {
@@ -543,3 +544,4 @@ const applyForQuest = (questId: string) => {
     </AppContext.Provider>
   );
 };
+

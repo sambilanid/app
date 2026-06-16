@@ -8,6 +8,7 @@ import { QuestCard } from './QuestCard';
 import { Button } from '../common/Button';
 import type { Quest } from '../../types';
 import { useApp } from '../../store/AppContext';
+import { getQuestDisplayInfo } from '../../utils/questUtils';
 
 interface ActivityQuestCardProps {
   quest: Quest;
@@ -23,25 +24,9 @@ export const ActivityQuestCard: React.FC<ActivityQuestCardProps> = ({
   onClick
 }) => {
   const { state } = useApp();
-  const isApplicant = quest.applicantIds?.includes(state.currentUserId!) && quest.status === 'available';
-  const isCreator = quest.creatorId === state.currentUserId;
+  const displayInfo = getQuestDisplayInfo(quest, state.currentUserId);
   
-  let displayStatus = isApplicant ? 'applying' : quest.status;
-  let customLabel: string | undefined;
-
-  if (isCreator) {
-    if (quest.status === 'active') {
-      customLabel = 'Sedang dikerjakan Adventurer';
-    } else if (quest.status === 'available') {
-      if (!quest.applicantIds || quest.applicantIds.length === 0) {
-        customLabel = 'Menunggu pemohon';
-      } else {
-        customLabel = `${quest.applicantIds.length} pemohon`;
-      }
-    }
-  }
-
-  const priceLabel = (quest.status === 'active' || quest.status === 'pending' || isApplicant) ? 'Budget' : 'Total pendapatan';
+  const priceLabel = (quest.status === 'active' || quest.status === 'pending' || displayInfo.status === 'applying') ? 'Budget' : 'Total pendapatan';
 
   return (
     <QuestCard
@@ -52,20 +37,22 @@ export const ActivityQuestCard: React.FC<ActivityQuestCardProps> = ({
       image={quest.image}
       createdAt={quest.createdAt}
       location={quest.location || quest.distance}
-      status={displayStatus as any}
-      customStatusLabel={customLabel}
+      status={displayInfo.status as any}
+      customStatusLabel={displayInfo.label}
       priceLabel={priceLabel}
       onClick={onClick}
       footer={
         <div className="flex gap-2">
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={onChat}
-            className="w-[40px] h-[40px] !p-0 rounded-full text-primary"
-          >
-            <MessageCircle size={18} />
-          </Button>
+          {!(displayInfo.status === 'waiting_adventurer') && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={onChat}
+              className="w-[40px] h-[40px] !p-0 rounded-full text-primary"
+            >
+              <MessageCircle size={18} />
+            </Button>
+          )}
           {quest.status === 'active' && onFinish && (
             <Button 
               size="sm"
