@@ -71,8 +71,8 @@ export interface WithdrawalPreset {
 
 export interface AppState {
   users: User[];
-  currentUserId: string;
-  user: User; // Current logged in user
+  currentUserId: string | null;
+  user: User | null; // Current logged in user, null if logged out
   allQuests: Quest[];
   availableQuests: Quest[];
   activeQuests: Quest[];

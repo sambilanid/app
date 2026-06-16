@@ -1,7 +1,7 @@
 # Project Instructions: Sambilan
 
 ## References
-- **Figma Design:** [Sambilan Design](https://www.figma.com/design/KJMR6HmQIN8SdSBSDWfW9T/Sambilan.id?node-id=218-37&m=dev)
+- **Figma Design:** [Sambilan Design](https://www.figma.com/design/KJMR6HmQIN8SdSBSDWfW9T/Sambilan.id?node-id=218-37&m=dev) CATATAN: Hanya digunakan untuk mengimplementasikan halaman baru.
 
 ## Documentation Standards
 - **Module Comments:** Setiap module (komponen atau halaman) baru harus memiliki komentar di awal file yang menjelaskan tujuan module tersebut dan kondisi kapan module tersebut harus digunakan.

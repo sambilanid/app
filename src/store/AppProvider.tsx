@@ -280,13 +280,13 @@ const initialMessages: Message[] = [
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(initialUsers);
-  const [currentUserId, setCurrentUserId] = useState<string>('1');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
   const currentUser = useMemo(() => 
-    users.find(u => u.id === currentUserId) || users[0], 
+    currentUserId ? users.find(u => u.id === currentUserId) || null : null, 
     [users, currentUserId]
   );
 
@@ -295,20 +295,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     currentUserId,
     user: currentUser,
     allQuests: quests,
-    availableQuests: quests.filter(q => 
+    availableQuests: currentUserId ? quests.filter(q => 
       q.status === 'available' && 
       q.creatorId !== currentUserId && 
       !q.applicantIds?.includes(currentUserId)
-    ),
-    activeQuests: quests.filter(q => 
+    ) : [],
+    activeQuests: currentUserId ? quests.filter(q => 
       q.takerId === currentUserId && 
       (q.status === 'active' || q.status === 'pending')
-    ),
-    pendingQuests: quests.filter(q => 
+    ) : [],
+    pendingQuests: currentUserId ? quests.filter(q => 
       q.applicantIds?.includes(currentUserId) && 
       q.status === 'available'
-    ),
-    completedQuests: quests.filter(q => q.takerId === currentUserId && q.status === 'completed'),
+    ) : [],
+    completedQuests: currentUserId ? quests.filter(q => q.takerId === currentUserId && q.status === 'completed') : [],
     categories: ['Jasa Titip', 'Antar/Jemput', 'Servis', 'Lainnya'],
     chats,
     messages,
@@ -316,6 +316,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const switchUser = (userId: string) => {
     setCurrentUserId(userId);
+  };
+
+  const login = (userId: string) => {
+    setCurrentUserId(userId);
+  };
+
+  const logout = () => {
+    setCurrentUserId(null);
   };
 
   const updateCurrentUser = (updater: (user: User) => User) => {
@@ -331,26 +339,77 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const addQuest = (quest: Quest) => {
-    setQuests(prev => [...prev, { ...quest, creatorId: currentUserId }]);
+    const userId = currentUserId;
+    if (!userId) return;
+    setQuests(prev => [...prev, { ...quest, creatorId: userId }]);
   };
 
-  const applyForQuest = (questId: string) => {
-    setQuests(prev => prev.map(q => {
-      if (q.id === questId) {
-        const applicantIds = q.applicantIds || [];
-        if (!applicantIds.includes(currentUserId)) {
-          return { ...q, applicantIds: [...applicantIds, currentUserId] };
-        }
-      }
-      return q;
-    }));
+  const updateQuest = (quest: Quest) => {
+    setQuests(prev => prev.map(q => q.id === quest.id ? quest : q));
   };
+
+  const deleteQuest = (questId: string) => {
+    setQuests(prev => prev.filter(q => q.id !== questId));
+  };
+const applyForQuest = (questId: string) => {
+  const userId = currentUserId;
+  if (!userId) return;
+  setQuests(prev => prev.map(q => {
+    if (q.id === questId) {
+      const applicantIds = q.applicantIds || [];
+      if (!applicantIds.includes(userId)) {
+        return { ...q, applicantIds: [...applicantIds, userId] };
+      }
+    }
+    return q;
+  }));
+};
 
   const cancelApplication = (questId: string) => {
     setQuests(prev => prev.map(q => {
       if (q.id === questId) {
         const applicantIds = q.applicantIds || [];
         return { ...q, applicantIds: applicantIds.filter(id => id !== currentUserId) };
+      }
+      return q;
+    }));
+  };
+
+  const acceptApplicant = (questId: string, userId: string) => {
+    setQuests(prev => {
+      const updatedQuests = prev.map(q => {
+        if (q.id === questId) {
+          return { 
+            ...q, 
+            status: 'active' as const, 
+            takerId: userId, 
+            applicantIds: [] 
+          };
+        }
+        return q;
+      });
+      return updatedQuests;
+    });
+    
+    // Kirim notifikasi ke user yang diterima
+    const quest = quests.find(q => q.id === questId);
+    if (quest) {
+      addNotificationToUser(userId, {
+        type: 'quest',
+        title: 'Permohonan Diterima',
+        message: `Permohonan Anda untuk quest "${quest.title}" telah diterima!`
+      });
+    }
+  };
+
+  const rejectApplicant = (questId: string, userId: string) => {
+    setQuests(prev => prev.map(q => {
+      if (q.id === questId) {
+        const applicantIds = q.applicantIds || [];
+        return { 
+          ...q, 
+          applicantIds: applicantIds.filter(id => id !== userId) 
+        };
       }
       return q;
     }));
@@ -377,10 +436,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const sendMessage = (chatId: string, text: string) => {
+    const userId = currentUserId;
+    if (!userId) return;
     const newMessage: Message = {
       id: `m${Date.now()}`,
       chatId,
-      senderId: currentUserId,
+      senderId: userId,
       text,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
@@ -393,6 +454,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const submitQuestEvidence = (questId: string) => {
     setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'pending' } : q));
+  };
+
+  const addNotificationToUser = (userId: string, notif: Omit<AppNotification, 'id' | 'unread' | 'time'>) => {
+    const newNotif: AppNotification = {
+      ...notif,
+      id: Date.now(),
+      unread: true,
+      time: 'Baru saja',
+    };
+    setUsers(prev => prev.map(u => u.id === userId ? {
+      ...u,
+      notifications: [newNotif, ...u.notifications]
+    } : u));
   };
 
   const addNotification = (notif: Omit<AppNotification, 'id' | 'unread' | 'time'>) => {
@@ -444,11 +518,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     <AppContext.Provider value={{ 
       state, 
       switchUser,
+      login,
+      logout,
       topUp, 
       withdraw, 
       addQuest, 
+      updateQuest,
+      deleteQuest,
       applyForQuest,
       cancelApplication,
+      acceptApplicant,
+      rejectApplicant,
       addNotification,
       markAllNotificationsAsRead,
       markNotificationAsRead,

@@ -8,11 +8,17 @@ import type { AppState, Quest, AppNotification, WithdrawalPreset } from '../type
 export interface AppContextType {
   state: AppState;
   switchUser: (userId: string) => void;
+  login: (userId: string) => void;
+  logout: () => void;
   topUp: (amount: number) => void;
   withdraw: (amount: number) => void;
   addQuest: (quest: Quest) => void;
+  updateQuest: (quest: Quest) => void;
+  deleteQuest: (questId: string) => void;
   applyForQuest: (questId: string) => void;
   cancelApplication: (questId: string) => void;
+  acceptApplicant: (questId: string, userId: string) => void;
+  rejectApplicant: (questId: string, userId: string) => void;
   addNotification: (notification: Omit<AppNotification, 'id' | 'unread' | 'time'>) => void;
   markAllNotificationsAsRead: () => void;
   markNotificationAsRead: (id: number) => void;

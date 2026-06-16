@@ -3,9 +3,10 @@
  * Digunakan saat: Adventurer telah menyelesaikan tugas dan perlu mengirimkan bukti foto atau catatan.
  */
 import React from 'react';
-import { ShoppingBag, Camera, AlertCircle, Info, Send } from 'lucide-react';
+import { Camera, AlertCircle, Info, Send } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
+import { Button } from '../components/common/Button';
 import { useApp } from '../store/AppContext';
 
 interface QuestEvidencePageProps {
@@ -15,12 +16,12 @@ interface QuestEvidencePageProps {
 }
 
 const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, onFinish }) => {
-  const { state, completeQuest } = useApp();
+  const { state, submitQuestEvidence } = useApp();
   const quest = state.activeQuests.find(q => q.id === questId);
 
   const handleFinish = () => {
     if (questId) {
-      completeQuest(questId);
+      submitQuestEvidence(questId);
     }
     onFinish();
   };
@@ -28,7 +29,7 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
   if (!quest) {
     return (
       <PageLayout
-        header={<PageHeader title="Selesaikan Quest" onBack={onBack} variant="primary" />}
+        header={<PageHeader title="Selesaikan Quest" onBack={onBack} />}
       >
         <div className="flex flex-col items-center justify-center h-[50vh] text-gray-text p-10 text-center">
           <p>Data quest tidak ditemukan atau quest sudah tidak aktif.</p>
@@ -43,18 +44,27 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
         <PageHeader 
           title="Selesaikan Quest" 
           onBack={onBack}
-          variant="primary"
         />
+      }
+      footer={
+        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+          <Button 
+            onClick={handleFinish}
+            fullWidth
+            size="lg"
+            className="rounded-[16px] !font-bold flex items-center justify-center gap-2"
+          >
+            <Send size={18} />
+            Kirim bukti & selesaikan
+          </Button>
+        </div>
       }
     >
       <div className="px-[20px] pt-[24px] pb-[40px] flex flex-col gap-[24px]">
         {/* Quest Info Card */}
         <div className="bg-[#ecf5fe] border border-[#dbe4ed] rounded-[16px] p-[16px] flex gap-[16px] relative overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-[6px] bg-primary" />
-          <div className="bg-primary/10 p-3 rounded-[12px] h-fit">
-            <ShoppingBag size={20} className="text-primary" />
-          </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 pl-2">
             <h2 className="text-[#141d23] font-semibold text-[14px]">Quest: {quest.title}</h2>
             <span className="text-primary text-[10px] font-bold tracking-[0.6px] uppercase">DALAM PROSES PENGERJAAN</span>
           </div>
@@ -99,15 +109,6 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
             <p className="text-[#3e4943] text-[14px] font-medium opacity-80">{quest.price} (dipotong biaya admin)</p>
           </div>
         </div>
-
-        {/* Action Button */}
-        <button 
-          onClick={handleFinish}
-          className="w-full bg-primary text-white py-4 rounded-[16px] font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-primary/90 transition-all active:scale-[0.98]"
-        >
-          <Send size={18} />
-          Kirim bukti & selesaikan
-        </button>
       </div>
     </PageLayout>
   );

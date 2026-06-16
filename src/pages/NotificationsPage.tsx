@@ -14,7 +14,8 @@ interface NotificationsPageProps {
 
 const NotificationsPage: React.FC<NotificationsPageProps> = ({ onBack }) => {
   const { state, markAllNotificationsAsRead, markNotificationAsRead } = useApp();
-  const { notifications } = state;
+  const { user } = state;
+  const { notifications } = user!;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {

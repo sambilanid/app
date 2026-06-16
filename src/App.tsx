@@ -2,7 +2,7 @@
  * Root component aplikasi.
  * Digunakan saat: Entry point utama yang mengatur navigasi antar halaman dengan sistem stack.
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
@@ -11,6 +11,7 @@ import TopUpPage from "./pages/TopUpPage";
 import ProfilePage from "./pages/ProfilePage";
 import ActivityPage from "./pages/ActivityPage";
 import CreateQuestPage from "./pages/CreateQuestPage";
+import ManageQuestPage from "./pages/ManageQuestPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ChatListPage from "./pages/ChatListPage";
 import ChatDetailPage from "./pages/ChatDetailPage";
@@ -18,7 +19,9 @@ import QuestEvidencePage from "./pages/QuestEvidencePage";
 import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
+import LoginPage from "./pages/LoginPage";
 import { BottomNavigationBar } from "./components/common/BottomNavigationBar";
+import { DialogProvider } from "./components/common/Dialog";
 import { useApp } from "./store/AppContext";
 import { AppProvider } from "./store/AppProvider";
 
@@ -30,6 +33,7 @@ type Page =
   | "profile"
   | "activity"
   | "create"
+  | "manage"
   | "notifications"
   | "chatList"
   | "chatDetail"
@@ -57,6 +61,23 @@ function AppContent() {
     { id: "home", page: "home" }
   ]);
   const [direction, setDirection] = useState(0);
+
+  useEffect(() => {
+    if (!state.user) {
+      setStack([{ id: "home", page: "home" }]);
+      setDirection(0);
+    }
+  }, [state.user]);
+
+  if (!state.user) {
+    return (
+      <div className="h-screen bg-black flex justify-center">
+        <div className="w-full max-w-screen-md bg-white relative h-screen overflow-hidden">
+          <LoginPage />
+        </div>
+      </div>
+    );
+  }
 
   const push = (page: Page, params?: StackItem["params"]) => {
     // Jika menavigasi ke tab utama, reset stack
@@ -117,7 +138,7 @@ function AppContent() {
               if (qId) {
                 const quest = state.allQuests.find(q => q.id === qId);
                 if (quest) {
-                  const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                  const chatId = findOrCreateChat([state.currentUserId!, quest.creatorId], qId);
                   push("chatDetail", { chatId });
                 }
               } else {
@@ -142,7 +163,7 @@ function AppContent() {
             onChat={(qId) => {
               const quest = state.allQuests.find(q => q.id === qId);
               if (quest) {
-                const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                const chatId = findOrCreateChat([state.currentUserId!, quest.creatorId], qId);
                 push("chatDetail", { chatId });
               }
             }}
@@ -168,7 +189,7 @@ function AppContent() {
             onChat={(qId) => {
               const quest = state.allQuests.find(q => q.id === qId);
               if (quest) {
-                const chatId = findOrCreateChat([state.currentUserId, quest.creatorId], qId);
+                const chatId = findOrCreateChat([state.currentUserId!, quest.creatorId], qId);
                 push("chatDetail", { chatId });
               }
             }}
@@ -176,6 +197,13 @@ function AppContent() {
         );
       case "create":
         return <CreateQuestPage onBack={pop} />;
+      case "manage":
+        return (
+          <ManageQuestPage 
+            questId={params?.questId || null} 
+            onBack={pop} 
+          />
+        );
       case "notifications":
         return <NotificationsPage onBack={pop} />;
       case "chatList":
@@ -290,7 +318,9 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
-      <AppContent />
+      <DialogProvider>
+        <AppContent />
+      </DialogProvider>
     </AppProvider>
   );
 }

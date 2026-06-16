@@ -14,6 +14,7 @@ import { Button } from '../components/common/Button';
 import mapPreview from '../assets/map-preview.png';
 
 import { useApp } from '../store/AppContext';
+import { getRelativeTime } from '../utils/dateUtils';
 
 interface QuestDetailPageProps {
   questId: string | null;
@@ -23,9 +24,9 @@ interface QuestDetailPageProps {
 }
 
 const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish }) => {
-  const { state } = useApp();
-  const allQuests = [...state.availableQuests, ...state.activeQuests, ...state.completedQuests];
-  const quest = allQuests.find(q => q.id === questId);
+  const { state, applyForQuest, cancelApplication } = useApp();
+  const quest = state.allQuests.find(q => q.id === questId);
+  const creator = quest ? state.users.find(u => u.id === quest.creatorId) : null;
 
   if (!quest) {
     return (
@@ -38,6 +39,8 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
       </PageLayout>
     );
   }
+
+  const isApplicant = quest.applicantIds?.includes(state.currentUserId!);
 
   return (
     <PageLayout
@@ -67,17 +70,17 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               </div>
             </div>
           </div>
-          {quest.status === 'active' ? (
-            <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                fullWidth 
-                size="lg"
-                leftIcon={<MessageCircle size={20} />}
-                onClick={() => onChat(quest.id)}
-              >
-                Chat
-              </Button>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              fullWidth 
+              size="lg"
+              leftIcon={<MessageCircle size={20} />}
+              onClick={() => onChat(quest.id)}
+            >
+              Chat
+            </Button>
+            {quest.status === 'active' ? (
               <Button 
                 fullWidth 
                 size="lg"
@@ -85,12 +88,24 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               >
                 Selesaikan
               </Button>
-            </div>
-          ) : (
-            <Button fullWidth size="lg">
-              Ambil quest ini
-            </Button>
-          )}
+            ) : isApplicant ? (
+              <Button 
+                fullWidth 
+                size="lg" 
+                onClick={() => cancelApplication(quest.id)}
+              >
+                Batalkan permohonan
+              </Button>
+            ) : (
+              <Button 
+                fullWidth 
+                size="lg"
+                onClick={() => applyForQuest(quest.id)}
+              >
+                Ambil quest ini
+              </Button>
+            )}
+          </div>
         </div>
       }
     >
@@ -103,7 +118,12 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
         <div className="px-[20px] py-[16px] flex flex-col gap-6">
           {/* Header Info */}
           <div className="flex flex-col gap-2">
-            <Badge variant="secondary" className="w-fit">{quest.category}</Badge>
+            <div className="flex justify-between items-center">
+              <Badge variant="secondary" className="w-fit">{quest.category}</Badge>
+              <span className="text-[#141d23] text-[12px] font-semibold opacity-60">
+                {getRelativeTime(quest.createdAt)}
+              </span>
+            </div>
             <h2 className="text-[#141d23] text-[24px] font-bold">{quest.title}</h2>
             
             <div className="flex flex-col gap-1 mt-2">
@@ -127,22 +147,19 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
           </p>
 
           {/* Creator Profile */}
-          {quest.creator && (
+          {creator && (
             <Card className="p-[17px] flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Avatar initials={quest.creator.initials} src={quest.creator.avatar} />
+                <Avatar initials={creator.initials} src={creator.avatar} />
                 <div>
-                  <p className="text-[#141d23] text-[14px] font-semibold">{quest.creator.name}</p>
+                  <p className="text-[#141d23] text-[14px] font-semibold">{creator.name}</p>
                   <div className="flex items-center gap-1 text-[#3e4943] text-[12px] font-bold">
-                    <span>★ {quest.creator.rating}</span>
+                    <span>★ {creator.rating}</span>
                     <span>•</span>
-                    <span>{quest.creator.questsCreated} quest dibuat</span>
+                    <span>{creator.questsCreated} quest dibuat</span>
                   </div>
                 </div>
               </div>
-              <button className="p-2 bg-[#f6faff] rounded-full text-primary">
-                <MessageCircle size={20} />
-              </button>
             </Card>
           )}
 

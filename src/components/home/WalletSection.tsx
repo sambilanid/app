@@ -23,7 +23,7 @@ export const WalletSection: React.FC<{
               style: 'currency', 
               currency: 'IDR', 
               minimumFractionDigits: 0 
-            }).format(user.balance)}
+            }).format(user!.balance)}
           </p>
         </div>
         

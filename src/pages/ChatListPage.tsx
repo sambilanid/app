@@ -17,7 +17,7 @@ const ChatListPage: React.FC<ChatListPageProps> = ({ onBack, onSelectChat }) => 
   const { state } = useApp();
   const { currentUserId, chats, messages, users, allQuests } = state;
 
-  const myChats = chats.filter(c => c.participants.includes(currentUserId));
+  const myChats = chats.filter(c => c.participants.includes(currentUserId!));
 
   return (
     <PageLayout

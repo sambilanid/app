@@ -30,8 +30,8 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }) => {
-  const { state } = useApp();
-  const { user } = state;
+  const { state, logout } = useApp();
+  const user = state.user!;
 
   const menuItems = [
     { icon: <UserCircle size={20} className="text-[#00694b]" />, label: 'Edit Profil' },
@@ -146,7 +146,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw }
                 <ChevronRight size={16} className="text-gray-400" />
               </button>
             ))}
-            <button className="w-full flex items-center justify-between p-4 hover:bg-red-50 transition-colors group">
+            <button 
+              className="w-full flex items-center justify-between p-4 hover:bg-red-50 transition-colors group"
+              onClick={logout}
+            >
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-red-50 rounded-[8px] flex items-center justify-center group-hover:bg-red-100 transition-colors">
                   <LogOut size={20} className="text-[#ba1a1a]" />

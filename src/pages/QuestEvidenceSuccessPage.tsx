@@ -20,6 +20,18 @@ const QuestEvidenceSuccessPage: React.FC<QuestEvidenceSuccessPageProps> = ({
   return (
     <PageLayout
       header={<PageHeader title="Bukti Quest" onBack={onBack} />}
+      footer={
+        <div className="bg-white border-t border-[#dbe4ed] px-[20px] py-[16px] pb-[32px]">
+          <Button
+            fullWidth
+            size="lg"
+            onClick={onActivity}
+            leftIcon={<List size={18} />}
+          >
+            Lihat Aktivitas
+          </Button>
+        </div>
+      }
     >
       <div className="h-full flex flex-col px-[20px] py-[60px] items-center text-center">
         {/* Success Icon */}
@@ -35,13 +47,6 @@ const QuestEvidenceSuccessPage: React.FC<QuestEvidenceSuccessPageProps> = ({
           Tunggu konfirmasi dari pemberi quest. Saldo akan otomatis masuk ke
           dompetmu setelah quest dikonfirmasi.
         </p>
-
-        {/* Action Buttons */}
-        <div className="w-full mt-auto">
-          <Button fullWidth onClick={onActivity} leftIcon={<List size={18} />}>
-            Lihat Aktivitas
-          </Button>
-        </div>
       </div>
     </PageLayout>
   );

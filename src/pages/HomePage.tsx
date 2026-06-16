@@ -7,8 +7,9 @@ import { Bell, MessageSquare, Clock, Search } from "lucide-react";
 import { Avatar } from "../components/common/Avatar";
 import { PageHeader } from "../components/common/PageHeader";
 import { WalletSection } from "../components/home/WalletSection";
-import { ActiveQuestCard } from "../components/home/ActiveQuestCard";
-import { CompactQuestCard } from "../components/home/CompactQuestCard";
+import { ActiveQuestCard } from "../components/quest/ActiveQuestCard";
+import { StandardQuestCard } from "../components/quest/StandardQuestCard";
+import { QuestCard } from "../components/quest/QuestCard";
 import { PageLayout } from "../components/common/PageLayout";
 import { useApp } from "../store/AppContext";
 
@@ -16,7 +17,7 @@ interface HomePageProps {
   onTopUp?: () => void;
   onWithdraw?: () => void;
   onNavigate: (
-    page: "home" | "search" | "activity" | "profile" | "detail",
+    page: "home" | "search" | "activity" | "profile" | "detail" | "manage",
     questId?: string,
     query?: string,
   ) => void;
@@ -34,15 +35,15 @@ const HomePage: React.FC<HomePageProps> = ({
   onFinish,
 }) => {
   const { state } = useApp();
-  const { availableQuests, activeQuests, user, notifications } = state;
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const { availableQuests, activeQuests, pendingQuests, user } = state;
+  const unreadCount = user!.notifications.filter((n) => n.unread).length;
 
   return (
     <PageLayout
       hasNavbar
       header={
         <PageHeader
-          title={`Selamat Pagi, ${user.name.split(" ")[0]}!`}
+          title={`Selamat Pagi, ${user!.name.split(" ")[0]}!`}
           subtitle="Apa yang kamu butuhin hari ini?"
           rightAction={
             <div className="flex items-center gap-[4px]">
@@ -67,8 +68,8 @@ const HomePage: React.FC<HomePageProps> = ({
               >
                 <Avatar
                   size="sm"
-                  src={user.avatar}
-                  initials={user.initials}
+                  src={user!.avatar}
+                  initials={user!.initials}
                   className="border border-gray-100"
                 />
               </button>
@@ -102,17 +103,67 @@ const HomePage: React.FC<HomePageProps> = ({
           )}
         </div>
 
+        {pendingQuests.length > 0 && (
+          <div className="px-[20px] mt-8 flex flex-col gap-4">
+            <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Menunggu persetujuan</h2>
+            {pendingQuests.map((quest) => (
+              <ActiveQuestCard 
+                key={quest.id}
+                quest={quest}
+                onChat={() => onChat(quest.id)}
+                onClick={() => onNavigate('detail', quest.id)}
+              />
+            ))}
+          </div>
+        )}
+
+        {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active')).length > 0 && (
+          <div className="px-[20px] mt-8 flex flex-col gap-4">
+            <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Quest buatanmu</h2>
+            {state.allQuests
+              .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active'))
+              .sort((a, b) => {
+                if (a.status === 'active' && b.status !== 'active') return -1;
+                if (a.status !== 'active' && b.status === 'active') return 1;
+                return 0;
+              })
+              .map((quest) => (
+                <QuestCard 
+                  key={quest.id}
+                  variant="active"
+                  category={quest.category}
+                  title={quest.title}
+                  price={quest.price}
+                  distance={quest.distance}
+                  image={quest.image}
+                  createdAt={quest.createdAt}
+                  onClick={() => onNavigate('manage', quest.id)}
+                  footer={
+                    quest.status === 'active' ? (
+                      <span className="text-[12px] font-bold text-[#7ea400] bg-[#7ea400]/10 px-2 py-0.5 rounded-full">
+                        Sedang dikerjakan
+                      </span>
+                    ) : (
+                      <span className={`text-[12px] font-bold ${quest.applicantIds && quest.applicantIds.length > 0 ? 'text-primary' : 'text-gray-400'}`}>
+                        {quest.applicantIds && quest.applicantIds.length > 0 
+                          ? `${quest.applicantIds.length} pemohon` 
+                          : 'Belum ada pemohon'}
+                      </span>
+                    )
+                  }
+                />
+              ))
+            }
+          </div>
+        )}
+
         <div className="px-[20px] mt-8 flex flex-col gap-4 pb-8">
           <h2 className="text-[#3e4943] text-[16px] px-1 font-bold">Quest di sekitarmu</h2>
           {availableQuests.length > 0 ? (
             availableQuests.map((quest) => (
-              <CompactQuestCard 
+              <StandardQuestCard 
                 key={quest.id}
-                category={quest.category}
-                title={quest.title}
-                price={quest.price}
-                distance={quest.distance}
-                image={quest.image}
+                quest={quest}
                 onClick={() => onNavigate('detail', quest.id)}
               />
             ))

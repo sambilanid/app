@@ -25,7 +25,8 @@ interface WithdrawPageProps {
 }
 
 const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
-  const { state, addWithdrawalPreset, removeWithdrawalPreset } = useApp();
+  const { state, withdraw, addWithdrawalPreset, removeWithdrawalPreset } = useApp();
+  const user = state.user!;
   const [method, setMethod] = useState<'bank' | 'wallet'>('bank');
   const [selectedBank, setSelectedBank] = useState<string>('BCA');
   const [selectedWallet, setSelectedWallet] = useState<string>('Gopay');
@@ -39,6 +40,8 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
 
   const handleWithdraw = () => {
     if (!accountNumber || !amount || parseInt(amount) <= 0) return;
+    
+    withdraw(parseInt(amount));
     
     onSuccess({
       amount,
@@ -101,7 +104,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
         {/* Balance Section */}
         <div className="bg-primary rounded-[16px] p-[20px] text-white flex flex-col gap-[4px]">
           <p className="text-[12px] opacity-80 font-medium">Saldo Tersedia</p>
-          <p className="text-[24px] font-bold">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(state.user.balance)}</p>
+          <p className="text-[24px] font-bold">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(user.balance)}</p>
         </div>
 
         {/* Amount Input Section */}
@@ -147,11 +150,11 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
         </div>
 
         {/* Saved Presets Section */}
-        {state.withdrawalPresets.length > 0 && (
+        {user.withdrawalPresets.length > 0 && (
           <div className="flex flex-col gap-[12px]">
             <p className="text-[#3e4943] text-[14px] font-semibold tracking-[0.14px]">Tujuan Tersimpan</p>
             <div className="flex flex-col gap-[8px]">
-              {state.withdrawalPresets.map((preset) => (
+              {user.withdrawalPresets.map((preset) => (
                 <div 
                   key={preset.id}
                   className="bg-white border border-[#dbe4ed] rounded-[12px] p-[16px] flex items-center justify-between group"
@@ -190,7 +193,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
           {/* Method Tabs */}
           <div className="flex flex-col gap-[12px]">
             <p className="text-[#3e4943] text-[14px] font-semibold tracking-[0.14px]">
-              {state.withdrawalPresets.length > 0 ? 'Atau Tambah Baru' : 'Tambah Tujuan Pencairan'}
+              {user.withdrawalPresets.length > 0 ? 'Atau Tambah Baru' : 'Tambah Tujuan Pencairan'}
             </p>
             <div className="flex gap-[12px] justify-between">
               <button 
