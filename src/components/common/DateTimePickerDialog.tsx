@@ -28,7 +28,7 @@ export const DateTimePickerDialog: React.FC<DateTimePickerDialogProps> = ({
   const [time, setTime] = useState('12:00');
 
   const handleConfirm = () => {
-    let dateLabel = '';
+    let dateLabel: string;
     if (selectedDate === todayStr) {
       dateLabel = 'Hari ini';
     } else if (selectedDate === tomorrowStr) {

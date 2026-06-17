@@ -29,9 +29,6 @@ interface WithdrawPageProps {
 const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
   const { state, withdraw, addWithdrawalPreset, removeWithdrawalPreset } = useApp();
   const { showDialog } = useDialog();
-  const user = state.user;
-
-  if (!user) return null;
 
   const [method, setMethod] = useState<'bank' | 'wallet'>('bank');
   const [selectedBank, setSelectedBank] = useState<string>('BCA');
@@ -39,6 +36,10 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
   const [presetName, setPresetName] = useState('');
+
+  const user = state.user;
+
+  if (!user) return null;
 
   const banks = ['BCA', 'Mandiri', 'BRI', 'BNI'];
   const wallets = ['Gopay', 'OVO', 'Dana', 'LinkAja', 'ShopeePay'];

@@ -13,6 +13,7 @@ import { QuestCard } from "../components/quest/QuestCard";
 import { PageLayout } from "../components/common/PageLayout";
 import { useApp } from "../store/AppContext";
 import { getQuestDisplayInfo } from "../utils/questUtils";
+import type { Quest } from "../types";
 
 interface HomePageProps {
   onTopUp?: () => void;
@@ -56,6 +57,10 @@ const CHARACTER_MAP = [
   }
 ];
 
+interface ScoredQuest extends Quest {
+  aiScore: number;
+}
+
 const HomePage: React.FC<HomePageProps> = ({
   onTopUp,
   onWithdraw,
@@ -86,7 +91,7 @@ const HomePage: React.FC<HomePageProps> = ({
     }
 
     // Scoring system
-    const scoredQuests = filteredQuests.map(quest => {
+    const scoredQuests: ScoredQuest[] = filteredQuests.map(quest => {
       let score = 0;
       const title = quest.title.toLowerCase();
       const desc = quest.description.toLowerCase();
@@ -116,7 +121,7 @@ const HomePage: React.FC<HomePageProps> = ({
       return { ...quest, aiScore: score };
     });
 
-    return scoredQuests.sort((a, b) => (b as any).aiScore - (a as any).aiScore);
+    return scoredQuests.sort((a, b) => b.aiScore - a.aiScore);
   }, [availableQuests, user]);
 
   const aiAffirmation = useMemo(() => {

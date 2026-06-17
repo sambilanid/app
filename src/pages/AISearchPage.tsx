@@ -2,7 +2,7 @@
  * Halaman AI Search (Demo).
  * Digunakan saat: Pengguna ingin mencari quest menggunakan bahasa alami melalui bantuan AI.
  */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Sparkles, Bot, User } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
 import { PageLayout } from "../components/common/PageLayout";
@@ -49,7 +49,7 @@ const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) =>
     }
   }, [messages, isTyping]);
 
-  const handleSend = (text: string) => {
+  const handleSend = useCallback((text: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       sender: 'user',
@@ -63,8 +63,8 @@ const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) =>
 
     // Simulate AI response
     setTimeout(() => {
-      let aiResponseText = "";
-      let suggestions: Quest[] = [];
+      let aiResponseText: string;
+      let suggestions: Quest[];
 
       const query = text.toLowerCase();
 
@@ -112,7 +112,7 @@ const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) =>
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
     }, 1500);
-  };
+  }, [state.availableQuests]);
 
   return (
     <PageLayout

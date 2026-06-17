@@ -2,7 +2,7 @@
  * Root component aplikasi.
  * Digunakan saat: Entry point utama yang mengatur navigasi antar halaman dengan sistem stack.
  */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
@@ -79,14 +79,6 @@ function AppContent() {
   ]);
   const [direction, setDirection] = useState(0);
   const [authView, setAuthView] = useState<"welcome" | "switcher" | "login" | "register">("welcome");
-
-  useEffect(() => {
-    if (!state.user) {
-      setStack([{ id: "home", page: "home" }]);
-      setDirection(0);
-      setAuthView("welcome");
-    }
-  }, [state.user]);
 
   if (!state.user) {
     const renderAuthView = () => {
@@ -444,11 +436,16 @@ function AppContent() {
   );
 }
 
+function AppWrapper() {
+  const { state } = useApp();
+  return <AppContent key={state.user?.id || 'guest'} />;
+}
+
 function App() {
   return (
     <AppProvider>
       <DialogProvider>
-        <AppContent />
+        <AppWrapper />
       </DialogProvider>
     </AppProvider>
   );

@@ -2,7 +2,7 @@
  * Provider untuk AppContext.
  * Digunakan saat: Membungkus seluruh aplikasi untuk menyediakan state global seperti data user dan daftar quest.
  */
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { AppContext } from './AppContext';
 import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message, Chat, Review } from '../types';

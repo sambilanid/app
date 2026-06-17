@@ -35,13 +35,13 @@ const topUpSources: TopUpSource[] = [
 
 const TopUpPage: React.FC<TopUpPageProps> = ({ onBack, onSuccess }) => {
   const { state, topUp, addNotification } = useApp();
-  const user = state.user;
-
-  if (!user) return null;
-
   const [amount, setAmount] = useState<string>('50000');
   const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
   const [selectedMethodType, setSelectedMethodType] = useState<'va' | 'manual' | null>(null);
+  
+  const user = state.user;
+
+  if (!user) return null;
 
   const handleSelectSource = (id: string) => {
     setSelectedSourceId(id);
