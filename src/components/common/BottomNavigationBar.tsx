@@ -17,12 +17,18 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, active, onClick }) => (
       e.stopPropagation();
       onClick?.();
     }}
-    className="flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors"
+    className="flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all active:scale-90"
   >
-    <div className={`${active ? 'text-primary' : 'text-[#5a5c5e]'}`}>
+    <div className={`
+      relative p-2 rounded-xl transition-all duration-300
+      ${active ? 'text-primary bg-primary/10' : 'text-[#5a5c5e] hover:bg-gray-50'}
+    `}>
       {icon}
+      {active && (
+        <span className="absolute inset-0 rounded-xl border-2 border-primary/20 animate-pulse" />
+      )}
     </div>
-    <span className={`text-xs font-bold tracking-tight ${active ? 'text-primary' : 'text-[#5a5c5e]'}`}>
+    <span className={`text-[10px] font-extrabold tracking-tight transition-colors duration-300 ${active ? 'text-primary' : 'text-[#5a5c5e]'}`}>
       {label}
     </span>
   </div>
