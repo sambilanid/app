@@ -6,7 +6,7 @@ import React from 'react';
 import { LogIn, UserPlus, Users } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { PageLayout } from '../components/common/PageLayout';
-import heroImage from '../assets/hero.png';
+import sambilanLogo from '../assets/sambilan_logo.png';
 
 interface WelcomePageProps {
   onLogin: () => void;
@@ -23,14 +23,12 @@ const WelcomePage: React.FC<WelcomePageProps> = ({
     <PageLayout className="bg-white">
       <div className="flex flex-col h-full">
         {/* Hero Section */}
-        <div className="relative h-[55%] w-full overflow-hidden">
+        <div className="relative h-[55%] w-full flex items-center justify-center bg-white p-4">
           <img 
-            src={heroImage} 
-            alt="Hero" 
-            className="w-full h-full object-cover scale-110"
+            src={sambilanLogo} 
+            alt="Sambilan Logo" 
+            className="w-full h-full object-contain scale-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-black/5" />
         </div>
 
         {/* Content Section */}
