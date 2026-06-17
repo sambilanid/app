@@ -3,7 +3,7 @@
  * Digunakan saat: Pengguna ingin masuk ke aplikasi menggunakan kredensial mereka.
  */
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Globe, Users } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
@@ -132,11 +132,11 @@ const AuthLoginPage: React.FC<AuthLoginPageProps> = ({ onBack, onSuccess, onRegi
 
           <div className="flex gap-4">
             <Button variant="outline" fullWidth className="bg-white">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pjax/google.png" alt="Google" className="w-5 h-5 mr-2" />
+              <Globe size={20} className="mr-2 text-red-500" />
               <span className="text-sm">Google</span>
             </Button>
             <Button variant="outline" fullWidth className="bg-white">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_2023.svg/1024px-Facebook_Logo_2023.svg.png" alt="Facebook" className="w-5 h-5 mr-2" />
+              <Users size={20} className="mr-2 text-blue-600" />
               <span className="text-sm">Facebook</span>
             </Button>
           </div>

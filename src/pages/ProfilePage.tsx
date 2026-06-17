@@ -111,21 +111,39 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
           <div className="flex justify-between items-center">
             <p className="text-primary text-[0.6875rem] font-semibold">{user.questsCreated} Quest Dibuat - {user.questsCompleted} Quest Dikerjakan</p>
             <div className="flex gap-2">
-              {!user.isVerified ? (
-                <Button 
-                  variant="primary" 
-                  size="xs" 
-                  className="!rounded-full !px-4 !h-8 text-[10px]"
-                  onClick={onVerify}
-                >
-                  Verifikasi Sekarang
-                </Button>
-              ) : (
+              {user.isVerified && (
                 <Badge variant="primary" className="!bg-[#d2e8ff] !text-[#001d32] !border-[#b0c9e3]">TERVERIFIKASI</Badge>
               )}
             </div>
           </div>
         </section>
+
+        {/* Verification Notice Card (Only for Unverified) */}
+        {!user.isVerified && (
+          <section className="px-5 mt-4">
+            <div className="bg-[#FFF4E5] border border-[#FFE0BD] p-5 rounded-3xl flex flex-col gap-4 shadow-sm">
+              <div className="flex gap-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck size={22} className="text-orange-600" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <h4 className="text-[#141d23] text-[15px] font-bold">Akun Belum Terverifikasi</h4>
+                  <p className="text-[#5a5c5e] text-[13px] leading-snug">
+                    Verifikasi identitasmu untuk meningkatkan kepercayaan dan membuka akses ke lebih banyak quest.
+                  </p>
+                </div>
+              </div>
+              <Button 
+                variant="primary" 
+                fullWidth
+                className="!h-12 !rounded-2xl text-sm font-bold shadow-md shadow-primary/20"
+                onClick={onVerify}
+              >
+                Verifikasi Sekarang
+              </Button>
+            </div>
+          </section>
+        )}
 
         {/* Balance Card */}
         <section className="px-5 mt-6">

@@ -24,9 +24,9 @@ interface AISearchPageProps {
 }
 
 const EXAMPLE_PROMPTS = [
-  "Cari pekerjaan yang santai di sore hari",
   "Quest dengan reward tinggi di atas 50rb",
   "Beli makanan di daerah Sukajadi",
+  "Cari pekerjaan yang santai di sore hari",
 ];
 
 const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) => {
@@ -69,14 +69,15 @@ const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) =>
       const query = text.toLowerCase();
 
       if (query.includes("santai") || query.includes("sore")) {
-        aiResponseText = "Tentu! Berikut adalah beberapa quest santai yang cocok dikerjakan di sore hari:";
+        aiResponseText = "Tentu! Sore hari adalah waktu yang tepat untuk produktif sambil menikmati suasana. Ini beberapa quest yang pas untuk kamu:";
         suggestions = state.availableQuests.filter(q => 
           q.title.toLowerCase().includes("beli") || 
           q.description.toLowerCase().includes("santai") ||
-          q.category.toLowerCase().includes("shopping")
+          q.category.toLowerCase().includes("shopping") ||
+          q.title.toLowerCase().includes("sore")
         ).slice(0, 2);
       } else if (query.includes("reward") || query.includes("tinggi") || query.includes("50")) {
-        aiResponseText = "Siap! Ini adalah quest dengan reward tertinggi yang tersedia saat ini:";
+        aiResponseText = "Siap! Saya sudah memfilter quest dengan imbalan terbaik untuk memaksimalkan pendapatanmu hari ini:";
         suggestions = [...state.availableQuests]
           .sort((a, b) => {
             const priceA = parseInt(a.price.replace(/[^0-9]/g, '')) || 0;
@@ -85,19 +86,19 @@ const AISearchPage: React.FC<AISearchPageProps> = ({ onBack, onSelectQuest }) =>
           })
           .slice(0, 2);
       } else if (query.includes("makanan") || query.includes("sukajadi") || query.includes("beli")) {
-        aiResponseText = "Ada beberapa quest terkait makanan di sekitar Sukajadi/Pasteur:";
+        aiResponseText = "Menarik! Ada beberapa misi kuliner dan belanja di area Sukajadi yang bisa kamu selesaikan sekarang:";
         suggestions = state.availableQuests.filter(q => 
           q.category.toLowerCase().includes("food") || 
           q.title.toLowerCase().includes("gacoan") ||
           q.description.toLowerCase().includes("makan")
         ).slice(0, 2);
       } else {
-        aiResponseText = "Saya menemukan beberapa quest menarik yang mungkin kamu suka:";
+        aiResponseText = "Berdasarkan preferensimu, saya merekomendasikan beberapa quest populer yang banyak diminati saat ini:";
         suggestions = state.availableQuests.slice(0, 2);
       }
 
       if (suggestions.length === 0) {
-        aiResponseText = "Maaf, saya tidak menemukan quest yang spesifik untuk kriteria tersebut. Namun, ini adalah beberapa quest populer saat ini:";
+        aiResponseText = "Saat ini belum ada quest yang spesifik dengan kriteria tersebut, tapi jangan khawatir! Kamu bisa mencoba beberapa quest pilihan yang paling relevan berikut ini:";
         suggestions = state.availableQuests.slice(0, 2);
       }
 
