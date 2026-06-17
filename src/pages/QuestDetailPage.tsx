@@ -8,8 +8,8 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Badge } from '../components/common/Badge';
 import { Card } from '../components/common/Card';
-import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
+import { ProfileCard } from '../components/common/ProfileCard';
 
 import mapPreview from '../assets/map-preview.png';
 
@@ -209,22 +209,14 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
 
           {/* Creator Profile */}
           {creator && (
-            <Card 
-              className="p-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all"
+            <ProfileCard 
+              name={creator.name}
+              avatar={creator.avatar}
+              initials={creator.initials}
+              rating={creator.rating}
+              statsLabel={`${creatorQuestsCreated} quest dibuat`}
               onClick={() => onViewProfile(creator.id)}
-            >
-              <div className="flex items-center gap-4">
-                <Avatar initials={creator.initials} src={creator.avatar} />
-                <div>
-                  <p className="text-[#141d23] text-sm font-semibold">{creator.name}</p>
-                  <div className="flex items-center gap-1 text-[#3e4943] text-xs font-bold">
-                    <span>★ {creator.rating}</span>
-                    <span>•</span>
-                    <span>{creatorQuestsCreated} quest dibuat</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            />
           )}
 
           {/* Location Card */}

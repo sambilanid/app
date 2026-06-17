@@ -8,8 +8,8 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Badge } from '../components/common/Badge';
 import { Card } from '../components/common/Card';
-import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
+import { ProfileCard } from '../components/common/ProfileCard';
 import { ReviewDialog } from '../components/common/ReviewDialog';
 
 import mapPreview from '../assets/map-preview.png';
@@ -24,9 +24,10 @@ interface ManageQuestPageProps {
   onBack: () => void;
   onEdit?: (questId: string) => void;
   onChatWithApplicant?: (applicantId: string) => void;
+  onViewProfile?: (userId: string) => void;
 }
 
-const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEdit, onChatWithApplicant }) => {
+const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEdit, onChatWithApplicant, onViewProfile }) => {
   const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, submitReview } = useApp();
   const { showDialog } = useDialog();
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
@@ -229,20 +230,17 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             {['active', 'pending', 'completed'].includes(quest.status) && quest.takerId ? (
               (() => {
                 const taker = state.users.find(u => u.id === quest.takerId);
-                return taker ? (
-                  <Card className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar initials={taker.initials} src={taker.avatar} size="sm" />
-                        <div>
-                          <p className="text-[#141d23] text-sm font-bold">{taker.name}</p>
-                          <div className="flex items-center gap-1 text-[#3e4943] text-[11px] font-bold">
-                            <span>★ {taker.rating}</span>
-                            <span>•</span>
-                            <span>{taker.questsCompleted} selesai</span>
-                          </div>
-                        </div>
-                      </div>
+                if (!taker) return null;
+                const questsCompleted = taker.questsCompleted ?? state.allQuests.filter(q => q.takerId === taker.id && q.status === 'completed').length;
+                return (
+                  <ProfileCard 
+                    name={taker.name}
+                    avatar={taker.avatar}
+                    initials={taker.initials}
+                    rating={taker.rating}
+                    statsLabel={`${questsCompleted} selesai`}
+                    onClick={() => onViewProfile?.(taker.id)}
+                    rightAction={
                       <Button 
                         variant="secondary" 
                         size="sm" 
@@ -251,54 +249,54 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
                       >
                         <MessageCircle size={18} />
                       </Button>
-                    </div>
-                  </Card>
-                ) : null;
+                    }
+                  />
+                );
               })()
             ) : applicants.length > 0 ? (
               <div className="flex flex-col gap-3">
-                {applicants.map((applicant) => applicant && (
-                  <Card key={applicant.id} className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar initials={applicant.initials} src={applicant.avatar} size="sm" />
-                        <div>
-                          <p className="text-[#141d23] text-sm font-bold">{applicant.name}</p>
-                          <div className="flex items-center gap-1 text-[#3e4943] text-[11px] font-bold">
-                            <span>★ {applicant.rating}</span>
-                            <span>•</span>
-                            <span>{applicant.questsCompleted} selesai</span>
-                          </div>
+                {applicants.map((applicant) => {
+                  if (!applicant) return null;
+                  const questsCompleted = applicant.questsCompleted ?? state.allQuests.filter(q => q.takerId === applicant.id && q.status === 'completed').length;
+                  return (
+                    <ProfileCard 
+                      key={applicant.id}
+                      name={applicant.name}
+                      avatar={applicant.avatar}
+                      initials={applicant.initials}
+                      rating={applicant.rating}
+                      statsLabel={`${questsCompleted} selesai`}
+                      onClick={() => onViewProfile?.(applicant.id)}
+                      rightAction={
+                        <div className="flex gap-2 items-center">
+                          <Button 
+                            variant="secondary" 
+                            size="sm" 
+                            className="!p-2 rounded-full text-primary"
+                            onClick={() => onChatWithApplicant?.(applicant.id)}
+                          >
+                            <MessageCircle size={18} />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="!p-2 rounded-full border-red-200 text-red-500 hover:bg-red-50"
+                            onClick={() => rejectApplicant(quest.id, applicant.id)}
+                          >
+                            <UserX size={18} />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="!p-2 rounded-full"
+                            onClick={() => acceptApplicant(quest.id, applicant.id)}
+                          >
+                            <UserCheck size={18} />
+                          </Button>
                         </div>
-                      </div>
-                      <div className="flex gap-2 items-center">
-                        <Button 
-                          variant="secondary" 
-                          size="sm" 
-                          className="!p-2 rounded-full text-primary"
-                          onClick={() => onChatWithApplicant?.(applicant.id)}
-                        >
-                          <MessageCircle size={18} />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="!p-2 rounded-full border-red-200 text-red-500 hover:bg-red-50"
-                          onClick={() => rejectApplicant(quest.id, applicant.id)}
-                        >
-                          <UserX size={18} />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          className="!p-2 rounded-full"
-                          onClick={() => acceptApplicant(quest.id, applicant.id)}
-                        >
-                          <UserCheck size={18} />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                      }
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="bg-gray-50 rounded-2xl p-8 border border-dashed border-gray-200 flex flex-col items-center justify-center text-center">

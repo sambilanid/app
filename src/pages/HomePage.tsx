@@ -2,8 +2,8 @@
  * Halaman utama aplikasi.
  * Digunakan saat: Landing page setelah login yang berisi ringkasan aktivitas dan rekomendasi.
  */
-import React from "react";
-import { Bell, MessageSquare, Clock, Search } from "lucide-react";
+import React, { useMemo } from "react";
+import { Bell, MessageSquare, Clock, Search, Sparkles } from "lucide-react";
 import { Avatar } from "../components/common/Avatar";
 import { PageHeader } from "../components/common/PageHeader";
 import { WalletSection } from "../components/home/WalletSection";
@@ -38,6 +38,71 @@ const HomePage: React.FC<HomePageProps> = ({
   const { state } = useApp();
   const { availableQuests, activeQuests, pendingQuests, user } = state;
   const unreadCount = user!.notifications.filter((n) => n.unread).length;
+
+  // AI Matching Logic
+  const aiSuggestedQuests = useMemo(() => {
+    if (!user || !user.bio) return availableQuests;
+
+    const bio = user.bio.toLowerCase();
+    
+    // Scoring system
+    const scoredQuests = availableQuests.map(quest => {
+      let score = 0;
+      const title = quest.title.toLowerCase();
+      const desc = quest.description.toLowerCase();
+      const cat = quest.category.toLowerCase();
+
+      // Keywords matching
+      if (bio.includes('kuliner') || bio.includes('makan')) {
+        if (cat.includes('titip') || title.includes('mie') || title.includes('makan') || desc.includes('makan')) score += 10;
+      }
+      if (bio.includes('teknik') || bio.includes('gadget') || bio.includes('ngulik')) {
+        if (cat.includes('reparasi') || title.includes('laptop') || title.includes('hp') || desc.includes('laptop') || desc.includes('komputer')) score += 10;
+      }
+      if (bio.includes('bersih') || bio.includes('rapi')) {
+        if (cat.includes('bersih') || title.includes('cuci') || desc.includes('bersih') || desc.includes('rapi')) score += 10;
+      }
+      if (bio.includes('bantu') || bio.includes('senang membantu')) {
+        score += 2;
+      }
+
+      // Distance factor (smaller is better)
+      const distMatch = quest.distance.match(/(\d+(\.\d+)?)/);
+      if (distMatch) {
+        const dist = parseFloat(distMatch[0]);
+        score += Math.max(0, 5 - dist); // Add up to 5 points for close quests
+      }
+
+      return { ...quest, aiScore: score };
+    });
+
+    return scoredQuests.sort((a, b) => (b as any).aiScore - (a as any).aiScore);
+  }, [availableQuests, user]);
+
+  const aiAffirmation = useMemo(() => {
+    if (!user || !user.bio) return "Ini beberapa quest yang mungkin kamu suka:";
+    
+    const bio = user.bio.toLowerCase();
+    const name = user.name.split(" ")[0];
+
+    if (bio.includes('kuliner') || bio.includes('makan')) {
+      return `Hai ${name}, sebagai pecinta kuliner, kamu pasti suka membantu orang mendapatkan makanan favorit mereka!`;
+    }
+    if (bio.includes('teknik') || bio.includes('gadget') || bio.includes('elektronik')) {
+      return `Halo ${name}! Skill teknismu sangat dibutuhkan di sini. Cek quest yang menantang keahlianmu:`;
+    }
+    if (bio.includes('bersih') || bio.includes('rapi') || bio.includes('administratif')) {
+      return `Spesial buat kamu yang teliti, ${name}. Bantu mereka yang butuh kerapihan dan keteraturan:`;
+    }
+    if (bio.includes('logistik') || bio.includes('pengantaran')) {
+      return `Ayo ${name}, tunjukkan kecepatanmu! Quest ini pas banget buat kamu yang jago urusan antar-jemput barang:`;
+    }
+    if (bio.includes('serba bisa') || bio.includes('bantuan umum')) {
+      return `Halo ${name}, sebagai orang yang serba bisa, bantuanmu akan sangat berarti di berbagai tugas unik ini:`;
+    }
+    
+    return `Berdasarkan karakter unikmu ${name}, AI kami menyarankan quest-quest berikut ini:`;
+  }, [user]);
 
   return (
     <PageLayout
@@ -162,15 +227,26 @@ const HomePage: React.FC<HomePageProps> = ({
         )}
 
         <div className="px-5 mt-8 flex flex-col gap-4 pb-8">
-          <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest di sekitarmu</h2>
-          {availableQuests.length > 0 ? (
-            availableQuests.map((quest) => (
-              <StandardQuestCard 
-                key={quest.id}
-                quest={quest}
-                onClick={() => onNavigate('detail', quest.id)}
-              />
-            ))
+          <div className="flex items-center gap-2 px-1">
+            <Sparkles size={18} className="text-primary fill-primary/20" />
+            <h2 className="text-[#3e4943] text-base font-bold">Saran Quest AI</h2>
+          </div>
+          
+          {aiSuggestedQuests.length > 0 ? (
+            <>
+              <div className="bg-gradient-to-r from-primary/10 to-transparent p-4 rounded-2xl border-l-4 border-primary mb-2">
+                <p className="text-[#3e4943] text-sm font-medium leading-relaxed">
+                  "{aiAffirmation}"
+                </p>
+              </div>
+              {aiSuggestedQuests.map((quest) => (
+                <StandardQuestCard 
+                  key={quest.id}
+                  quest={quest}
+                  onClick={() => onNavigate('detail', quest.id)}
+                />
+              ))}
+            </>
           ) : (
             <div className="bg-white border border-gray-100 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
               <div className="bg-gray-50 p-4 rounded-full mb-3">

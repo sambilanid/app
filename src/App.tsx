@@ -323,6 +323,7 @@ function AppContent() {
               const chatId = findOrCreateChat([state.currentUserId!, applicantId], params?.questId);
               push("chatDetail", { chatId });
             }}
+            onViewProfile={(userId) => push("otherProfile", { userId })}
           />
         );
       case "notifications":
