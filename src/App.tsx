@@ -20,10 +20,12 @@ import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
 import CreateQuestSuccessPage from "./pages/CreateQuestSuccessPage";
 import TopUpSuccessPage from "./pages/TopUpSuccessPage";
 import EditProfilePage from "./pages/EditProfilePage";
+import OtherProfilePage from "./pages/OtherProfilePage";
 import VerificationPage from "./pages/VerificationPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
 import WelcomePage from "./pages/WelcomePage";
+import AISearchPage from "./pages/AISearchPage";
 import AccountSwitcherPage from "./pages/AccountSwitcherPage";
 import AuthLoginPage from "./pages/AuthLoginPage";
 import AuthRegisterPage from "./pages/AuthRegisterPage";
@@ -51,7 +53,9 @@ type Page =
   | "editProfile"
   | "verification"
   | "withdraw"
-  | "withdrawSuccess";
+  | "withdrawSuccess"
+  | "aiSearch"
+  | "otherProfile";
 
 interface StackItem {
   id: string;
@@ -59,6 +63,7 @@ interface StackItem {
   params?: {
     questId?: string;
     chatId?: string;
+    userId?: string;
     searchQuery?: string;
     withdrawSuccessData?: { amount: string; method: string; destination: string };
     topupAmount?: string;
@@ -211,6 +216,7 @@ function AppContent() {
           <SearchPage
             onBack={() => push("home")}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
+            onAISearch={() => push("aiSearch")}
           />
         );
       case "detail":
@@ -227,6 +233,14 @@ function AppContent() {
             }}
             onFinish={(qId) => push("evidence", { questId: qId })}
             onGoToVerification={() => push("verification")}
+            onViewProfile={(userId) => push("otherProfile", { userId })}
+          />
+        );
+      case "otherProfile":
+        return (
+          <OtherProfilePage
+            userId={params?.userId || null}
+            onBack={pop}
           />
         );
       case "topup":
@@ -360,6 +374,13 @@ function AppContent() {
             method={params?.withdrawSuccessData?.method || ""}
             destination={params?.withdrawSuccessData?.destination || ""}
             onHome={() => push("home")}
+          />
+        );
+      case "aiSearch":
+        return (
+          <AISearchPage 
+            onBack={pop}
+            onSelectQuest={(qId) => push("detail", { questId: qId })}
           />
         );
       default:

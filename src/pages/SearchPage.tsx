@@ -3,6 +3,7 @@
  * Menampilkan quest terdekat secara default, dan memungkinkan pencarian/filter.
  */
 import React, { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { SearchInput } from '../components/common/SearchInput';
@@ -13,9 +14,10 @@ import { useApp } from '../store/AppContext';
 interface SearchPageProps {
   onBack: () => void;
   onSelectQuest: (questId: string) => void;
+  onAISearch?: () => void;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest }) => {
+const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest, onAISearch }) => {
   const { state } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('Terdekat');
@@ -76,8 +78,29 @@ const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest }) => {
       }
     >
       <div className="pb-24">
+        {/* AI Search Banner */}
+        <div className="px-5 mt-4">
+          <button 
+            onClick={onAISearch}
+            className="w-full bg-gradient-to-r from-primary to-[#6366f1] p-4 rounded-2xl flex items-center justify-between text-white shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                <Sparkles size={20} className="text-white" />
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="font-bold text-[15px]">Coba AI Search</span>
+                <span className="text-[12px] opacity-90 font-medium text-left">Cari quest dengan bahasa alami</span>
+              </div>
+            </div>
+            <div className="bg-white/20 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider">
+              Baru
+            </div>
+          </button>
+        </div>
+
         {/* Filters */}
-        <div className="mt-2">
+        <div className="mt-4">
           <FilterChips 
             label="Urutkan" 
             options={['Terdekat', 'Reward Tertinggi', 'Terbaru']} 

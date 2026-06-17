@@ -18,10 +18,21 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ onBack, onSuccess }
   const { verifyAccount } = useApp();
   const [photo, setPhoto] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleTakePhoto = () => {
-    // Simulasi mengambil foto
-    setPhoto('https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=400&auto=format&fit=crop');
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = () => {
@@ -68,11 +79,18 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ onBack, onSuccess }
           </p>
 
           <div 
-            className={`aspect-[3/4] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${
+            className={`aspect-[3/4] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all cursor-pointer ${
               photo ? 'border-primary' : 'border-[#bdcac1] bg-white'
             }`}
             onClick={handleTakePhoto}
           >
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              className="hidden" 
+            />
             {photo ? (
               <img src={photo} alt="Selfie" className="w-full h-full object-cover" />
             ) : (

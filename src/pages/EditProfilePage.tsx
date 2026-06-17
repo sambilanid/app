@@ -26,9 +26,27 @@ const EditProfilePage: React.FC<EditProfilePageProps> = ({ onBack, onSuccess }) 
     phone: user?.phone || '',
     bio: user?.bio || '',
     location: user?.location || '',
+    avatar: user?.avatar || '',
   });
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   if (!user) return null;
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, avatar: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,10 +66,17 @@ const EditProfilePage: React.FC<EditProfilePageProps> = ({ onBack, onSuccess }) 
       <form onSubmit={handleSubmit} className="px-5 py-6 flex flex-col gap-6">
         {/* Avatar Edit Section */}
         <div className="flex flex-col items-center gap-3">
-          <div className="relative">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+            className="hidden" 
+          />
+          <div className="relative cursor-pointer" onClick={handleAvatarClick}>
             <Avatar 
               initials={user.initials} 
-              src={user.avatar} 
+              src={formData.avatar} 
               size="xl" 
               className="border-4 border-white shadow-md !bg-[#ffdad6] !text-[#93000a]" 
             />

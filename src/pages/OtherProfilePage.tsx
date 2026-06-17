@@ -1,19 +1,11 @@
 /**
- * Halaman profil pengguna.
- * Digunakan saat: Menampilkan informasi akun dan pengaturan user.
+ * Halaman profil pengguna lain.
+ * Digunakan saat: User ingin melihat informasi dan reputasi pembuat quest atau adventurer lain.
  */
 import React, { useState } from 'react';
 import { 
   Star, 
-  Plus, 
-  ArrowDownToLine, 
-  ChevronRight, 
   UserCircle, 
-  History, 
-  ShieldCheck, 
-  HelpCircle, 
-  Info, 
-  LogOut,
   MapPin,
   Calendar
 } from 'lucide-react';
@@ -21,47 +13,42 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Avatar } from '../components/common/Avatar';
 import { Card } from '../components/common/Card';
-import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { useApp } from '../store/AppContext';
 import { getRelativeTime } from '../utils/dateUtils';
 
-interface ProfilePageProps {
+interface OtherProfilePageProps {
+  userId: string | null;
   onBack: () => void;
-  onTopUp: () => void;
-  onWithdraw: () => void;
-  onEditProfile: () => void;
-  onVerify: () => void;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, onEditProfile, onVerify }) => {
-  const { state, logout } = useApp();
+const OtherProfilePage: React.FC<OtherProfilePageProps> = ({ userId, onBack }) => {
+  const { state } = useApp();
   const [activeReviewTab, setActiveReviewTab] = useState<'adventurer' | 'creator'>('adventurer');
-  const user = state.user;
+  
+  const user = state.users.find(u => u.id === userId);
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <PageLayout
+        header={<PageHeader title="Profil tidak ditemukan" onBack={onBack} />}
+      >
+        <div className="flex flex-col items-center justify-center h-[50vh] text-gray-text">
+          <p>Profil pengguna tidak tersedia.</p>
+        </div>
+      </PageLayout>
+    );
+  }
 
   const filteredReviews = state.reviews.filter(r => 
     r.revieweeId === user.id && r.role === activeReviewTab
   );
 
-  const menuItems = [
-    { 
-      icon: <UserCircle size={20} className="text-[#00694b]" />, 
-      label: 'Edit Profil', 
-      onClick: () => {
-        onEditProfile();
-      }
-    },
-    { icon: <History size={20} className="text-[#00694b]" />, label: 'Riwayat Transaksi' },
-    { icon: <ShieldCheck size={20} className="text-[#00694b]" />, label: 'Keamanan Akun' },
-    { icon: <HelpCircle size={20} className="text-[#00694b]" />, label: 'Bantuan & FAQ' },
-    { icon: <Info size={20} className="text-[#00694b]" />, label: 'Tentang Aplikasi' },
-  ];
+  const questsCreated = state.allQuests.filter(q => q.creatorId === user.id).length;
+  const questsCompleted = state.allQuests.filter(q => q.takerId === user.id && q.status === 'completed').length;
 
   return (
     <PageLayout
-      hasNavbar
       header={
         <PageHeader
           title="Profil Pengguna"
@@ -69,7 +56,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
         />
       }
     >
-      <div className="pb-10">
+      <div className="pb-12">
         {/* Profile Info Section */}
         <section className="px-5 pt-6 flex flex-col gap-4">
           <div className="flex gap-4 items-center">
@@ -77,7 +64,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
               initials={user.initials} 
               src={user.avatar}
               size="lg" 
-              className="border-4 border-white !bg-[#ffdad6] !text-[#93000a]" 
+              className="border-4 border-white !bg-[#d2e8ff] !text-[#001d32]" 
             />
             <div className="flex flex-col gap-1">
               <h2 className="text-[#141d23] text-lg font-bold leading-tight">{user.name}</h2>
@@ -109,52 +96,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
           )}
 
           <div className="flex justify-between items-center">
-            <p className="text-primary text-[0.6875rem] font-semibold">{user.questsCreated} Quest Dibuat - {user.questsCompleted} Quest Dikerjakan</p>
+            <p className="text-primary text-[0.6875rem] font-semibold">{questsCreated} Quest Dibuat - {questsCompleted} Quest Dikerjakan</p>
             <div className="flex gap-2">
-              {!user.isVerified ? (
-                <Button 
-                  variant="primary" 
-                  size="xs" 
-                  className="!rounded-full !px-4 !h-8 text-[10px]"
-                  onClick={onVerify}
-                >
-                  Verifikasi Sekarang
-                </Button>
-              ) : (
+              {user.isVerified && (
                 <Badge variant="primary" className="!bg-[#d2e8ff] !text-[#001d32] !border-[#b0c9e3]">TERVERIFIKASI</Badge>
               )}
             </div>
-          </div>
-        </section>
-
-        {/* Balance Card */}
-        <section className="px-5 mt-6">
-          <div className="bg-primary p-6 rounded-3xl text-white relative overflow-hidden shadow-lg shadow-primary/20">
-            <div className="relative z-10">
-              <p className="text-xs font-bold tracking-widest opacity-80 uppercase">SALDO SAMBILAN</p>
-              <h3 className="text-3xl font-extrabold mt-1">Rp {user.balance.toLocaleString('id-ID')}</h3>
-              <div className="flex gap-4 mt-6">
-                <Button 
-                  variant="secondary" 
-                  fullWidth 
-                  onClick={onTopUp}
-                  className="!bg-white !text-primary !rounded-2xl shadow-sm"
-                  leftIcon={<Plus size={16} />}
-                >
-                  Top Up
-                </Button>
-                <Button 
-                  variant="secondary" 
-                  fullWidth 
-                  onClick={onWithdraw}
-                  className="!bg-white !text-primary !rounded-2xl shadow-sm"
-                  leftIcon={<ArrowDownToLine size={16} />}
-                >
-                  Tarik
-                </Button>
-              </div>
-            </div>
-            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-[#00855f] rounded-full blur-[40px] opacity-60" />
           </div>
         </section>
 
@@ -195,9 +142,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
               </div>
               <p className="text-[#3e4943] font-medium">Belum ada review.</p>
               <p className="text-xs text-gray-400 mt-1">
-                {activeReviewTab === 'adventurer' 
-                  ? 'Selesaikan quest untuk mendapatkan feedback dari Creator!' 
-                  : 'Buat quest dan beri feedback untuk mendapatkan feedback balik!'}
+                Pengguna ini belum memiliki review {activeReviewTab === 'adventurer' ? 'sebagai Adventurer' : 'sebagai Creator'}.
               </p>
             </Card>
           ) : (
@@ -238,56 +183,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
             </div>
           )}
         </section>
-
-        {/* Settings Section */}
-        <section className="px-5 mt-8 pb-12">
-          <h3 className="text-[#141d23] text-xl font-bold mb-4">Settings</h3>
-          <Card className="overflow-hidden">
-            <button 
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50"
-              onClick={() => onEditProfile()}
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-[#e0e9f2] rounded-lg flex items-center justify-center">
-                  <UserCircle size={20} className="text-[#00694b]" />
-                </div>
-                <span className="text-[#141d23] font-bold">Edit Profil</span>
-              </div>
-              <ChevronRight size={16} className="text-gray-400" />
-            </button>
-
-            {menuItems.slice(1).map((item, idx) => (
-              <button 
-                key={idx}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#e0e9f2] rounded-lg flex items-center justify-center">
-                    {item.icon}
-                  </div>
-                  <span className="text-[#141d23] font-bold">{item.label}</span>
-                </div>
-                <ChevronRight size={16} className="text-gray-400" />
-              </button>
-            ))}
-            
-            <button 
-              className="w-full flex items-center justify-between p-4 hover:bg-red-50 transition-colors group"
-              onClick={logout}
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                  <LogOut size={20} className="text-[#ba1a1a]" />
-                </div>
-                <span className="text-[#ba1a1a] font-bold">Keluar Akun</span>
-              </div>
-              <ChevronRight size={16} className="text-red-200" />
-            </button>
-          </Card>
-        </section>
       </div>
     </PageLayout>
   );
 };
 
-export default ProfilePage;
+export default OtherProfilePage;

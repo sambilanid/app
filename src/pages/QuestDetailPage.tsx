@@ -24,9 +24,17 @@ interface QuestDetailPageProps {
   onChat: (questId: string) => void;
   onFinish: (questId: string) => void;
   onGoToVerification: () => void;
+  onViewProfile: (userId: string) => void;
 }
 
-const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish, onGoToVerification }) => {
+const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ 
+  questId, 
+  onBack, 
+  onChat, 
+  onFinish, 
+  onGoToVerification,
+  onViewProfile
+}) => {
   const { state, applyForQuest, cancelApplication } = useApp();
   const { showDialog } = useDialog();
   const quest = state.allQuests.find(q => q.id === questId);
@@ -201,7 +209,10 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
 
           {/* Creator Profile */}
           {creator && (
-            <Card className="p-4 flex items-center justify-between">
+            <Card 
+              className="p-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all"
+              onClick={() => onViewProfile(creator.id)}
+            >
               <div className="flex items-center gap-4">
                 <Avatar initials={creator.initials} src={creator.avatar} />
                 <div>

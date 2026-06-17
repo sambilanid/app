@@ -38,8 +38,26 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
     toLocation: '',
     budget: '',
     deadline: '',
-    description: ''
+    description: '',
+    image: '' as string | null
   });
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const currentConfig = categoryConfig[formData.category] || categoryConfig['Lainnya'];
 
@@ -95,7 +113,7 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           category: formData.category,
           price: `Rp${Number(formData.budget).toLocaleString('id-ID')}`,
           distance: '0.0 km', // Default untuk quest baru
-          image: questFood, // Default image
+          image: formData.image || questFood, // Use uploaded image or default
           description: formData.description,
           status: 'available' as const,
           location: formData.location || formData.fromLocation || formData.toLocation,
@@ -151,12 +169,33 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
     >
       <div className="px-5 pt-6 pb-24 flex flex-col gap-5">
         {/* Upload Image Section */}
-        <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
-            <ImageIcon size={24} className="text-primary" />
-          </div>
-          <p className="text-[#141d23] font-bold text-sm">Tambah Foto Quest</p>
-          <p className="text-[#3e4943] text-xs opacity-60">Opsional, tapi membantu adventurer</p>
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleFileChange} 
+          accept="image/*" 
+          className="hidden" 
+        />
+        <div 
+          onClick={handleImageClick}
+          className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors overflow-hidden relative"
+        >
+          {formData.image ? (
+            <img src={formData.image} alt="Quest preview" className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <>
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                <ImageIcon size={24} className="text-primary" />
+              </div>
+              <p className="text-[#141d23] font-bold text-sm">Tambah Foto Quest</p>
+              <p className="text-[#3e4943] text-xs opacity-60">Opsional, tapi membantu adventurer</p>
+            </>
+          )}
+          {formData.image && (
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+              <p className="text-white font-bold text-sm">Ganti Foto</p>
+            </div>
+          )}
         </div>
 
         {/* Form Sections */}
@@ -235,7 +274,10 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <label className="text-[#3e4943] text-sm font-bold">Budget <span className="text-red-500">*</span></label>
+              <div className="flex justify-between items-center">
+                <label className="text-[#3e4943] text-sm font-bold">Budget <span className="text-red-500">*</span></label>
+                <span className="text-[10px] text-primary font-bold">Saldo: Rp{(state.user?.balance || 0).toLocaleString('id-ID')}</span>
+              </div>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">Rp</span>
                 <input 

@@ -20,10 +20,38 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
   const { state, submitQuestEvidence } = useApp();
   const { showDialog } = useDialog();
   const [notes, setNotes] = useState('');
+  const [evidenceImage, setEvidenceImage] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const quest = state.activeQuests.find(q => q.id === questId);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEvidenceImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleFinish = () => {
     if (!questId) return;
+
+    if (!evidenceImage) {
+      showDialog({
+        title: 'Bukti Belum Lengkap',
+        message: 'Mohon lampirkan foto bukti kerja terlebih dahulu.',
+        confirmLabel: 'OK',
+        onConfirm: () => {}
+      });
+      return;
+    }
 
     showDialog({
       title: 'Kirim Bukti Quest',
@@ -31,9 +59,7 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
       confirmLabel: 'Ya, Kirim',
       cancelLabel: 'Batal',
       onConfirm: () => {
-        // Mock image URL for demo
-        const mockImage = 'https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=1000&auto=format&fit=crop';
-        submitQuestEvidence(questId, mockImage, notes);
+        submitQuestEvidence(questId, evidenceImage, notes);
         onFinish();
       }
     });
@@ -86,12 +112,33 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
         {/* Upload Section */}
         <div className="flex flex-col gap-3">
           <h3 className="text-[#3e4943] text-xs font-bold tracking-[0.6px] uppercase">UPLOAD BUKTI KERJA</h3>
-          <div className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-              <Camera size={28} className="text-[#3e4943]" />
-            </div>
-            <p className="text-[#141d23] font-semibold text-sm">Foto dari kamera aplikasi</p>
-            <p className="text-[#3e4943] text-xs opacity-60">(tidak bisa dari galeri)</p>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+            className="hidden" 
+          />
+          <div 
+            onClick={handleImageClick}
+            className="bg-white border-2 border-[#bdcac1] border-dashed rounded-2xl py-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors overflow-hidden relative min-h-[160px]"
+          >
+            {evidenceImage ? (
+              <img src={evidenceImage} alt="Evidence preview" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <>
+                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <Camera size={28} className="text-[#3e4943]" />
+                </div>
+                <p className="text-[#141d23] font-semibold text-sm">Foto dari kamera aplikasi</p>
+                <p className="text-[#3e4943] text-xs opacity-60">(tidak bisa dari galeri)</p>
+              </>
+            )}
+            {evidenceImage && (
+              <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <p className="text-white font-bold text-sm">Ganti Foto</p>
+              </div>
+            )}
           </div>
           
           <div className="bg-[#dbe4ed]/30 border border-[#dbe4ed]/50 p-4 rounded-xl flex gap-3">
@@ -121,7 +168,7 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
           </div>
           <div className="flex flex-col">
             <p className="text-[#141d23] text-sm font-semibold leading-tight">Reward akan cair setelah konfirmasi</p>
-            <p className="text-[#3e4943] text-sm font-medium opacity-80">{quest.price} (dipotong biaya admin)</p>
+            <p className="text-[#3e4943] text-sm font-medium opacity-80">{quest.price}</p>
           </div>
         </div>
       </div>
