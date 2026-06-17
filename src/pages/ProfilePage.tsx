@@ -27,7 +27,7 @@ import { useApp } from '../store/AppContext';
 import { getRelativeTime } from '../utils/dateUtils';
 
 interface ProfilePageProps {
-  onBack: () => void;
+  onBack?: () => void;
   onTopUp: () => void;
   onWithdraw: () => void;
   onEditProfile: () => void;

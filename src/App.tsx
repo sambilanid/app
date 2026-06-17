@@ -2,7 +2,7 @@
  * Root component aplikasi.
  * Digunakan saat: Entry point utama yang mengatur navigasi antar halaman dengan sistem stack.
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
@@ -147,40 +147,64 @@ function AppContent() {
       }
 
       setStack([{ id: page, page }]);
+      window.history.replaceState({ page, params, id: page }, "");
       return;
     }
     
+    const id = `${page}-${Date.now()}`;
     setDirection(1);
     setStack(prev => [...prev, { 
-      id: `${page}-${Date.now()}`, 
+      id, 
       page, 
       params 
     }]);
+    window.history.pushState({ page, params, id }, "");
   };
 
   const pop = () => {
     if (stack.length > 1) {
       setDirection(-1);
       setStack(prev => prev.slice(0, -1));
+      // Trigger browser back if it was a UI-initiated pop
+      if (window.history.state?.id === stack[stack.length - 1].id) {
+        window.history.back();
+      }
     }
   };
 
   const replace = (page: Page, params?: StackItem["params"]) => {
+    const id = `${page}-${Date.now()}`;
     setDirection(0);
     setStack(prev => {
       const newStack = [...prev];
       newStack[newStack.length - 1] = { 
-        id: `${page}-${Date.now()}`, 
+        id, 
         page, 
         params 
       };
       return newStack;
     });
+    window.history.replaceState({ page, params, id }, "");
   };
+
+  // Sync with browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      if (stack.length > 1) {
+        setDirection(-1);
+        setStack(prev => prev.slice(0, -1));
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [stack.length]);
 
   const renderPage = (item: StackItem) => {
     const { page, params } = item;
     
+    const handleBack = stack.length > 1 ? pop : undefined;
+
     switch (page) {
       case "home":
         return (
@@ -206,7 +230,7 @@ function AppContent() {
       case "search":
         return (
           <SearchPage
-            onBack={() => push("home")}
+            onBack={handleBack}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
             onAISearch={() => push("aiSearch")}
           />
@@ -252,7 +276,7 @@ function AppContent() {
       case "profile":
         return (
           <ProfilePage
-            onBack={() => push("home")}
+            onBack={handleBack}
             onTopUp={() => push("topup")}
             onWithdraw={() => push("withdraw")}
             onEditProfile={() => push("editProfile")}
@@ -276,7 +300,7 @@ function AppContent() {
       case "activity":
         return (
           <ActivityPage
-            onBack={() => push("home")}
+            onBack={handleBack}
             onSelectQuest={(qId) => push("detail", { questId: qId })}
             onManageQuest={(qId) => push("manage", { questId: qId })}
             onFinish={(qId) => push("evidence", { questId: qId })}

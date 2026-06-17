@@ -12,7 +12,7 @@ import { StandardQuestCard } from '../components/quest/StandardQuestCard';
 import { useApp } from '../store/AppContext';
 
 interface SearchPageProps {
-  onBack: () => void;
+  onBack?: () => void;
   onSelectQuest: (questId: string) => void;
   onAISearch?: () => void;
 }

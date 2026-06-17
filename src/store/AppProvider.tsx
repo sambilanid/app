@@ -26,10 +26,10 @@ const initialUsers: User[] = [
     email: 'ade@sambilan.id',
     phone: '081234567890',
     password: 'password123',
-    rating: 4.5,
-    reviewCount: 2,
-    adventurerRating: 4.5,
-    adventurerReviewCount: 2,
+    rating: 0.0,
+    reviewCount: 0,
+    adventurerRating: 0.0,
+    adventurerReviewCount: 0,
     creatorRating: 0.0,
     creatorReviewCount: 0,
     isVerified: false,
@@ -44,22 +44,6 @@ const initialUsers: User[] = [
         message: 'Permintaan top up kamu sudah dibuat. Selesaikan pembayaran agar saldo masuk.',
         time: '14 jam lalu',
         unread: true,
-      },
-      {
-        id: 2,
-        type: 'quest',
-        title: 'Quest Berhasil Diambil',
-        message: 'Kamu telah mengambil quest "Jastip Mie Gacoan". Segera selesaikan sebelum deadline!',
-        time: '1 hari lalu',
-        unread: false,
-      },
-      {
-        id: 3,
-        type: 'system',
-        title: 'Verifikasi Berhasil',
-        message: 'Selamat! Akun kamu sekarang sudah terverifikasi sebagai Adventurer.',
-        time: '2 hari lalu',
-        unread: false,
       },
     ],
     withdrawalPresets: [],
@@ -278,13 +262,12 @@ const initialQuests: Quest[] = [
     image: questFood,
     createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
     description: 'Beli mie ayam legendaris Pak Di.',
-    status: 'active',
+    status: 'available',
     location: 'Kalimanah',
     fromLocation: 'Mie Ayam Pak Di',
     toLocation: 'Kantor Bupati',
     deadline: '30 mnt',
     creatorId: '2', // Reza
-    takerId: '1', // Ade
   },
   {
     id: 'q10',
@@ -295,29 +278,18 @@ const initialQuests: Quest[] = [
     image: questShopping,
     createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 mnt ago
     description: 'Tolong anterin galon yang udah didepan pintu ke dalem kamar.',
-    status: 'active',
+    status: 'available',
     location: 'Kost Mawar',
     fromLocation: 'Depan Pintu',
     toLocation: 'Kamar 102',
     deadline: '15 mnt',
     creatorId: '6', // Nashiruddin
-    takerId: '1', // Ade
   }
 ];
 
 const initialChats: Chat[] = [];
 
 const initialReviews: Review[] = [
-  {
-    id: 'r1',
-    questId: 'q_old_1',
-    reviewerId: '2',
-    revieweeId: '1',
-    rating: 5,
-    comment: 'Kerja sangat cepat dan sopan. Sangat direkomendasikan!',
-    role: 'adventurer',
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-  },
   {
     id: 'r2',
     questId: 'q_old_1',
@@ -327,16 +299,6 @@ const initialReviews: Review[] = [
     comment: 'Pemberi tugas yang jelas dan ramah. Pembayaran lancar.',
     role: 'creator',
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'r3',
-    questId: 'q_old_2',
-    reviewerId: '3',
-    revieweeId: '1',
-    rating: 4,
-    comment: 'Barang sampai dengan aman, meskipun agak sedikit terlambat dari estimasi.',
-    role: 'adventurer',
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'r4',

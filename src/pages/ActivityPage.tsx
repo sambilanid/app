@@ -16,7 +16,7 @@ import { ReviewDialog } from '../components/common/ReviewDialog';
 import type { Quest } from '../types';
 
 interface ActivityPageProps {
-  onBack: () => void;
+  onBack?: () => void;
   onSelectQuest: (questId: string) => void;
   onManageQuest: (questId: string) => void;
   onFinish: (questId: string) => void;
