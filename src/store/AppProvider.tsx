@@ -317,8 +317,30 @@ const initialMessages: Message[] = [
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(() => {
-    const savedUsers = localStorage.getItem('sambilan_users');
-    return savedUsers ? JSON.parse(savedUsers) : initialUsers;
+    try {
+      const savedUsers = localStorage.getItem('sambilan_users');
+      if (!savedUsers) return initialUsers;
+      
+      const parsedUsers = JSON.parse(savedUsers) as User[];
+      
+      // Validasi sederhana: pastikan user pertama (jika ada) punya field baru
+      // Jika state sangat lama atau tidak valid, reset ke awal
+      const isValid = parsedUsers.length > 0 && 
+                      'adventurerRating' in parsedUsers[0] && 
+                      'balance' in parsedUsers[0];
+      
+      if (!isValid) {
+        console.warn('Invalid state detected, resetting to initial users');
+        localStorage.removeItem('sambilan_users');
+        localStorage.removeItem('sambilan_session');
+        return initialUsers;
+      }
+      
+      return parsedUsers;
+    } catch (e) {
+      console.error('Failed to parse users from localStorage', e);
+      return initialUsers;
+    }
   });
   const [currentUserId, setCurrentUserId] = useState<string | null>(() => {
     return localStorage.getItem('sambilan_session');

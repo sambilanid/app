@@ -85,12 +85,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, onTopUp, onWithdraw, 
                 <div className="flex items-center gap-1">
                   <span className="text-[#5a5c5e] text-xs font-bold uppercase tracking-tighter">Adventurer</span>
                   <Star size={12} className="text-orange-400 fill-orange-400" />
-                  <span className="text-[#141d23] text-sm font-bold">{user.adventurerRating.toFixed(1)}</span>
+                  <span className="text-[#141d23] text-sm font-bold">{(user.adventurerRating || 0).toFixed(1)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-[#5a5c5e] text-xs font-bold uppercase tracking-tighter">Creator</span>
                   <Star size={12} className="text-orange-400 fill-orange-400" />
-                  <span className="text-[#141d23] text-sm font-bold">{user.creatorRating.toFixed(1)}</span>
+                  <span className="text-[#141d23] text-sm font-bold">{(user.creatorRating || 0).toFixed(1)}</span>
                 </div>
               </div>
               {user.location && (
