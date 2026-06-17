@@ -112,7 +112,7 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           title: formData.title,
           category: formData.category,
           price: `Rp${Number(formData.budget).toLocaleString('id-ID')}`,
-          distance: '0.0 km', // Default untuk quest baru
+          distance: '0.5 km', // Default untuk quest baru
           image: formData.image || questFood, // Use uploaded image or default
           description: formData.description,
           status: 'available' as const,

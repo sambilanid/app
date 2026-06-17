@@ -8,6 +8,7 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
 import { useApp } from '../store/AppContext';
+import { useDialog } from '../components/common/Dialog';
 
 interface VerificationPageProps {
   onBack: () => void;
@@ -16,6 +17,7 @@ interface VerificationPageProps {
 
 const VerificationPage: React.FC<VerificationPageProps> = ({ onBack, onSuccess }) => {
   const { verifyAccount } = useApp();
+  const { showDialog } = useDialog();
   const [photo, setPhoto] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -43,7 +45,13 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ onBack, onSuccess }
     setTimeout(() => {
       verifyAccount();
       setIsSubmitting(false);
-      onSuccess();
+      
+      showDialog({
+        title: 'Verifikasi Berhasil',
+        message: 'Selamat! Akun Anda telah berhasil diverifikasi. Sekarang Anda dapat memposting quest dan menikmati fitur lengkap Sambilan.',
+        confirmLabel: 'Mantap',
+        onConfirm: onSuccess
+      });
     }, 1500);
   };
 

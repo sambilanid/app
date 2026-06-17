@@ -27,6 +27,35 @@ interface HomePageProps {
   onFinish: (questId: string) => void;
 }
 
+// Define character mapping for AI Suggestions
+const CHARACTER_MAP = [
+  {
+    keywords: ['tech savvy', 'tekno', 'gadget', 'komputer', 'laptop', 'teknik'],
+    category: 'Jasa reparasi',
+    affirmation: 'Buat kamu yang tech savvy, ini quest-quest yang mungkin kamu suka:'
+  },
+  {
+    keywords: ['pecinta kuliner', 'makan-makan', 'foodie', 'kuliner', 'makan'],
+    category: 'Jasa titip',
+    affirmation: 'Buat kamu yang pecinta kuliner, ini quest-quest yang mungkin kamu suka:'
+  },
+  {
+    keywords: ['sat set', 'gercep', 'logistik', 'pengantaran', 'cepat', 'kurir'],
+    category: 'Jasa antar ambil barang',
+    affirmation: 'Buat kamu yang sat set, ini quest-quest yang mungkin kamu suka:'
+  },
+  {
+    keywords: ['tukang bersih', 'rapi', 'resik', 'bersih-bersih', 'kebersihan'],
+    category: 'Jasa bersih-bersih',
+    affirmation: 'Buat kamu yang tukang bersih, ini quest-quest yang mungkin kamu suka:'
+  },
+  {
+    keywords: ['tenaga kuat', 'pindahan', 'angkat-angkat', 'angkut', 'pindah'],
+    category: 'Jasa pindahan',
+    affirmation: 'Buat kamu yang punya tenaga kuat, ini quest-quest yang mungkin kamu suka:'
+  }
+];
+
 const HomePage: React.FC<HomePageProps> = ({
   onTopUp,
   onWithdraw,
@@ -45,14 +74,25 @@ const HomePage: React.FC<HomePageProps> = ({
 
     const bio = user.bio.toLowerCase();
     
+    // Check for special character keyword
+    const characterMatch = CHARACTER_MAP.find(char => 
+      char.keywords.some(keyword => bio.includes(keyword.toLowerCase()))
+    );
+
+    // Hard filter by character category if match found
+    let filteredQuests = availableQuests;
+    if (characterMatch) {
+      filteredQuests = availableQuests.filter(quest => quest.category === characterMatch.category);
+    }
+
     // Scoring system
-    const scoredQuests = availableQuests.map(quest => {
+    const scoredQuests = filteredQuests.map(quest => {
       let score = 0;
       const title = quest.title.toLowerCase();
       const desc = quest.description.toLowerCase();
       const cat = quest.category.toLowerCase();
 
-      // Keywords matching
+      // Keywords matching (secondary sorting within hard-filtered results or fallback)
       if (bio.includes('kuliner') || bio.includes('makan')) {
         if (cat.includes('titip') || title.includes('mie') || title.includes('makan') || desc.includes('makan')) score += 10;
       }
@@ -84,6 +124,15 @@ const HomePage: React.FC<HomePageProps> = ({
     
     const bio = user.bio.toLowerCase();
     const name = user.name.split(" ")[0];
+
+    // Check for special character keyword
+    const characterMatch = CHARACTER_MAP.find(char => 
+      char.keywords.some(keyword => bio.includes(keyword.toLowerCase()))
+    );
+
+    if (characterMatch) {
+      return characterMatch.affirmation;
+    }
 
     if (bio.includes('kuliner') || bio.includes('makan')) {
       return `Hai ${name}, sebagai pecinta kuliner, kamu pasti suka membantu orang mendapatkan makanan favorit mereka!`;

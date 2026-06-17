@@ -34,7 +34,7 @@ const initialUsers: User[] = [
     creatorReviewCount: 0,
     isVerified: false,
     balance: 271000000,
-    bio: 'Freelancer antusias yang siap membantu segala kebutuhan Anda di sekitar Purbalingga.',
+    bio: 'Freelancer tech savvy yang siap membantu segala urusan tekno dan gadget Anda.',
     location: 'Purbalingga, Jawa Tengah',
     notifications: [
       {
@@ -80,6 +80,7 @@ const initialUsers: User[] = [
     creatorReviewCount: 2,
     isVerified: true,
     balance: 500000,
+    bio: 'Pecinta kuliner sejati yang hobi hunting makanan enak. Siap bantu jastip makanan favoritmu!',
     notifications: [],
     withdrawalPresets: [],
   },
@@ -99,7 +100,7 @@ const initialUsers: User[] = [
     creatorReviewCount: 1,
     isVerified: true,
     balance: 750000,
-    bio: 'Penyuka kebersihan dan kerapihan. Bisa bantu beres-beres rumah atau urusan administratif ringan.',
+    bio: 'Tukang bersih yang resik dan rapi. Siap bantu beres-beres rumah atau urusan administratif ringan.',
     notifications: [],
     withdrawalPresets: [],
   },
@@ -119,7 +120,7 @@ const initialUsers: User[] = [
     creatorReviewCount: 0,
     isVerified: true,
     balance: 1200000,
-    bio: 'Sangat cekatan dalam urusan logistik dan pengantaran barang. Percayakan paket atau belanjaan Anda pada saya untuk pengantaran yang aman dan cepat.',
+    bio: 'Sangat sat set dan gercep dalam urusan logistik. Percayakan paket Anda pada saya untuk pengantaran yang cepat.',
     notifications: [],
     withdrawalPresets: [],
   },
@@ -139,6 +140,7 @@ const initialUsers: User[] = [
     creatorReviewCount: 1,
     isVerified: true,
     balance: 450000,
+    bio: 'Punya tenaga kuat, siap bantu angkat-angkat atau pindahan kost dengan aman dan amanah.',
     notifications: [],
     withdrawalPresets: [],
   }
@@ -303,10 +305,7 @@ const initialQuests: Quest[] = [
   }
 ];
 
-const initialChats: Chat[] = [
-  { id: 'c1', participants: ['1', '2'], questId: 'q9' },
-  { id: 'c2', participants: ['1', '6'], questId: 'q10' },
-];
+const initialChats: Chat[] = [];
 
 const initialReviews: Review[] = [
   {
@@ -391,62 +390,15 @@ const initialReviews: Review[] = [
   }
 ];
 
-const initialMessages: Message[] = [
-  { id: 'm1', chatId: 'c1', senderId: '2', text: 'Halo kak, saya sudah di depan Mie Ayam Pak Di ya.', time: '10:40 AM' },
-  { id: 'm2', chatId: 'c1', senderId: '1', text: 'Oke sebentar ya, saya transfer uangnya.', time: '10:41 AM' },
-  { id: 'm4', chatId: 'c1', senderId: '1', text: 'Sudah saya transfer ya kak Rp35.000 (mie + ongkir).', time: '10:43 AM' },
-  { id: 'm5', chatId: 'c1', senderId: '1', text: 'Masuk kak. Ini lagi antre, lumayan ramai ya hari ini.', time: '10:45 AM' },
-  { id: 'm6', chatId: 'c1', senderId: '1', text: 'Siap, santai aja kak. Jangan lupa sambalnya dipisah ya.', time: '10:46 AM' },
-  { id: 'm3', chatId: 'c2', senderId: '6', text: 'Permisi kak, galonnya sudah saya taruh di dalam ya.', time: '11:20 AM' },
-];
+const initialMessages: Message[] = [];
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [users, setUsers] = useState<User[]>(() => {
-    try {
-      const savedUsers = localStorage.getItem('sambilan_users');
-      if (!savedUsers) return initialUsers;
-      
-      const parsedUsers = JSON.parse(savedUsers) as User[];
-      
-      // Validasi sederhana: pastikan user pertama (jika ada) punya field baru
-      // Jika state sangat lama atau tidak valid, reset ke awal
-      const isValid = parsedUsers.length > 0 && 
-                      'adventurerRating' in parsedUsers[0] && 
-                      'balance' in parsedUsers[0];
-      
-      if (!isValid) {
-        console.warn('Invalid state detected, resetting to initial users');
-        localStorage.removeItem('sambilan_users');
-        localStorage.removeItem('sambilan_session');
-        return initialUsers;
-      }
-      
-      return parsedUsers;
-    } catch (e) {
-      console.error('Failed to parse users from localStorage', e);
-      return initialUsers;
-    }
-  });
-  const [currentUserId, setCurrentUserId] = useState<string | null>(() => {
-    return localStorage.getItem('sambilan_session');
-  });
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
-
-  // Persistence
-  useEffect(() => {
-    localStorage.setItem('sambilan_users', JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
-    if (currentUserId) {
-      localStorage.setItem('sambilan_session', currentUserId);
-    } else {
-      localStorage.removeItem('sambilan_session');
-    }
-  }, [currentUserId]);
 
   const currentUser = useMemo(() => {
     if (!currentUserId) return null;
@@ -904,3 +856,4 @@ const applyForQuest = (questId: string) => {
     </AppContext.Provider>
   );
 };
+
