@@ -19,6 +19,8 @@ import QuestEvidencePage from "./pages/QuestEvidencePage";
 import QuestEvidenceSuccessPage from "./pages/QuestEvidenceSuccessPage";
 import CreateQuestSuccessPage from "./pages/CreateQuestSuccessPage";
 import TopUpSuccessPage from "./pages/TopUpSuccessPage";
+import EditProfilePage from "./pages/EditProfilePage";
+import VerificationPage from "./pages/VerificationPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import WithdrawSuccessPage from "./pages/WithdrawSuccessPage";
 import WelcomePage from "./pages/WelcomePage";
@@ -46,6 +48,8 @@ type Page =
   | "evidence"
   | "evidenceSuccess"
   | "createSuccess"
+  | "editProfile"
+  | "verification"
   | "withdraw"
   | "withdrawSuccess";
 
@@ -222,6 +226,7 @@ function AppContent() {
               }
             }}
             onFinish={(qId) => push("evidence", { questId: qId })}
+            onGoToVerification={() => push("verification")}
           />
         );
       case "topup":
@@ -244,6 +249,22 @@ function AppContent() {
             onBack={() => push("home")}
             onTopUp={() => push("topup")}
             onWithdraw={() => push("withdraw")}
+            onEditProfile={() => push("editProfile")}
+            onVerify={() => push("verification")}
+          />
+        );
+      case "verification":
+        return (
+          <VerificationPage
+            onBack={pop}
+            onSuccess={pop}
+          />
+        );
+      case "editProfile":
+        return (
+          <EditProfilePage
+            onBack={pop}
+            onSuccess={pop}
           />
         );
       case "activity":
@@ -267,6 +288,8 @@ function AppContent() {
           <CreateQuestPage 
             onBack={pop} 
             onSuccess={() => replace("createSuccess")}
+            onGoToVerification={() => push("verification")}
+            onGoToTopUp={() => push("topup")}
           />
         );
       case "createSuccess":

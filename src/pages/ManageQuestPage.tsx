@@ -10,13 +10,14 @@ import { Badge } from '../components/common/Badge';
 import { Card } from '../components/common/Card';
 import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
+import { ReviewDialog } from '../components/common/ReviewDialog';
 
 import mapPreview from '../assets/map-preview.png';
 
 import { useApp } from '../store/AppContext';
 import { useDialog } from '../components/common/Dialog';
 import { getRelativeTime } from '../utils/dateUtils';
-import { getQuestDisplayInfo } from '../utils/questUtils';
+import { getQuestDisplayInfo, categoryConfig } from '../utils/questUtils';
 
 interface ManageQuestPageProps {
   questId: string | null;
@@ -26,8 +27,9 @@ interface ManageQuestPageProps {
 }
 
 const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEdit, onChatWithApplicant }) => {
-  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest } = useApp();
+  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, submitReview } = useApp();
   const { showDialog } = useDialog();
+  const [isReviewOpen, setIsReviewOpen] = React.useState(false);
   const quest = state.allQuests.find(q => q.id === questId);
   const displayInfo = quest ? getQuestDisplayInfo(quest, state.currentUserId) : null;
   const applicants = quest?.applicantIds?.map(id => state.users.find(u => u.id === id)).filter(Boolean) || [];
@@ -66,8 +68,15 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
       cancelLabel: 'Batal',
       onConfirm: () => {
         completeQuest(quest.id);
+        setIsReviewOpen(true);
       }
     });
+  };
+
+  const handleReviewSubmit = (rating: number, comment: string) => {
+    if (quest?.takerId) {
+      submitReview(quest.id, quest.takerId, rating, comment, 'adventurer');
+    }
   };
 
   return (
@@ -124,6 +133,17 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
       }
     >
       <div className="pb-40">
+        {/* Review Dialog */}
+        {quest?.takerId && (
+          <ReviewDialog 
+            isOpen={isReviewOpen}
+            onClose={() => setIsReviewOpen(false)}
+            onSubmit={handleReviewSubmit}
+            revieweeName={state.users.find(u => u.id === quest.takerId)?.name || 'Adventurer'}
+            role="adventurer"
+          />
+        )}
+
         {/* Hero Image */}
         <div className="bg-[#8af7c8] h-48 w-full flex items-center justify-center overflow-hidden">
           <img src={quest.image} alt={quest.title} className="w-full h-full object-cover opacity-80" />
@@ -143,9 +163,20 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             <div className="flex flex-col gap-1 mt-2">
               <div className="flex items-center gap-2 text-[#3e4943]">
                 <MapPin size={16} className="text-primary" />
-                <div>
-                  <p className="text-sm font-semibold">{quest.location}</p>
-                  <p className="text-xs">{quest.distance} dari lokasi</p>
+                <div className="flex flex-col">
+                  {quest.location && <p className="text-sm font-semibold">{quest.location}</p>}
+                  {quest.fromLocation && (
+                    <p className="text-xs">
+                      <span className="opacity-60">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).from}: </span>
+                      {quest.fromLocation}
+                    </p>
+                  )}
+                  {quest.toLocation && (
+                    <p className="text-xs">
+                      <span className="opacity-60">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).to}: </span>
+                      {quest.toLocation}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2 text-[#3e4943]">

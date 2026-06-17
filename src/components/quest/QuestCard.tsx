@@ -70,7 +70,7 @@ interface QuestCardProps {
   createdAt?: string;
   description?: string;
   location?: string;
-  status?: 'active' | 'completed' | 'canceled' | 'available' | 'pending' | 'applying';
+  status?: 'active' | 'completed' | 'canceled' | 'available' | 'pending' | 'applying' | 'on_going' | 'waiting_confirmation' | 'has_applicants' | 'waiting_adventurer';
   customStatusLabel?: string;
   priceLabel?: string;
   variant?: 'standard' | 'active' | 'activity';
@@ -95,6 +95,27 @@ export const QuestCard: React.FC<QuestCardProps> = ({
   onClick
 }) => {
   const relativeTime = getRelativeTime(createdAt);
+
+  const getStatusStyles = (s: string) => {
+    switch (s) {
+      case 'active':
+      case 'on_going':
+        return 'text-[#7ea400] bg-[#7ea400]/10';
+      case 'pending':
+      case 'waiting_confirmation':
+        return 'text-orange-500 bg-orange-500/10';
+      case 'applying':
+      case 'available':
+      case 'has_applicants':
+        return 'text-blue-500 bg-blue-500/10';
+      case 'waiting_adventurer':
+        return 'text-gray-400 bg-gray-100';
+      case 'completed':
+        return 'text-primary bg-primary/10';
+      default:
+        return 'text-primary bg-primary/10';
+    }
+  };
 
   if (variant === 'active') {
     return (
@@ -129,16 +150,13 @@ export const QuestCard: React.FC<QuestCardProps> = ({
             </span>
           </div>
           {status && (
-            <div className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-              status === 'active' ? 'text-[#7ea400] bg-[#7ea400]/10' : 
-              status === 'pending' ? 'text-orange-500 bg-orange-500/10' :
-              status === 'applying' || status === 'available' ? 'text-blue-500 bg-blue-500/10' :
-              'text-[#00694b] bg-[#00694b]/10'
-            }`}>
+            <div className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${getStatusStyles(status)}`}>
               {customStatusLabel || (
-                status === 'active' ? 'Aktif' : 
-                status === 'pending' ? 'Menunggu Konfirmasi' : 
+                status === 'active' || status === 'on_going' ? 'Aktif' : 
+                status === 'pending' || status === 'waiting_confirmation' ? 'Menunggu Konfirmasi' : 
                 status === 'applying' ? 'Menunggu Persetujuan' :
+                status === 'has_applicants' ? 'Ada Pendaftar' :
+                status === 'waiting_adventurer' ? 'Menunggu Adventurer' :
                 'Selesai'
               )}
             </div>

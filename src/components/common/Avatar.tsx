@@ -7,7 +7,7 @@ import React from 'react';
 interface AvatarProps {
   src?: string;
   initials?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
 }
 
@@ -16,6 +16,7 @@ export const Avatar: React.FC<AvatarProps> = ({ src, initials, size = 'md', clas
     sm: 'w-8 h-8 text-xs',
     md: 'w-12 h-12 text-base',
     lg: 'w-16 h-16 text-xl',
+    xl: 'w-24 h-24 text-2xl',
   };
 
   return (

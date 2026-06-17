@@ -50,10 +50,11 @@ const AuthRegisterPage: React.FC<AuthRegisterPageProps> = ({ onBack, onSuccess, 
         </div>
 
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
-          <Input 
+          <Input
             label="Nama Lengkap"
-            placeholder="Contoh: Budi Santoso"
+            placeholder="Contoh: Naila Rona Nur Aini"
             leftIcon={<User size={18} />}
+
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}

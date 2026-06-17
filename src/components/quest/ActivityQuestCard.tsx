@@ -14,6 +14,7 @@ interface ActivityQuestCardProps {
   quest: Quest;
   onChat?: () => void;
   onFinish?: () => void;
+  onReview?: () => void;
   onClick?: () => void;
 }
 
@@ -21,12 +22,17 @@ export const ActivityQuestCard: React.FC<ActivityQuestCardProps> = ({
   quest,
   onChat,
   onFinish,
+  onReview,
   onClick
 }) => {
   const { state } = useApp();
   const displayInfo = getQuestDisplayInfo(quest, state.currentUserId);
   
   const priceLabel = (quest.status === 'active' || quest.status === 'pending' || displayInfo.status === 'applying') ? 'Budget' : 'Total pendapatan';
+
+  const isCreator = quest.creatorId === state.currentUserId;
+  const canReview = quest.status === 'completed' && 
+    ((isCreator && !quest.creatorReviewed) || (!isCreator && !quest.takerReviewed));
 
   return (
     <QuestCard
@@ -60,6 +66,18 @@ export const ActivityQuestCard: React.FC<ActivityQuestCardProps> = ({
               className="px-4 py-2 rounded-full !text-[12px] !font-bold"
             >
               Selesaikan
+            </Button>
+          )}
+          {canReview && onReview && (
+            <Button 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onReview();
+              }}
+              className="px-4 py-2 rounded-full !text-[12px] !font-bold"
+            >
+              Beri Ulasan
             </Button>
           )}
         </div>      }

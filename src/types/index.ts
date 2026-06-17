@@ -10,12 +10,18 @@ export interface User {
   email: string;
   phone: string;
   password?: string; // Optional for security or demo purposes
-  rating: number;
-  reviewCount: number;
-  questsCreated: number;
-  questsCompleted: number;
+  rating: number; // Aggregate rating
+  reviewCount: number; // Aggregate review count
+  adventurerRating: number;
+  adventurerReviewCount: number;
+  creatorRating: number;
+  creatorReviewCount: number;
+  questsCreated?: number; // Calculated dynamically in AppProvider
+  questsCompleted?: number; // Calculated dynamically in AppProvider
   isVerified: boolean;
   balance: number;
+  bio?: string;
+  location?: string;
   notifications: AppNotification[];
   withdrawalPresets: WithdrawalPreset[];
 }
@@ -32,6 +38,17 @@ export interface Chat {
   id: string;
   participants: string[]; // User IDs
   questId?: string; // Optional link to a quest
+}
+
+export interface Review {
+  id: string;
+  questId: string;
+  reviewerId: string;
+  revieweeId: string;
+  rating: number; // 1-5
+  comment: string;
+  role: 'adventurer' | 'creator'; // Peran dari pengguna yang diulas
+  createdAt: string;
 }
 
 export interface Quest {
@@ -54,6 +71,8 @@ export interface Quest {
   applicantIds?: string[];
   evidenceImage?: string;
   evidenceNotes?: string;
+  creatorReviewed?: boolean;
+  takerReviewed?: boolean;
 }
 
 export interface AppNotification {
@@ -85,4 +104,5 @@ export interface AppState {
   categories: string[];
   chats: Chat[];
   messages: Message[];
+  reviews: Review[];
 }

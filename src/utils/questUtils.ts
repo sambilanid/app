@@ -18,6 +18,19 @@ export interface QuestDisplayInfo {
   status: QuestDisplayStatus;
 }
 
+export const categoryConfig: Record<string, { from?: string; to?: string; location?: string }> = {
+  'Jasa titip': { from: 'Alamat Toko/Tempat Beli', to: 'Alamat Pengantaran' },
+  'Jasa antar jemput': { from: 'Titik Jemput', to: 'Titik Antar' },
+  'Jasa antar ambil barang': { from: 'Lokasi Ambil Barang', to: 'Lokasi Pengantaran' },
+  'Jasa angkut': { from: 'Lokasi Muat', to: 'Lokasi Bongkar' },
+  'Jasa pindahan': { from: 'Alamat Asal', to: 'Alamat Tujuan' },
+  'Jasa reparasi': { location: 'Lokasi Barang' },
+  'Antar orang sakit': { from: 'Alamat Penjemputan', to: 'Tujuan (RS/Klinik)' },
+  'Membeli obat': { to: 'Alamat Pengantaran' },
+  'Jasa bersih-bersih': { location: 'Lokasi Pembersihan' },
+  'Lainnya': { location: 'Lokasi' },
+};
+
 /**
  * Menerjemahkan status quest global menjadi status yang relevan bagi user tertentu.
  */

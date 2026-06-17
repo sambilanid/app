@@ -8,6 +8,7 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
 import { useApp } from '../store/AppContext';
+import { useDialog } from '../components/common/Dialog';
 
 interface QuestEvidencePageProps {
   questId: string | null;
@@ -17,16 +18,25 @@ interface QuestEvidencePageProps {
 
 const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, onFinish }) => {
   const { state, submitQuestEvidence } = useApp();
+  const { showDialog } = useDialog();
   const [notes, setNotes] = useState('');
   const quest = state.activeQuests.find(q => q.id === questId);
 
   const handleFinish = () => {
-    if (questId) {
-      // Mock image URL for demo
-      const mockImage = 'https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=1000&auto=format&fit=crop';
-      submitQuestEvidence(questId, mockImage, notes);
-    }
-    onFinish();
+    if (!questId) return;
+
+    showDialog({
+      title: 'Kirim Bukti Quest',
+      message: 'Apakah kamu yakin bukti yang dilampirkan sudah benar? Setelah dikirim, bukti tidak dapat diubah lagi.',
+      confirmLabel: 'Ya, Kirim',
+      cancelLabel: 'Batal',
+      onConfirm: () => {
+        // Mock image URL for demo
+        const mockImage = 'https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=1000&auto=format&fit=crop';
+        submitQuestEvidence(questId, mockImage, notes);
+        onFinish();
+      }
+    });
   };
 
   if (!quest) {

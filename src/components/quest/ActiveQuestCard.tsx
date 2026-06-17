@@ -26,18 +26,30 @@ export const ActiveQuestCard: React.FC<ActiveQuestCardProps> = ({
       distance={quest.distance}
       image={quest.image}
       createdAt={quest.createdAt}
+      status={quest.status}
       onClick={onClick}
       footer={
-        onFinish && (
-          <div className="flex gap-2 justify-end">
-            <Button 
-              size="sm"
-              onClick={onFinish}
-              className="px-4 py-2 rounded-full !text-xs !font-bold"
-            >
-              Selesaikan
-            </Button>
+        quest.status === 'pending' ? (
+          <div className="flex justify-end">
+            <span className="text-[11px] font-bold text-orange-500 bg-orange-500/10 px-3 py-1 rounded-full">
+              Menunggu Konfirmasi
+            </span>
           </div>
+        ) : (
+          onFinish && (
+            <div className="flex gap-2 justify-end">
+              <Button 
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFinish();
+                }}
+                className="px-4 py-2 rounded-full !text-xs !font-bold"
+              >
+                Selesaikan
+              </Button>
+            </div>
+          )
         )
       }
     />

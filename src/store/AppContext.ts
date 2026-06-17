@@ -27,6 +27,9 @@ export interface AppContextType {
   findOrCreateChat: (userIds: string[], questId?: string) => string;
   completeQuest: (questId: string) => void;
   submitQuestEvidence: (questId: string, image?: string, notes?: string) => void;
+  submitReview: (questId: string, revieweeId: string, rating: number, comment: string, role: 'adventurer' | 'creator') => void;
+  updateUserProfile: (profileData: Partial<Pick<User, 'name' | 'email' | 'phone' | 'bio' | 'location' | 'avatar'>>) => void;
+  verifyAccount: () => void;
   addWithdrawalPreset: (preset: Omit<WithdrawalPreset, 'id'>) => void;
   removeWithdrawalPreset: (id: string) => void;
 }

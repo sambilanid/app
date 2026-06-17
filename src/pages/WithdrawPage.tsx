@@ -18,6 +18,7 @@ import { PageHeader } from '../components/common/PageHeader';
 import { BalanceCard } from '../components/wallet/BalanceCard';
 import { AmountInputCard } from '../components/wallet/AmountInputCard';
 import { useApp } from '../store/AppContext';
+import { useDialog } from '../components/common/Dialog';
 import type { WithdrawalPreset } from '../types';
 
 interface WithdrawPageProps {
@@ -27,6 +28,7 @@ interface WithdrawPageProps {
 
 const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
   const { state, withdraw, addWithdrawalPreset, removeWithdrawalPreset } = useApp();
+  const { showDialog } = useDialog();
   const user = state.user;
 
   if (!user) return null;
@@ -46,12 +48,26 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
   const handleWithdrawPreset = (preset: WithdrawalPreset) => {
     if (!isAmountValid) return;
     
-    withdraw(parseInt(amount));
-    
-    onSuccess({
-      amount,
-      method: preset.method === 'bank' ? 'Transfer Bank' : 'E-Wallet',
-      destination: preset.bankName ? `${preset.bankName} • ${preset.accountNumber}` : preset.accountNumber
+    const formattedAmount = new Intl.NumberFormat('id-ID', { 
+      style: 'currency', 
+      currency: 'IDR', 
+      minimumFractionDigits: 0 
+    }).format(parseInt(amount));
+
+    showDialog({
+      title: 'Konfirmasi Penarikan',
+      message: `Apakah kamu yakin ingin menarik saldo sebesar ${formattedAmount} ke ${preset.name} (${preset.bankName ? `${preset.bankName} • ` : ''}${preset.accountNumber})?`,
+      confirmLabel: 'Tarik Dana',
+      cancelLabel: 'Batal',
+      onConfirm: () => {
+        withdraw(parseInt(amount));
+        
+        onSuccess({
+          amount,
+          method: preset.method === 'bank' ? 'Transfer Bank' : 'E-Wallet',
+          destination: preset.bankName ? `${preset.bankName} • ${preset.accountNumber}` : preset.accountNumber
+        });
+      }
     });
   };
 

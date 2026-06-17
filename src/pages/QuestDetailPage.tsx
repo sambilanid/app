@@ -16,24 +16,42 @@ import mapPreview from '../assets/map-preview.png';
 import { useApp } from '../store/AppContext';
 import { useDialog } from '../components/common/Dialog';
 import { getRelativeTime } from '../utils/dateUtils';
-import { getQuestDisplayInfo } from '../utils/questUtils';
+import { getQuestDisplayInfo, categoryConfig } from '../utils/questUtils';
 
 interface QuestDetailPageProps {
   questId: string | null;
   onBack: () => void;
   onChat: (questId: string) => void;
   onFinish: (questId: string) => void;
+  onGoToVerification: () => void;
 }
 
-const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish }) => {
+const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onChat, onFinish, onGoToVerification }) => {
   const { state, applyForQuest, cancelApplication } = useApp();
   const { showDialog } = useDialog();
   const quest = state.allQuests.find(q => q.id === questId);
   const displayInfo = quest ? getQuestDisplayInfo(quest, state.currentUserId) : null;
   const creator = quest ? state.users.find(u => u.id === quest.creatorId) : null;
+  
+  // Calculate stats for creator if not present
+  const creatorQuestsCreated = creator 
+    ? (creator.questsCreated ?? state.allQuests.filter(q => q.creatorId === creator.id).length)
+    : 0;
 
   const handleApplyQuest = () => {
     if (!quest) return;
+
+    if (!state.user?.isVerified) {
+      showDialog({
+        title: 'Akun Belum Terverifikasi',
+        message: 'Maaf, Anda harus memverifikasi identitas terlebih dahulu sebelum dapat mengambil quest untuk menjamin keamanan antar pengguna.',
+        confirmLabel: 'Verifikasi Sekarang',
+        cancelLabel: 'Nanti Saja',
+        onConfirm: onGoToVerification
+      });
+      return;
+    }
+
     showDialog({
       title: 'Ambil Quest?',
       message: 'Pastikan Anda sanggup menyelesaikan quest ini sebelum deadline.',
@@ -44,6 +62,8 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
       }
     });
   };
+
+  const isCreator = quest?.creatorId === state.currentUserId;
 
   const handleCancelApplication = () => {
     if (!quest) return;
@@ -127,7 +147,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               >
                 Batalkan permohonan
               </Button>
-            ) : (
+            ) : !isCreator ? (
               <Button 
                 fullWidth 
                 size="lg"
@@ -135,7 +155,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               >
                 Ambil quest ini
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       }
@@ -158,13 +178,15 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
             <h2 className="text-[#141d23] text-2xl font-bold">{quest.title}</h2>
             
             <div className="flex flex-col gap-1 mt-2">
-              <div className="flex items-center gap-2 text-[#3e4943]">
-                <MapPin size={16} className="text-primary" />
-                <div>
-                  <p className="text-sm font-semibold">{quest.location}</p>
-                  <p className="text-xs">{quest.distance} dari lokasi</p>
+              {quest.location && (
+                <div className="flex items-center gap-2 text-[#3e4943]">
+                  <MapPin size={16} className="text-primary" />
+                  <div>
+                    <p className="text-sm font-semibold">{quest.location}</p>
+                    {quest.distance && <p className="text-xs">{quest.distance} dari lokasi</p>}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="flex items-center gap-2 text-[#3e4943]">
                 <Clock size={16} className="text-primary" />
                 <p className="text-sm font-semibold">Deadline {quest.deadline || 'Hari ini'}</p>
@@ -187,7 +209,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
                   <div className="flex items-center gap-1 text-[#3e4943] text-xs font-bold">
                     <span>★ {creator.rating}</span>
                     <span>•</span>
-                    <span>{creator.questsCreated} quest dibuat</span>
+                    <span>{creatorQuestsCreated} quest dibuat</span>
                   </div>
                 </div>
               </div>
@@ -200,9 +222,19 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({ questId, onBack, onCh
               <div className="bg-primary/10 p-3 rounded-xl text-primary">
                   <MapPin size={24} />
               </div>
-              <div>
-                  {quest.fromLocation && <p className="text-[#141d23] text-sm font-semibold">Dari: {quest.fromLocation}</p>}
-                  {quest.toLocation && <p className="text-[#141d23] text-sm font-semibold">Ke: {quest.toLocation}</p>}
+              <div className="flex flex-col gap-1">
+                  {quest.fromLocation && (
+                    <div className="text-sm">
+                      <span className="text-[#3e4943] opacity-60 font-medium">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).from}: </span>
+                      <span className="text-[#141d23] font-semibold">{quest.fromLocation}</span>
+                    </div>
+                  )}
+                  {quest.toLocation && (
+                    <div className="text-sm">
+                      <span className="text-[#3e4943] opacity-60 font-medium">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).to}: </span>
+                      <span className="text-[#141d23] font-semibold">{quest.toLocation}</span>
+                    </div>
+                  )}
               </div>
             </Card>
           )}

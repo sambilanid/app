@@ -9,3 +9,4 @@
 
 ## Quality Control
 - **Build Verification:** Selalu gunakan perintah `npm run build` untuk memastikan tidak ada kesalahan syntax, type mismatch, atau error pada build pipeline sebelum menyelesaikan tugas. Perintah ini lebih menyeluruh daripada sekadar linter atau tsc standalone.
+- **UI Consistency:** Pastikan elemen UI baru yang ditambah memiliki gaya yang konsisten dengan keseluruhan UI, prioritaskan penggunaan toolkit UI yang sudah diimplementasikan dalam proyek.

@@ -12,6 +12,7 @@ import { StandardQuestCard } from "../components/quest/StandardQuestCard";
 import { QuestCard } from "../components/quest/QuestCard";
 import { PageLayout } from "../components/common/PageLayout";
 import { useApp } from "../store/AppContext";
+import { getQuestDisplayInfo } from "../utils/questUtils";
 
 interface HomePageProps {
   onTopUp?: () => void;
@@ -115,42 +116,47 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
 
-        {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active')).length > 0 && (
+        {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending')).length > 0 && (
           <div className="px-5 mt-8 flex flex-col gap-4">
             <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest buatanmu</h2>
             {state.allQuests
-              .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active'))
+              .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending'))
               .sort((a, b) => {
-                if (a.status === 'active' && b.status !== 'active') return -1;
-                if (a.status !== 'active' && b.status === 'active') return 1;
+                if (a.status === 'pending' && b.status !== 'pending') return -1;
+                if (a.status === 'active' && b.status === 'available') return -1;
+                if (a.status === 'available' && b.status === 'active') return 1;
                 return 0;
               })
-              .map((quest) => (
-                <QuestCard 
-                  key={quest.id}
-                  variant="active"
-                  category={quest.category}
-                  title={quest.title}
-                  price={quest.price}
-                  distance={quest.distance}
-                  image={quest.image}
-                  createdAt={quest.createdAt}
-                  onClick={() => onNavigate('manage', quest.id)}
-                  footer={
-                    quest.status === 'active' ? (
-                      <span className="text-xs font-bold text-[#7ea400] bg-[#7ea400]/10 px-2 py-0.5 rounded-full">
-                        Sedang dikerjakan
+              .map((quest) => {
+                const displayInfo = getQuestDisplayInfo(quest, state.currentUserId);
+                let badgeClass = "text-primary bg-primary/10";
+                
+                if (displayInfo.status === 'on_going') badgeClass = "text-[#7ea400] bg-[#7ea400]/10";
+                else if (displayInfo.status === 'waiting_confirmation') badgeClass = "text-orange-500 bg-orange-500/10";
+                else if (displayInfo.status === 'has_applicants') badgeClass = "text-blue-500 bg-blue-500/10";
+                else if (displayInfo.status === 'waiting_adventurer') badgeClass = "text-gray-400 bg-gray-100";
+
+                return (
+                  <QuestCard 
+                    key={quest.id}
+                    variant="active"
+                    category={quest.category}
+                    title={quest.title}
+                    price={quest.price}
+                    distance={quest.distance}
+                    image={quest.image}
+                    createdAt={quest.createdAt}
+                    onClick={() => onNavigate('manage', quest.id)}
+                    footer={
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${badgeClass}`}>
+                        {displayInfo.status === 'has_applicants' 
+                          ? `${quest.applicantIds?.length || 0} pemohon` 
+                          : displayInfo.label}
                       </span>
-                    ) : (
-                      <span className={`text-xs font-bold ${quest.applicantIds && quest.applicantIds.length > 0 ? 'text-primary' : 'text-gray-400'}`}>
-                        {quest.applicantIds && quest.applicantIds.length > 0 
-                          ? `${quest.applicantIds.length} pemohon` 
-                          : 'Belum ada pemohon'}
-                      </span>
-                    )
-                  }
-                />
-              ))
+                    }
+                  />
+                );
+              })
             }
           </div>
         )}

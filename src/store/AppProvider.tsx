@@ -5,12 +5,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { AppContext } from './AppContext';
-import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message, Chat } from '../types';
+import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message, Chat, Review } from '../types';
 
 import avatarAde from '../assets/avatar-ade.svg';
-import avatarReza from '../assets/avatar-reza.png';
 import avatarSari from '../assets/avatar-sari.svg';
-import avatarBudi from '../assets/avatar-budi.svg';
 
 import questFood from '../assets/quest-food.png';
 import questShopping from '../assets/quest-shopping.png';
@@ -30,10 +28,14 @@ const initialUsers: User[] = [
     password: 'password123',
     rating: 0.0,
     reviewCount: 0,
-    questsCreated: 0,
-    questsCompleted: 0,
-    isVerified: true,
+    adventurerRating: 0.0,
+    adventurerReviewCount: 0,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
+    isVerified: false,
     balance: 271000000,
+    bio: 'Freelancer antusias yang siap membantu segala kebutuhan Anda di sekitar Purbalingga.',
+    location: 'Purbalingga, Jawa Tengah',
     notifications: [
       {
         id: 1,
@@ -66,14 +68,16 @@ const initialUsers: User[] = [
     id: '2',
     name: 'Reza Kurniawan',
     initials: 'RK',
-    avatar: avatarReza,
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reza+Kurniawan',
     email: 'reza@gmail.com',
     phone: '082112233445',
     password: 'password123',
     rating: 4.7,
     reviewCount: 25,
-    questsCreated: 8,
-    questsCompleted: 15,
+    adventurerRating: 4.7,
+    adventurerReviewCount: 25,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
     isVerified: true,
     balance: 500000,
     notifications: [],
@@ -89,27 +93,50 @@ const initialUsers: User[] = [
     password: 'password123',
     rating: 4.9,
     reviewCount: 42,
-    questsCreated: 12,
-    questsCompleted: 30,
+    adventurerRating: 4.9,
+    adventurerReviewCount: 42,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
     isVerified: true,
     balance: 750000,
     notifications: [],
     withdrawalPresets: [],
   },
   {
-    id: '4',
-    name: 'Budi Santoso',
-    initials: 'BS',
-    avatar: avatarBudi,
-    email: 'budi@outlook.com',
-    phone: '089988776655',
+    id: '5',
+    name: 'Naila Rona Nur Aini',
+    initials: 'NR',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Naila+Rona+Nur+Aini',
+    email: 'naila@sambilan.id',
+    phone: '081299887766',
     password: 'password123',
-    rating: 4.5,
-    reviewCount: 18,
-    questsCreated: 5,
-    questsCompleted: 10,
+    rating: 5.0,
+    reviewCount: 12,
+    adventurerRating: 5.0,
+    adventurerReviewCount: 12,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
     isVerified: true,
-    balance: 300000,
+    balance: 1200000,
+    notifications: [],
+    withdrawalPresets: [],
+  },
+  {
+    id: '6',
+    name: 'Nashiruddin',
+    initials: 'NS',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Nashiruddin',
+    email: 'nashir@sambilan.id',
+    phone: '085544332211',
+    password: 'password123',
+    rating: 4.8,
+    reviewCount: 5,
+    adventurerRating: 4.8,
+    adventurerReviewCount: 5,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
+    isVerified: true,
+    balance: 450000,
     notifications: [],
     withdrawalPresets: [],
   }
@@ -118,7 +145,7 @@ const initialUsers: User[] = [
 const initialQuests: Quest[] = [
   {
     id: 'q1',
-    category: 'Jasa Titip',
+    category: 'Jasa titip',
     title: 'Jastip Mie Gacoan',
     price: 'Rp15.000',
     distance: '0.8 km',
@@ -134,7 +161,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q2',
-    category: 'Jasa Titip',
+    category: 'Jasa titip',
     title: 'Jastip Alfamart',
     price: 'Rp18.000',
     distance: '1.2 km',
@@ -150,7 +177,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q3',
-    category: 'Antar/Jemput',
+    category: 'Jasa antar ambil barang',
     title: 'Antar Paket ke J&T',
     price: 'Rp10.000',
     distance: '0.5 km',
@@ -162,11 +189,11 @@ const initialQuests: Quest[] = [
     fromLocation: 'Rumah Saya',
     toLocation: 'J&T Express Purbalingga',
     deadline: '2 jam',
-    creatorId: '4', // Budi
+    creatorId: '5', // Naila
   },
   {
     id: 'q4',
-    category: 'Antar/Jemput',
+    category: 'Jasa antar ambil barang',
     title: 'Jemput Dokumen Kantor',
     price: 'Rp20.000',
     distance: '2.5 km',
@@ -182,7 +209,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q5',
-    category: 'Servis',
+    category: 'Jasa bersih-bersih',
     title: 'Cuci Sepatu Sneaker',
     price: 'Rp35.000',
     distance: '1.8 km',
@@ -196,7 +223,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q6',
-    category: 'Servis',
+    category: 'Jasa reparasi',
     title: 'Instal Ulang Laptop',
     price: 'Rp100.000',
     distance: '3.0 km',
@@ -206,11 +233,11 @@ const initialQuests: Quest[] = [
     status: 'available',
     location: 'Boajong',
     deadline: '1 hari',
-    creatorId: '4', // Budi
+    creatorId: '6', // Nashiruddin
   },
   {
     id: 'q7',
-    category: 'Lainnya',
+    category: 'Jasa pindahan',
     title: 'Bantu Pindahan Kost',
     price: 'Rp50.000',
     distance: '0.3 km',
@@ -219,6 +246,8 @@ const initialQuests: Quest[] = [
     description: 'Bantu angkut barang-barang pindahan kost, jaraknya dekat cuma beda gang.',
     status: 'available',
     location: 'Purbalingga Kidul',
+    fromLocation: 'Kost Lama (Gang Melati)',
+    toLocation: 'Kost Baru (Gang Mawar)',
     deadline: '3 jam',
     creatorId: '2', // Reza
   },
@@ -238,7 +267,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q9',
-    category: 'Jasa Titip',
+    category: 'Jasa titip',
     title: 'Jastip Mie Ayam',
     price: 'Rp20.000',
     distance: '1.0 km',
@@ -255,7 +284,7 @@ const initialQuests: Quest[] = [
   },
   {
     id: 'q10',
-    category: 'Jasa Titip',
+    category: 'Jasa antar ambil barang',
     title: 'Antar Galon ke Kamar',
     price: 'Rp5.000',
     distance: '0.1 km',
@@ -267,14 +296,14 @@ const initialQuests: Quest[] = [
     fromLocation: 'Depan Pintu',
     toLocation: 'Kamar 102',
     deadline: '15 mnt',
-    creatorId: '4', // Budi
+    creatorId: '6', // Nashiruddin
     takerId: '1', // Ade
   }
 ];
 
 const initialChats: Chat[] = [
   { id: 'c1', participants: ['1', '2'], questId: 'q9' },
-  { id: 'c2', participants: ['1', '4'], questId: 'q10' },
+  { id: 'c2', participants: ['1', '6'], questId: 'q10' },
 ];
 
 const initialMessages: Message[] = [
@@ -283,7 +312,7 @@ const initialMessages: Message[] = [
   { id: 'm4', chatId: 'c1', senderId: '1', text: 'Sudah saya transfer ya kak Rp35.000 (mie + ongkir).', time: '10:43 AM' },
   { id: 'm5', chatId: 'c1', senderId: '1', text: 'Masuk kak. Ini lagi antre, lumayan ramai ya hari ini.', time: '10:45 AM' },
   { id: 'm6', chatId: 'c1', senderId: '1', text: 'Siap, santai aja kak. Jangan lupa sambalnya dipisah ya.', time: '10:46 AM' },
-  { id: 'm3', chatId: 'c2', senderId: '4', text: 'Permisi kak, galonnya sudah saya taruh di dalam ya.', time: '11:20 AM' },
+  { id: 'm3', chatId: 'c2', senderId: '6', text: 'Permisi kak, galonnya sudah saya taruh di dalam ya.', time: '11:20 AM' },
 ];
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -297,6 +326,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   // Persistence
   useEffect(() => {
@@ -311,10 +341,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [currentUserId]);
 
-  const currentUser = useMemo(() => 
-    currentUserId ? users.find(u => u.id === currentUserId) || null : null, 
-    [users, currentUserId]
-  );
+  const currentUser = useMemo(() => {
+    if (!currentUserId) return null;
+    const user = users.find(u => u.id === currentUserId);
+    if (!user) return null;
+
+    // Hitung statistik dinamis
+    const questsCreated = quests.filter(q => q.creatorId === currentUserId).length;
+    const questsCompleted = quests.filter(q => q.takerId === currentUserId && q.status === 'completed').length;
+
+    return {
+      ...user,
+      questsCreated,
+      questsCompleted
+    };
+  }, [users, currentUserId, quests]);
 
   const state: AppState = {
     users,
@@ -335,9 +376,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       q.status === 'available'
     ) : [],
     completedQuests: currentUserId ? quests.filter(q => q.takerId === currentUserId && q.status === 'completed') : [],
-    categories: ['Jasa Titip', 'Antar/Jemput', 'Servis', 'Lainnya'],
+    categories: [
+      'Jasa titip',
+      'Jasa antar jemput',
+      'Jasa antar ambil barang',
+      'Jasa angkut',
+      'Jasa pindahan',
+      'Jasa reparasi',
+      'Antar orang sakit',
+      'Membeli obat',
+      'Jasa bersih-bersih',
+      'Lainnya'
+    ],
     chats,
     messages,
+    reviews,
   };
 
   const switchUser = (userId: string) => {
@@ -358,13 +411,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       id: `u${Date.now()}`,
       name: userData.name,
       initials,
+      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userData.name)}`,
       email: userData.email,
       phone: userData.phone,
       password: userData.password,
       rating: 0.0,
       reviewCount: 0,
-      questsCreated: 0,
-      questsCompleted: 0,
+      adventurerRating: 0.0,
+      adventurerReviewCount: 0,
+      creatorRating: 0.0,
+      creatorReviewCount: 0,
       isVerified: false,
       balance: 0,
       notifications: [],
@@ -394,6 +450,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const addQuest = (quest: Quest) => {
     const userId = currentUserId;
     if (!userId) return;
+
+    const priceAmount = parseInt(quest.price.replace(/[^0-9]/g, '')) || 0;
+    const adminFee = 3500;
+    const totalToDeduct = priceAmount + adminFee;
+
+    // Deduct from balance
+    setUsers(prev => prev.map(u => {
+      if (u.id === userId) {
+        return {
+          ...u,
+          balance: Math.max(0, u.balance - totalToDeduct)
+        };
+      }
+      return u;
+    }));
+
     setQuests(prev => [...prev, { ...quest, creatorId: userId }]);
   };
 
@@ -502,7 +574,37 @@ const applyForQuest = (questId: string) => {
   };
 
   const completeQuest = (questId: string) => {
+    const quest = quests.find(q => q.id === questId);
+    if (!quest || !quest.takerId) {
+      setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'completed' } : q));
+      return;
+    }
+
+    const priceAmount = parseInt(quest.price.replace(/[^0-9]/g, '')) || 0;
+    const takerId = quest.takerId;
+
+    // 1. Update Quest Status
     setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'completed' } : q));
+
+    // 2. Update Taker's balance, questsCompleted count, and add notification
+    setUsers(prev => prev.map(u => {
+      if (u.id === takerId) {
+        const newNotif: AppNotification = {
+          id: Date.now(),
+          type: 'payment',
+          title: 'Quest Selesai & Pembayaran Diterima',
+          message: `Quest "${quest.title}" telah dikonfirmasi selesai oleh pembuat quest. Saldo Rp ${priceAmount.toLocaleString('id-ID')} telah ditambahkan ke akun Anda.`,
+          time: 'Baru saja',
+          unread: true,
+        };
+        return {
+          ...u,
+          balance: u.balance + priceAmount,
+          notifications: [newNotif, ...u.notifications]
+        };
+      }
+      return u;
+    }));
   };
 
   const submitQuestEvidence = (questId: string, image?: string, notes?: string) => {
@@ -512,6 +614,74 @@ const applyForQuest = (questId: string) => {
       evidenceImage: image,
       evidenceNotes: notes
     } : q));
+  };
+
+  const submitReview = (questId: string, revieweeId: string, rating: number, comment: string, role: 'adventurer' | 'creator') => {
+    const reviewerId = currentUserId;
+    if (!reviewerId) return;
+
+    const newReview: Review = {
+      id: `r${Date.now()}`,
+      questId,
+      reviewerId,
+      revieweeId,
+      rating,
+      comment,
+      role,
+      createdAt: new Date().toISOString()
+    };
+
+    setReviews(prev => [...prev, newReview]);
+
+    // Update User Rating
+    setUsers(prev => prev.map(u => {
+      if (u.id === revieweeId) {
+        if (role === 'adventurer') {
+          const newReviewCount = u.adventurerReviewCount + 1;
+          const newRating = (u.adventurerRating * u.adventurerReviewCount + rating) / newReviewCount;
+          
+          // Overall aggregate
+          const totalReviewCount = u.reviewCount + 1;
+          const totalRating = (u.rating * u.reviewCount + rating) / totalReviewCount;
+
+          return {
+            ...u,
+            adventurerRating: parseFloat(newRating.toFixed(1)),
+            adventurerReviewCount: newReviewCount,
+            rating: parseFloat(totalRating.toFixed(1)),
+            reviewCount: totalReviewCount
+          };
+        } else {
+          const newReviewCount = u.creatorReviewCount + 1;
+          const newRating = (u.creatorRating * u.creatorReviewCount + rating) / newReviewCount;
+
+          // Overall aggregate
+          const totalReviewCount = u.reviewCount + 1;
+          const totalRating = (u.rating * u.reviewCount + rating) / totalReviewCount;
+
+          return {
+            ...u,
+            creatorRating: parseFloat(newRating.toFixed(1)),
+            creatorReviewCount: newReviewCount,
+            rating: parseFloat(totalRating.toFixed(1)),
+            reviewCount: totalReviewCount
+          };
+        }
+      }
+      return u;
+    }));
+
+    // Update Quest status
+    setQuests(prev => prev.map(q => {
+      if (q.id === questId) {
+        if (role === 'adventurer') {
+          return { ...q, creatorReviewed: true };
+        } else {
+          return { ...q, takerReviewed: true };
+        }
+      }
+      return q;
+    }));
   };
 
   const addNotificationToUser = (userId: string, notif: Omit<AppNotification, 'id' | 'unread' | 'time'>) => {
@@ -572,6 +742,28 @@ const applyForQuest = (questId: string) => {
     }));
   };
 
+  const updateUserProfile = (profileData: Partial<Pick<User, 'name' | 'email' | 'phone' | 'bio' | 'location' | 'avatar'>>) => {
+    updateCurrentUser(prev => {
+      let initials = prev.initials;
+      if (profileData.name) {
+        const names = profileData.name.trim().split(/\s+/);
+        initials = names.length > 1 
+          ? (names[0][0] + names[names.length - 1][0]).toUpperCase()
+          : names[0].substring(0, 2).toUpperCase();
+      }
+      return { ...prev, ...profileData, initials };
+    });
+  };
+
+  const verifyAccount = () => {
+    updateCurrentUser(prev => ({ ...prev, isVerified: true }));
+    addNotification({
+      type: 'system',
+      title: 'Verifikasi Berhasil',
+      message: 'Selamat! Akun kamu sekarang sudah terverifikasi. Kamu sekarang bisa memposting dan mengambil quest.'
+    });
+  };
+
   return (
     <AppContext.Provider value={{ 
       state, 
@@ -595,6 +787,9 @@ const applyForQuest = (questId: string) => {
       findOrCreateChat,
       completeQuest,
       submitQuestEvidence,
+      submitReview,
+      updateUserProfile,
+      verifyAccount,
       addWithdrawalPreset,
       removeWithdrawalPreset
     }}>

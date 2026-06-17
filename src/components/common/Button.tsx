@@ -6,10 +6,11 @@ import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'outline' | 'ghost' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -19,11 +20,13 @@ export const Button: React.FC<ButtonProps> = ({
   fullWidth = false,
   leftIcon,
   rightIcon,
+  isLoading = false,
   className = '',
   onClick,
   ...props 
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isLoading) return;
     e.stopPropagation();
     onClick?.(e);
   };
@@ -39,6 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const sizes = {
+    xs: 'px-2 py-1 text-[10px]',
     sm: 'px-3 py-1.5 text-xs',
     md: 'px-4 py-3 text-sm',
     lg: 'px-6 py-4 text-base',
@@ -54,18 +58,29 @@ export const Button: React.FC<ButtonProps> = ({
       onPointerDown={handleInteraction}
       onMouseDown={handleInteraction}
       onTouchStart={handleInteraction}
+      disabled={props.disabled || isLoading}
       className={`
         ${baseStyles} 
         ${variants[variant]} 
         ${sizes[size]} 
         ${fullWidth ? 'w-full' : ''} 
+        ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}
         ${className}
       `}
       {...props}
     >
-      {leftIcon && <span className="mr-2">{leftIcon}</span>}
-      {children}
-      {rightIcon && <span className="ml-2">{rightIcon}</span>}
+      {isLoading ? (
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          {children}
+        </div>
+      ) : (
+        <>
+          {leftIcon && <span className="mr-2">{leftIcon}</span>}
+          {children}
+          {rightIcon && <span className="ml-2">{rightIcon}</span>}
+        </>
+      )}
     </button>
   );
 };

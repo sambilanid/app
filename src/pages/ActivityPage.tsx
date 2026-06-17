@@ -12,6 +12,9 @@ import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { SearchInput } from '../components/common/SearchInput';
 import { ActivityQuestCard } from '../components/quest/ActivityQuestCard';
+import { ReviewDialog } from '../components/common/ReviewDialog';
+import type { Quest } from '../types';
+
 interface ActivityPageProps {
   onBack: () => void;
   onSelectQuest: (questId: string) => void;
@@ -30,17 +33,31 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
   const [activeTab, setActiveTab] = useState<'made' | 'done'>('done');
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { state } = useApp();
+  const [reviewingQuest, setReviewingQuest] = useState<Quest | null>(null);
+  const { state, submitReview } = useApp();
   const { activeQuests, pendingQuests, completedQuests } = state;
 
-  const activities = activeTab === 'done' 
-    ? [...activeQuests, ...pendingQuests, ...completedQuests]
-    : state.allQuests.filter(q => q.creatorId === state.currentUserId);
+  const activities = activeTab === 'made' 
+    ? state.allQuests.filter(q => q.creatorId === state.currentUserId)
+    : [...activeQuests, ...pendingQuests, ...completedQuests];
 
   const filteredActivities = activities.filter(item => 
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleReviewSubmit = (rating: number, comment: string) => {
+    if (reviewingQuest) {
+      const isCreator = reviewingQuest.creatorId === state.currentUserId;
+      const revieweeId = isCreator ? reviewingQuest.takerId : reviewingQuest.creatorId;
+      const role = isCreator ? 'adventurer' : 'creator';
+      
+      if (revieweeId) {
+        submitReview(reviewingQuest.id, revieweeId, rating, comment, role);
+      }
+      setReviewingQuest(null);
+    }
+  };
 
   return (
     <PageLayout
@@ -85,6 +102,21 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
       }
     >
       <div>
+        {/* Review Dialog */}
+        {reviewingQuest && (
+          <ReviewDialog
+            isOpen={!!reviewingQuest}
+            onClose={() => setReviewingQuest(null)}
+            onSubmit={handleReviewSubmit}
+            revieweeName={(() => {
+              const isCreator = reviewingQuest.creatorId === state.currentUserId;
+              const revieweeId = isCreator ? reviewingQuest.takerId : reviewingQuest.creatorId;
+              return state.users.find(u => u.id === revieweeId)?.name || 'Pengguna';
+            })()}
+            role={reviewingQuest.creatorId === state.currentUserId ? 'adventurer' : 'creator'}
+          />
+        )}
+
         {/* Navigation Tabs */}
         <div className="px-5 pt-6 flex gap-2 overflow-x-auto no-scrollbar">
           <button 
@@ -121,6 +153,7 @@ const ActivityPage: React.FC<ActivityPageProps> = ({
               quest={item}
               onChat={() => onChat(item.id)}
               onFinish={() => onFinish(item.id)}
+              onReview={() => setReviewingQuest(item)}
               onClick={() => activeTab === 'made' ? onManageQuest(item.id) : onSelectQuest(item.id)}
             />
           ))}
