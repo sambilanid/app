@@ -13,6 +13,7 @@ import { QuestCard } from "../components/quest/QuestCard";
 import { PageLayout } from "../components/common/PageLayout";
 import { useApp } from "../store/AppContext";
 import { getQuestDisplayInfo } from "../utils/questUtils";
+import { getTimeGreeting } from "../utils/dateUtils";
 import type { Quest } from "../types";
 
 interface HomePageProps {
@@ -163,7 +164,7 @@ const HomePage: React.FC<HomePageProps> = ({
       hasNavbar
       header={
         <PageHeader
-          title={`Selamat Pagi, ${user!.name.split(" ")[0]}!`}
+          title={`${getTimeGreeting()}, ${user!.name.split(" ")[0]}!`}
           subtitle="Apa yang kamu butuhin hari ini?"
           rightAction={
             <div className="flex items-center gap-1">
