@@ -28,7 +28,7 @@ export const ActivityQuestCard: React.FC<ActivityQuestCardProps> = ({
   const { state } = useApp();
   const displayInfo = getQuestDisplayInfo(quest, state.currentUserId);
   
-  const priceLabel = (quest.status === 'active' || quest.status === 'pending' || displayInfo.status === 'applying') ? 'Budget' : 'Total pendapatan';
+  const priceLabel = (quest.status === 'active' || quest.status === 'pending' || displayInfo.status === 'applying') ? 'Reward' : 'Total pendapatan';
 
   const isCreator = quest.creatorId === state.currentUserId;
   const canReview = quest.status === 'completed' && 

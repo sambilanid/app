@@ -36,7 +36,7 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
     location: '',
     fromLocation: '',
     toLocation: '',
-    budget: '',
+    reward: '',
     deadline: '',
     description: '',
     image: '' as string | null
@@ -62,21 +62,21 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
   const currentConfig = categoryConfig[formData.category] || categoryConfig['Lainnya'];
 
   const ADMIN_FEE = 3500;
-  const BUDGET_LIMIT = 1000000;
-  const budgetValue = Number(formData.budget) || 0;
-  const totalCost = budgetValue + ADMIN_FEE;
+  const REWARD_LIMIT = 1000000;
+  const rewardValue = Number(formData.reward) || 0;
+  const totalCost = rewardValue + ADMIN_FEE;
 
-  const isBudgetOverLimit = budgetValue > BUDGET_LIMIT;
+  const isRewardOverLimit = rewardValue > REWARD_LIMIT;
   const isFieldsValid = 
     formData.title && 
-    formData.budget && 
-    budgetValue > 0 &&
+    formData.reward && 
+    rewardValue > 0 &&
     formData.description &&
     (!currentConfig.from || formData.fromLocation) &&
     (!currentConfig.to || formData.toLocation) &&
     (!currentConfig.location || formData.location);
 
-  const isFormValid = isFieldsValid && !isBudgetOverLimit;
+  const isFormValid = isFieldsValid && !isRewardOverLimit;
 
   const handlePublish = () => {
     if (!state.user?.isVerified) {
@@ -111,7 +111,7 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           id: `q${Date.now()}`,
           title: formData.title,
           category: formData.category,
-          price: `Rp${Number(formData.budget).toLocaleString('id-ID')}`,
+          price: `Rp${Number(formData.reward).toLocaleString('id-ID')}`,
           distance: '0.5 km', // Default untuk quest baru
           image: formData.image || questFood, // Use uploaded image or default
           description: formData.description,
@@ -275,7 +275,7 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
-                <label className="text-[#3e4943] text-sm font-bold">Budget <span className="text-red-500">*</span></label>
+                <label className="text-[#3e4943] text-sm font-bold">Reward <span className="text-red-500">*</span></label>
                 <span className="text-[10px] text-primary font-bold">Saldo: Rp{(state.user?.balance || 0).toLocaleString('id-ID')}</span>
               </div>
               <div className="relative">
@@ -285,15 +285,15 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
                   inputMode="numeric"
                   placeholder="0"
                   className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-10 text-sm focus:outline-none focus:border-primary transition-colors"
-                  value={formData.budget}
+                  value={formData.reward}
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '');
-                    setFormData({ ...formData, budget: value });
+                    setFormData({ ...formData, reward: value });
                   }}
                 />
               </div>
-              <p className={`text-[10px] ml-1 ${isBudgetOverLimit ? 'text-red-500 font-bold' : 'text-[#3e4943] opacity-60'}`}>
-                {isBudgetOverLimit ? `Maksimal budget Rp${BUDGET_LIMIT.toLocaleString('id-ID')}` : `Maks. Rp${BUDGET_LIMIT.toLocaleString('id-ID')}`}
+              <p className={`text-[10px] ml-1 ${isRewardOverLimit ? 'text-red-500 font-bold' : 'text-[#3e4943] opacity-60'}`}>
+                {isRewardOverLimit ? `Maksimal reward Rp${REWARD_LIMIT.toLocaleString('id-ID')}` : `Maks. Rp${REWARD_LIMIT.toLocaleString('id-ID')}`}
               </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -326,8 +326,8 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col gap-3 my-2">
             <h3 className="text-[#3e4943] text-sm font-bold">Rincian Biaya</h3>
             <div className="flex justify-between items-center text-sm">
-              <span className="text-[#3e4943] opacity-60">Budget Quest</span>
-              <span className="text-[#141d23] font-medium">Rp{budgetValue.toLocaleString('id-ID')}</span>
+              <span className="text-[#3e4943] opacity-60">Reward Quest</span>
+              <span className="text-[#141d23] font-medium">Rp{rewardValue.toLocaleString('id-ID')}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-[#3e4943] opacity-60">Biaya Admin</span>
