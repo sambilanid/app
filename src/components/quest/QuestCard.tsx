@@ -70,7 +70,7 @@ interface QuestCardProps {
   createdAt?: string;
   description?: string;
   location?: string;
-  status?: 'active' | 'completed' | 'canceled' | 'available' | 'pending' | 'applying' | 'on_going' | 'waiting_confirmation' | 'has_applicants' | 'waiting_adventurer';
+  status?: 'active' | 'completed' | 'canceled' | 'available' | 'pending' | 'applying' | 'on_going' | 'waiting_confirmation' | 'has_applicants' | 'waiting_adventurer' | 'disputed';
   customStatusLabel?: string;
   priceLabel?: string;
   variant?: 'standard' | 'active' | 'activity';
@@ -104,6 +104,8 @@ export const QuestCard: React.FC<QuestCardProps> = ({
       case 'pending':
       case 'waiting_confirmation':
         return 'text-orange-500 bg-orange-500/10';
+      case 'disputed':
+        return 'text-red-500 bg-red-500/10';
       case 'applying':
       case 'available':
       case 'has_applicants':
@@ -154,6 +156,7 @@ export const QuestCard: React.FC<QuestCardProps> = ({
               {customStatusLabel || (
                 status === 'active' || status === 'on_going' ? 'Aktif' : 
                 status === 'pending' || status === 'waiting_confirmation' ? 'Menunggu Konfirmasi' : 
+                status === 'disputed' ? 'Dalam Mediasi' :
                 status === 'applying' ? 'Menunggu Persetujuan' :
                 status === 'has_applicants' ? 'Ada Pendaftar' :
                 status === 'waiting_adventurer' ? 'Menunggu Adventurer' :

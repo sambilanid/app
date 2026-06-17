@@ -11,6 +11,7 @@ export type QuestDisplayStatus =
   | 'applying' 
   | 'on_going' 
   | 'waiting_confirmation' 
+  | 'disputed'
   | 'completed';
 
 export interface QuestDisplayInfo {
@@ -57,6 +58,9 @@ export const getQuestDisplayInfo = (quest: Quest, currentUserId: string | null):
     if (quest.status === 'pending') {
       return { label: 'Menunggu Konfirmasi', status: 'waiting_confirmation' };
     }
+    if (quest.status === 'disputed') {
+      return { label: 'Dalam Mediasi', status: 'disputed' };
+    }
     if (quest.status === 'completed') {
       return { label: 'Selesai', status: 'completed' };
     }
@@ -69,6 +73,9 @@ export const getQuestDisplayInfo = (quest: Quest, currentUserId: string | null):
     }
     if (quest.status === 'pending') {
       return { label: 'Menunggu Konfirmasi', status: 'waiting_confirmation' };
+    }
+    if (quest.status === 'disputed') {
+      return { label: 'Dalam Mediasi', status: 'disputed' };
     }
     if (quest.status === 'completed') {
       return { label: 'Selesai', status: 'completed' };

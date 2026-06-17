@@ -29,10 +29,12 @@ export const ActiveQuestCard: React.FC<ActiveQuestCardProps> = ({
       status={quest.status}
       onClick={onClick}
       footer={
-        quest.status === 'pending' ? (
+        quest.status === 'pending' || quest.status === 'disputed' ? (
           <div className="flex justify-end">
-            <span className="text-[11px] font-bold text-orange-500 bg-orange-500/10 px-3 py-1 rounded-full">
-              Menunggu Konfirmasi
+            <span className={`text-[11px] font-bold px-3 py-1 rounded-full ${
+              quest.status === 'disputed' ? 'text-red-500 bg-red-500/10' : 'text-orange-500 bg-orange-500/10'
+            }`}>
+              {quest.status === 'disputed' ? 'Dalam Mediasi' : 'Menunggu Konfirmasi'}
             </span>
           </div>
         ) : (

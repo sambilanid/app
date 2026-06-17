@@ -55,7 +55,7 @@ const QuestEvidencePage: React.FC<QuestEvidencePageProps> = ({ questId, onBack, 
 
     showDialog({
       title: 'Kirim Bukti Quest',
-      message: 'Apakah kamu yakin bukti yang dilampirkan sudah benar? Setelah dikirim, bukti tidak dapat diubah lagi.',
+      message: 'Apakah kamu yakin bukti yang dilampirkan sudah benar? Kamu masih bisa mengubah bukti ini sebelum dikonfirmasi oleh pembuat quest.',
       confirmLabel: 'Ya, Kirim',
       cancelLabel: 'Batal',
       onConfirm: () => {

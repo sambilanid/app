@@ -26,7 +26,9 @@ export interface AppContextType {
   sendMessage: (chatId: string, text: string) => void;
   findOrCreateChat: (userIds: string[], questId?: string) => string;
   completeQuest: (questId: string) => void;
+  reportDispute: (questId: string) => void;
   submitQuestEvidence: (questId: string, image?: string, notes?: string) => void;
+  cancelQuestEvidence: (questId: string) => void;
   submitReview: (questId: string, revieweeId: string, rating: number, comment: string, role: 'adventurer' | 'creator') => void;
   updateUserProfile: (profileData: Partial<Pick<User, 'name' | 'email' | 'phone' | 'bio' | 'location' | 'avatar'>>) => void;
   verifyAccount: () => void;

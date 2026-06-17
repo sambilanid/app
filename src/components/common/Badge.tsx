@@ -6,7 +6,7 @@ import React from 'react';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger';
   className?: string;
 }
 
@@ -18,6 +18,7 @@ export const Badge: React.FC<BadgeProps> = ({
   const variants = {
     primary: 'bg-primary/10 text-primary border-primary/20',
     secondary: 'bg-[#ecf5fe] text-primary border-[#6ddbad]',
+    danger: 'bg-red-50 text-red-500 border-red-200',
   };
 
   return (

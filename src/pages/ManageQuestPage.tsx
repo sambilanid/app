@@ -3,7 +3,7 @@
  * Digunakan saat: User ingin mengedit, menghapus, atau mengelola pemohon quest miliknya.
  */
 import React from 'react';
-import { Share2, MapPin, Clock, Trash2, Edit2, UserCheck, UserX, MessageCircle } from 'lucide-react';
+import { Share2, MapPin, Clock, Trash2, Edit2, UserCheck, UserX, MessageCircle, AlertTriangle } from 'lucide-react';
 import { PageLayout } from '../components/common/PageLayout';
 import { PageHeader } from '../components/common/PageHeader';
 import { Badge } from '../components/common/Badge';
@@ -28,7 +28,7 @@ interface ManageQuestPageProps {
 }
 
 const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEdit, onChatWithApplicant, onViewProfile }) => {
-  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, submitReview } = useApp();
+  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, reportDispute, submitReview } = useApp();
   const { showDialog } = useDialog();
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
   const quest = state.allQuests.find(q => q.id === questId);
@@ -74,6 +74,26 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
     });
   };
 
+  const handleReportDispute = () => {
+    showDialog({
+      title: 'Laporkan Dispute?',
+      message: 'Opsi ini merupakan langkah terakhir (last-resort) dan proses mediasi oleh tim Sambilan dapat memakan waktu. Kami sangat menyarankan Anda untuk mencoba bernegosiasi melalui chat terlebih dahulu.',
+      confirmLabel: 'Laporkan Dispute',
+      cancelLabel: 'Batal',
+      variant: 'danger',
+      onConfirm: () => {
+        reportDispute(quest.id);
+        setTimeout(() => {
+          showDialog({
+            title: 'Dispute Dilaporkan',
+            message: 'Laporan Anda telah diterima oleh tim Sambilan. Kami akan meninjau bukti-bukti yang ada dan menghubungi Anda segera.',
+            confirmLabel: 'Tutup',
+          });
+        }, 100);
+      }
+    });
+  };
+
   const handleReviewSubmit = (rating: number, comment: string) => {
     if (quest?.takerId) {
       submitReview(quest.id, quest.takerId, rating, comment, 'adventurer');
@@ -88,18 +108,22 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           onBack={onBack}
           rightAction={
             <div className="flex items-center gap-2">
-              <button 
-                onClick={() => onEdit?.(quest.id)}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors text-primary"
-              >
-                <Edit2 size={20} />
-              </button>
-              <button 
-                onClick={handleDelete}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors text-red-500"
-              >
-                <Trash2 size={20} />
-              </button>
+              {quest.status !== 'disputed' && (
+                <>
+                  <button 
+                    onClick={() => onEdit?.(quest.id)}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors text-primary"
+                  >
+                    <Edit2 size={20} />
+                  </button>
+                  <button 
+                    onClick={handleDelete}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors text-red-500"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </>
+              )}
               <button className="p-2 -mr-2 rounded-full hover:bg-gray-100 transition-colors">
                 <Share2 size={20} className="text-[#141d23]" />
               </button>
@@ -116,19 +140,48 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             </div>
             <div className="text-right">
               <p className="text-[#3e4943] text-xs font-bold uppercase tracking-wider">Status Quest</p>
-              <Badge variant={displayInfo?.status === 'waiting_adventurer' ? 'primary' : 'secondary'}>
+              <Badge variant={
+                displayInfo?.status === 'disputed' ? 'danger' : 
+                displayInfo?.status === 'waiting_adventurer' ? 'primary' : 
+                'secondary'
+              }>
                 {displayInfo?.label}
               </Badge>
             </div>
           </div>
           {quest.status === 'pending' && (
-            <Button 
-              fullWidth 
-              size="lg"
-              onClick={handleConfirmCompletion}
-            >
-              Konfirmasi Selesai
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                fullWidth 
+                variant="outline"
+                className="text-red-500 border-red-200 flex-1"
+                onClick={handleReportDispute}
+              >
+                Laporkan Dispute
+              </Button>
+              <Button 
+                fullWidth 
+                size="lg"
+                className="flex-[1.5]"
+                onClick={handleConfirmCompletion}
+              >
+                Konfirmasi Selesai
+              </Button>
+            </div>
+          )}
+          {quest.status === 'disputed' && (
+            <div className="flex flex-col gap-3">
+              <p className="text-[#3e4943] text-xs italic text-center px-4">
+                Dana masih ditahan. Jika masalah sudah selesai melalui diskusi, Anda dapat menyelesaikan quest di bawah ini.
+              </p>
+              <Button 
+                fullWidth 
+                size="lg"
+                onClick={handleConfirmCompletion}
+              >
+                Selesaikan Quest
+              </Button>
+            </div>
           )}
         </div>
       }
@@ -143,6 +196,19 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             revieweeName={state.users.find(u => u.id === quest.takerId)?.name || 'Adventurer'}
             role="adventurer"
           />
+        )}
+
+        {/* Dispute Banner */}
+        {quest.status === 'disputed' && (
+          <div className="bg-red-50 border-b border-red-100 p-4 flex gap-3">
+            <AlertTriangle className="text-red-500 shrink-0" size={20} />
+            <div className="flex flex-col gap-1">
+              <p className="text-red-800 text-sm font-bold">Quest dalam mediasi</p>
+              <p className="text-red-700 text-xs leading-relaxed">
+                Tim Sambilan sedang meninjau quest ini. Anda masih dapat berdiskusi dengan Adventurer melalui chat untuk mencapai kesepakatan.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Hero Image */}
@@ -188,7 +254,7 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           </div>
 
           {/* Evidence Section */}
-          {quest.status === 'pending' && (
+          {(quest.status === 'pending' || quest.status === 'disputed') && (
             <div className="flex flex-col gap-4">
               <h3 className="text-[#141d23] text-base font-bold uppercase tracking-wider">Bukti Penyelesaian</h3>
               <Card className="p-4 flex flex-col gap-4 bg-orange-50 border-orange-100">
@@ -222,12 +288,12 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[#141d23] text-base font-bold">
-                {['active', 'pending', 'completed'].includes(quest.status) ? 'Dikerjakan oleh' : `Daftar Pemohon (${applicants.length})`}
+                {['active', 'pending', 'disputed', 'completed'].includes(quest.status) ? 'Dikerjakan oleh' : `Daftar Pemohon (${applicants.length})`}
               </h3>
-              {!['active', 'pending', 'completed'].includes(quest.status) && applicants.length > 0 && <span className="text-primary text-xs font-bold">Lihat Semua</span>}
+              {!['active', 'pending', 'disputed', 'completed'].includes(quest.status) && applicants.length > 0 && <span className="text-primary text-xs font-bold">Lihat Semua</span>}
             </div>
             
-            {['active', 'pending', 'completed'].includes(quest.status) && quest.takerId ? (
+            {['active', 'pending', 'disputed', 'completed'].includes(quest.status) && quest.takerId ? (
               (() => {
                 const taker = state.users.find(u => u.id === quest.takerId);
                 if (!taker) return null;

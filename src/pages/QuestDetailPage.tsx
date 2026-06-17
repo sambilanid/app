@@ -35,7 +35,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
   onGoToVerification,
   onViewProfile
 }) => {
-  const { state, applyForQuest, cancelApplication } = useApp();
+  const { state, applyForQuest, cancelApplication, cancelQuestEvidence } = useApp();
   const { showDialog } = useDialog();
   const quest = state.allQuests.find(q => q.id === questId);
   const displayInfo = quest ? getQuestDisplayInfo(quest, state.currentUserId) : null;
@@ -83,6 +83,20 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
       variant: 'danger',
       onConfirm: () => {
         cancelApplication(quest.id);
+      }
+    });
+  };
+
+  const handleCancelEvidence = () => {
+    if (!quest) return;
+    showDialog({
+      title: 'Batalkan Pengiriman?',
+      message: 'Bukti yang sudah dikirim akan dihapus dan status quest akan kembali menjadi Sedang Dikerjakan.',
+      confirmLabel: 'Ya, Batalkan',
+      cancelLabel: 'Kembali',
+      variant: 'danger',
+      onConfirm: () => {
+        cancelQuestEvidence(quest.id);
       }
     });
   };
@@ -145,6 +159,16 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
               >
                 Selesaikan
               </Button>
+            ) : displayInfo?.status === 'waiting_confirmation' && !isCreator ? (
+              <Button 
+                variant="outline"
+                fullWidth 
+                size="lg" 
+                className="border-red-200 text-red-500 hover:bg-red-50"
+                onClick={handleCancelEvidence}
+              >
+                Batalkan pengiriman
+              </Button>
             ) : displayInfo?.status === 'applying' ? (
               <Button 
                 variant="outline"
@@ -201,6 +225,29 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Evidence Section (for Taker when pending) */}
+          {quest.status === 'pending' && !isCreator && (
+            <div className="flex flex-col gap-4">
+              <h3 className="text-[#141d23] text-base font-bold uppercase tracking-wider">Bukti Penyelesaian</h3>
+              <Card className="p-4 flex flex-col gap-4 bg-orange-50 border-orange-100">
+                {quest.evidenceImage && (
+                  <div className="rounded-xl overflow-hidden h-48">
+                    <img src={quest.evidenceImage} alt="Evidence" className="w-full h-full object-cover" />
+                  </div>
+                )}
+                {quest.evidenceNotes && (
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-bold text-orange-800 uppercase">Catatan Anda:</p>
+                    <p className="text-[#3e4943] text-sm">{quest.evidenceNotes}</p>
+                  </div>
+                )}
+                {!quest.evidenceImage && !quest.evidenceNotes && (
+                  <p className="text-[#3e4943] text-sm italic">Tidak ada bukti yang dilampirkan.</p>
+                )}
+              </Card>
+            </div>
+          )}
 
           {/* Description */}
           <p className="text-[#3e4943] text-base leading-6">

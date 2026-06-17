@@ -236,13 +236,14 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
 
-        {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending')).length > 0 && (
+        {state.allQuests.filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending' || q.status === 'disputed')).length > 0 && (
           <div className="px-5 mt-8 flex flex-col gap-4">
             <h2 className="text-[#3e4943] text-base px-1 font-bold">Quest buatanmu</h2>
             {state.allQuests
-              .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending'))
+              .filter(q => q.creatorId === state.currentUserId && (q.status === 'available' || q.status === 'active' || q.status === 'pending' || q.status === 'disputed'))
               .sort((a, b) => {
-                if (a.status === 'pending' && b.status !== 'pending') return -1;
+                if (a.status === 'disputed' && b.status !== 'disputed') return -1;
+                if (a.status === 'pending' && b.status !== 'pending' && b.status !== 'disputed') return -1;
                 if (a.status === 'active' && b.status === 'available') return -1;
                 if (a.status === 'available' && b.status === 'active') return 1;
                 return 0;
@@ -250,12 +251,12 @@ const HomePage: React.FC<HomePageProps> = ({
               .map((quest) => {
                 const displayInfo = getQuestDisplayInfo(quest, state.currentUserId);
                 let badgeClass = "text-primary bg-primary/10";
-                
-                if (displayInfo.status === 'on_going') badgeClass = "text-[#7ea400] bg-[#7ea400]/10";
+
+                if (displayInfo.status === 'disputed') badgeClass = "text-red-500 bg-red-500/10";
+                else if (displayInfo.status === 'on_going') badgeClass = "text-[#7ea400] bg-[#7ea400]/10";
                 else if (displayInfo.status === 'waiting_confirmation') badgeClass = "text-orange-500 bg-orange-500/10";
                 else if (displayInfo.status === 'has_applicants') badgeClass = "text-blue-500 bg-blue-500/10";
                 else if (displayInfo.status === 'waiting_adventurer') badgeClass = "text-gray-400 bg-gray-100";
-
                 return (
                   <QuestCard 
                     key={quest.id}

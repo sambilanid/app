@@ -390,7 +390,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     ) : [],
     activeQuests: currentUserId ? quests.filter(q => 
       q.takerId === currentUserId && 
-      (q.status === 'active' || q.status === 'pending')
+      (q.status === 'active' || q.status === 'pending' || q.status === 'disputed')
     ) : [],
     pendingQuests: currentUserId ? quests.filter(q => 
       q.applicantIds?.includes(currentUserId) && 
@@ -398,11 +398,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     ) : [],
     completedQuests: currentUserId ? quests.filter(q => q.takerId === currentUserId && q.status === 'completed') : [],
     categories: [
+      'Jasa pindahan',
       'Jasa titip',
       'Jasa antar jemput',
       'Jasa antar ambil barang',
       'Jasa angkut',
-      'Jasa pindahan',
       'Jasa reparasi',
       'Antar orang sakit',
       'Membeli obat',
@@ -628,12 +628,25 @@ const applyForQuest = (questId: string) => {
     }));
   };
 
+  const reportDispute = (questId: string) => {
+    setQuests(prev => prev.map(q => q.id === questId ? { ...q, status: 'disputed' } : q));
+  };
+
   const submitQuestEvidence = (questId: string, image?: string, notes?: string) => {
     setQuests(prev => prev.map(q => q.id === questId ? { 
       ...q, 
       status: 'pending',
       evidenceImage: image,
       evidenceNotes: notes
+    } : q));
+  };
+
+  const cancelQuestEvidence = (questId: string) => {
+    setQuests(prev => prev.map(q => q.id === questId ? { 
+      ...q, 
+      status: 'active',
+      evidenceImage: undefined,
+      evidenceNotes: undefined
     } : q));
   };
 
@@ -807,7 +820,9 @@ const applyForQuest = (questId: string) => {
       sendMessage,
       findOrCreateChat,
       completeQuest,
+      reportDispute,
       submitQuestEvidence,
+      cancelQuestEvidence,
       submitReview,
       updateUserProfile,
       verifyAccount,

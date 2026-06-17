@@ -59,7 +59,7 @@ export interface Quest {
   distance: string;
   image: string;
   description: string;
-  status: 'active' | 'completed' | 'available' | 'pending';
+  status: 'active' | 'completed' | 'available' | 'pending' | 'disputed';
   date?: string;
   createdAt?: string;
   location?: string;
