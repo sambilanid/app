@@ -12,7 +12,7 @@ import { Button } from '../components/common/Button';
 import { ProfileCard } from '../components/common/ProfileCard';
 import { ReviewDialog } from '../components/common/ReviewDialog';
 
-import mapPreview from '../assets/map-preview.png';
+import { MiniMapPreview } from '../components/quest/MiniMapPreview';
 
 import { useApp } from '../store/AppContext';
 import { useDialog } from '../components/common/Dialog';
@@ -228,21 +228,49 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             <h2 className="text-[#141d23] text-2xl font-bold">{quest.title}</h2>
             
             <div className="flex flex-col gap-1 mt-2">
-              <div className="flex items-center gap-2 text-[#3e4943]">
-                <MapPin size={16} className="text-primary" />
-                <div className="flex flex-col">
-                  {quest.location && <p className="text-sm font-semibold">{quest.location}</p>}
+              <div className="flex items-start gap-2 text-[#3e4943]">
+                <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
+                <div className="flex flex-col flex-1 min-w-0">
+                  {quest.location && (
+                    <div>
+                      <p className="text-sm font-semibold">{quest.location}</p>
+                      {quest.locationDetails && (
+                        <p className="text-xs text-[#00694b] font-semibold mt-0.5">Patokan: {quest.locationDetails}</p>
+                      )}
+                      {quest.locationCoords && (
+                        <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                          Coords: {quest.locationCoords.lat.toFixed(6)}, {quest.locationCoords.lng.toFixed(6)}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   {quest.fromLocation && (
-                    <p className="text-xs">
-                      <span className="opacity-60">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).from}: </span>
-                      {quest.fromLocation}
-                    </p>
+                    <div className="text-xs mt-1">
+                      <span className="opacity-60 font-medium">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).from}: </span>
+                      <span className="font-semibold">{quest.fromLocation}</span>
+                      {quest.fromLocationDetails && (
+                        <p className="text-xs text-[#00694b] font-semibold mt-0.5">Patokan: {quest.fromLocationDetails}</p>
+                      )}
+                      {quest.fromLocationCoords && (
+                        <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                          Coords: {quest.fromLocationCoords.lat.toFixed(6)}, {quest.fromLocationCoords.lng.toFixed(6)}
+                        </p>
+                      )}
+                    </div>
                   )}
                   {quest.toLocation && (
-                    <p className="text-xs">
-                      <span className="opacity-60">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).to}: </span>
-                      {quest.toLocation}
-                    </p>
+                    <div className="text-xs mt-1 border-t border-gray-100 pt-1">
+                      <span className="opacity-60 font-medium">{(categoryConfig[quest.category] || categoryConfig['Lainnya']).to}: </span>
+                      <span className="font-semibold">{quest.toLocation}</span>
+                      {quest.toLocationDetails && (
+                        <p className="text-xs text-[#00694b] font-semibold mt-0.5">Patokan: {quest.toLocationDetails}</p>
+                      )}
+                      {quest.toLocationCoords && (
+                        <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                          Coords: {quest.toLocationCoords.lat.toFixed(6)}, {quest.toLocationCoords.lng.toFixed(6)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -372,16 +400,11 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
           </div>
 
           {/* Map Preview */}
-          <div className="bg-[#e0e9f2] border border-[#bdcac1] h-32 rounded-2xl overflow-hidden relative">
-             <img 
-               src={mapPreview} 
-               alt="map" 
-               className="w-full h-full object-cover opacity-60"
-             />
-             <div className="absolute inset-0 flex items-center justify-center">
-                <MapPin size={32} className="text-primary" />
-             </div>
-          </div>
+          <MiniMapPreview 
+            coords={quest.locationCoords} 
+            fromCoords={quest.fromLocationCoords} 
+            toCoords={quest.toLocationCoords} 
+          />
         </div>
       </div>
     </PageLayout>

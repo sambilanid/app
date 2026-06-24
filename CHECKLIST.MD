@@ -1,2 +1,16 @@
-- [x] Hapus keterangan "Belum ada SKCK" dan properti penentunya dari state aplikasi.
-- [x] Tambahkan logika adapter yang menerjemahkan state quest global yang user-agnostic ke dalam representasi sederhana berdasarkan perspektif user yang sedang login saat ini. Misalnya, menerjemahkan state quest yang dibuat oleh user saat ini namun belum memiliki applicant sebagai "Menunggu adventurer". Ini dilakukan agar UI hanya fokus menampilkan berdasarkan state quest sederhana yang sudah terproses dan logika bisa di-decouple di modul non-UI.
+- [ ] **AI Content Moderation**: Implementasi pendeteksian otomatis kata terlarang dan konten tidak pantas pada deskripsi Quest secara real-time (proses latar belakang 1-2 detik) sebelum Quest dipublikasikan.
+- [ ] **AI Dynamic Pricing**: Implementasi sistem saran upah otomatis berdasarkan analisis deskripsi tugas, tingkat kesulitan, kategori, dan jarak tempuh.
+- [ ] **AI Smart & Proximity Matching**: Implementasi sistem pencocokan otomatis cerdas untuk merekomendasikan Quest kepada Adventurer terdekat yang paling relevan.
+- [ ] **Guild Notification**: Implementasi pengiriman push notification otomatis ke perangkat Adventurer yang berada di radius terdekat dari lokasi Quest baru.
+- [ ] **Prompt-Based Job Search Riil**: Integrasi API LLM asli untuk mendukung pencarian Quest menggunakan bahasa alami secara akurat (saat ini masih menggunakan simulasi kata kunci/regex sederhana).
+- [ ] **Integrasi Peta & Navigasi Interaktif**:
+  - Implementasi peta interaktif (seperti Google Maps / Leaflet) untuk mempermudah Quest Creator menandai titik lokasi (pinpoint) secara presisi.
+  - Implementasi rute navigasi visual dari lokasi Adventurer ke lokasi Quest.
+- [ ] **Integrasi Payment Gateway (Midtrans)**:
+  - Integrasi pembayaran riil menggunakan Midtrans (QRIS, e-wallet, Virtual Account) untuk sistem pengisian saldo (Top Up).
+  - Integrasi Midtrans Disbursement API untuk pencairan saldo (Withdrawal) ke rekening bank/e-wallet asli.
+- [ ] **Pencatatan Ledger Kas Platform**: Pengelolaan pencatatan dana komisi platform sebesar Rp3.500 per transaksi sukses secara sistematis.
+- [ ] **Kamera In-App Terintegrasi**: Pembuatan komponen kamera khusus di dalam aplikasi untuk mengambil Proof of Work (PoW) secara langsung guna mencegah pengunggahan foto palsu dari galeri.
+- [ ] **Sistem Pemilihan/Penerimaan Pelamar Otomatis (Auto-Select)**: Pilihan mekanisme pemilihan pelamar Quest otomatis berdasarkan kriteria "siapa cepat dia dapat" (first click) atau rating tertinggi.
+- [ ] **Mekanisme Auto-Approve 1x24 Jam**: Implementasi background timer / otomatisasi sistem untuk menyetujui penyelesaian Quest secara otomatis jika Creator tidak merespons dalam waktu 24 jam setelah bukti dikirim.
+- [ ] **Sistem Badge Reputasi**: Penambahan badge reputasi akumulatif (seperti *Elite Adventurer*, *Pro Adventurer*) di Profil pengguna berdasarkan pencapaian rating dan jumlah penyelesaian Quest.

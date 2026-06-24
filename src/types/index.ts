@@ -63,8 +63,14 @@ export interface Quest {
   date?: string;
   createdAt?: string;
   location?: string;
+  locationDetails?: string;
   fromLocation?: string;
+  fromLocationDetails?: string;
   toLocation?: string;
+  toLocationDetails?: string;
+  locationCoords?: { lat: number; lng: number };
+  fromLocationCoords?: { lat: number; lng: number };
+  toLocationCoords?: { lat: number; lng: number };
   deadline?: string;
   creatorId: string;
   takerId?: string;

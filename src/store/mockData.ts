@@ -1,0 +1,353 @@
+/**
+ * Modul data tiruan (mock data) untuk aplikasi Sambilan.
+ * Digunakan saat: Menyediakan data awal untuk pengguna, quest, percakapan, pesan, dan ulasan sebelum dihubungkan ke backend/API sesungguhnya.
+ */
+
+import type { User, Quest, Review, Chat, Message } from '../types';
+
+import avatarAde from '../assets/avatar-ade.svg';
+import avatarSari from '../assets/avatar-sari.svg';
+
+import questFood from '../assets/quest-food.png';
+import questShopping from '../assets/quest-shopping.png';
+import questSouvenir from '../assets/quest-souvenir.png';
+import questGacoan from '../assets/quest-gacoan.png';
+import questAlfamart from '../assets/quest-alfamart.png';
+import questOleholeh from '../assets/quest-oleholeh.png';
+
+export const initialUsers: User[] = [
+  {
+    id: '1',
+    name: 'ADE YAHYA HENDRIAWAN',
+    initials: 'AY',
+    avatar: avatarAde,
+    email: 'ade@sambilan.id',
+    phone: '081234567890',
+    password: 'password123',
+    rating: 0.0,
+    reviewCount: 0,
+    adventurerRating: 0.0,
+    adventurerReviewCount: 0,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
+    isVerified: false,
+    balance: 271000000,
+    bio: 'Freelancer tech savvy yang siap membantu segala urusan tekno dan gadget Anda.',
+    location: 'Purbalingga, Jawa Tengah',
+    notifications: [
+      {
+        id: 1,
+        type: 'payment',
+        title: 'Top Up Menunggu Pembayaran',
+        message: 'Permintaan top up kamu sudah dibuat. Selesaikan pembayaran agar saldo masuk.',
+        time: '14 jam lalu',
+        unread: true,
+      },
+    ],
+    withdrawalPresets: [],
+  },
+  {
+    id: '2',
+    name: 'Reza Kurniawan',
+    initials: 'RK',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reza+Kurniawan',
+    email: 'reza@gmail.com',
+    phone: '082112233445',
+    password: 'password123',
+    rating: 4.6,
+    reviewCount: 3,
+    adventurerRating: 5.0,
+    adventurerReviewCount: 1,
+    creatorRating: 4.5,
+    creatorReviewCount: 2,
+    isVerified: true,
+    balance: 500000,
+    bio: 'Pecinta kuliner sejati yang hobi hunting makanan enak. Siap bantu jastip makanan favoritmu!',
+    notifications: [],
+    withdrawalPresets: [],
+  },
+  {
+    id: '3',
+    name: 'Sari Nur Aini',
+    initials: 'SA',
+    avatar: avatarSari,
+    email: 'sari@yahoo.com',
+    phone: '085776655443',
+    password: 'password123',
+    rating: 5.0,
+    reviewCount: 2,
+    adventurerRating: 5.0,
+    adventurerReviewCount: 1,
+    creatorRating: 5.0,
+    creatorReviewCount: 1,
+    isVerified: true,
+    balance: 750000,
+    bio: 'Tukang bersih yang resik dan rapi. Siap bantu beres-beres rumah atau urusan administratif ringan.',
+    notifications: [],
+    withdrawalPresets: [],
+  },
+  {
+    id: '5',
+    name: 'Naila Rona Nur Aini',
+    initials: 'NR',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Naila+Rona+Nur+Aini',
+    email: 'naila@sambilan.id',
+    phone: '081299887766',
+    password: 'password123',
+    rating: 5.0,
+    reviewCount: 1,
+    adventurerRating: 5.0,
+    adventurerReviewCount: 1,
+    creatorRating: 0.0,
+    creatorReviewCount: 0,
+    isVerified: true,
+    balance: 1200000,
+    bio: 'Sangat sat set dan gercep dalam urusan logistik. Percayakan paket Anda pada saya untuk pengantaran yang cepat.',
+    notifications: [],
+    withdrawalPresets: [],
+  },
+  {
+    id: '6',
+    name: 'Nashiruddin',
+    initials: 'NS',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Nashiruddin',
+    email: 'nashir@sambilan.id',
+    phone: '085544332211',
+    password: 'password123',
+    rating: 4.0,
+    reviewCount: 1,
+    adventurerRating: 0.0,
+    adventurerReviewCount: 0,
+    creatorRating: 4.0,
+    creatorReviewCount: 1,
+    isVerified: true,
+    balance: 450000,
+    bio: 'Punya tenaga kuat, siap bantu angkat-angkat atau pindahan kost dengan aman dan amanah.',
+    notifications: [],
+    withdrawalPresets: [],
+  }
+];
+
+export const initialQuests: Quest[] = [
+  {
+    id: 'q1',
+    category: 'Jasa titip',
+    title: 'Jastip Mie Gacoan',
+    price: 'Rp15.000',
+    distance: '0.8 km',
+    image: questGacoan,
+    createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 mnt ago
+    description: 'Beli 2 porsi Mie Iblis level 4, titip di kawasan perkantoran Purbalingga Food Centre.',
+    status: 'available',
+    location: 'Kalimanah, Purbalingga',
+    fromLocation: 'Mie Gacoan Purbalingga',
+    toLocation: 'Perkantoran PFC',
+    deadline: '45 mnt',
+    creatorId: '2', // Reza
+  },
+  {
+    id: 'q2',
+    category: 'Jasa titip',
+    title: 'Jastip Alfamart',
+    price: 'Rp18.000',
+    distance: '1.2 km',
+    image: questAlfamart,
+    createdAt: new Date(Date.now() - 32 * 60 * 1000).toISOString(), // 32 mnt ago
+    description: 'Tolong belikan galon Aqua dan sabun mandi di Alfamart depan kampus.',
+    status: 'available',
+    location: 'Purbalingga Lor',
+    fromLocation: 'Alfamart Kampus',
+    toLocation: 'Kosan Mawar',
+    deadline: '1 jam',
+    creatorId: '3', // Sari
+  },
+  {
+    id: 'q3',
+    category: 'Jasa antar ambil barang',
+    title: 'Antar Paket ke J&T',
+    price: 'Rp10.000',
+    distance: '0.5 km',
+    image: questShopping,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    description: 'Tolong antarkan paket jualan saya ke agen J&T terdekat, sudah dipacking tinggal drop.',
+    status: 'available',
+    location: 'Bancarkembar',
+    fromLocation: 'Rumah Saya',
+    toLocation: 'J&T Express Purbalingga',
+    deadline: '2 jam',
+    creatorId: '5', // Naila
+  },
+  {
+    id: 'q4',
+    category: 'Jasa antar ambil barang',
+    title: 'Jemput Dokumen Kantor',
+    price: 'Rp20.000',
+    distance: '2.5 km',
+    image: questSouvenir,
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+    description: 'Jemput dokumen di kantor pos dan antarkan ke alamat kantor saya di pusat kota.',
+    status: 'available',
+    location: 'Purbalingga Wetan',
+    fromLocation: 'Kantor Pos Purbalingga',
+    toLocation: 'Gedung Keuangan',
+    deadline: '1.5 jam',
+    creatorId: '2', // Reza
+  },
+  {
+    id: 'q5',
+    category: 'Jasa bersih-bersih',
+    title: 'Cuci Sepatu Sneaker',
+    price: 'Rp35.000',
+    distance: '1.8 km',
+    image: questShopping,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    description: 'Cari jasa cuci sepatu deep clean untuk 2 pasang sneaker. Bisa ambil ke rumah.',
+    status: 'available',
+    location: 'Kalikabong',
+    deadline: '2 hari',
+    creatorId: '3', // Sari
+  },
+  {
+    id: 'q6',
+    category: 'Jasa reparasi',
+    title: 'Instal Ulang Laptop',
+    price: 'Rp100.000',
+    distance: '3.0 km',
+    image: questSouvenir,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+    description: 'Laptop lemot banget, butuh instal ulang Windows 11 dan aplikasi standar.',
+    status: 'available',
+    location: 'Boajong',
+    deadline: '1 hari',
+    creatorId: '6', // Nashiruddin
+  },
+  {
+    id: 'q7',
+    category: 'Jasa pindahan',
+    title: 'Bantu Pindahan Kost',
+    price: 'Rp50.000',
+    distance: '0.3 km',
+    image: questOleholeh,
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+    description: 'Bantu angkut barang-barang pindahan kost, jaraknya dekat cuma beda gang.',
+    status: 'available',
+    location: 'Purbalingga Kidul',
+    fromLocation: 'Kost Lama (Gang Melati)',
+    toLocation: 'Kost Baru (Gang Mawar)',
+    deadline: '3 jam',
+    creatorId: '2', // Reza
+  },
+  {
+    id: 'q8',
+    category: 'Lainnya',
+    title: 'Jaga Toko Sebentar',
+    price: 'Rp30.000',
+    distance: '0.7 km',
+    image: questFood,
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+    description: 'Butuh orang buat jaga toko kelontong selama 2 jam karena ada urusan mendadak.',
+    status: 'available',
+    location: 'Kalimanah Lor',
+    deadline: '2 jam',
+    creatorId: '3', // Sari
+  },
+  {
+    id: 'q9',
+    category: 'Jasa titip',
+    title: 'Jastip Mie Ayam',
+    price: 'Rp20.000',
+    distance: '1.0 km',
+    image: questFood,
+    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+    description: 'Beli mie ayam legendaris Pak Di.',
+    status: 'available',
+    location: 'Kalimanah',
+    fromLocation: 'Mie Ayam Pak Di',
+    toLocation: 'Kantor Bupati',
+    deadline: '30 mnt',
+    creatorId: '2', // Reza
+  },
+  {
+    id: 'q10',
+    category: 'Jasa antar ambil barang',
+    title: 'Antar Galon ke Kamar',
+    price: 'Rp5.000',
+    distance: '0.1 km',
+    image: questShopping,
+    createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 mnt ago
+    description: 'Tolong anterin galon yang udah didepan pintu ke dalem kamar.',
+    status: 'available',
+    location: 'Kost Mawar',
+    fromLocation: 'Depan Pintu',
+    toLocation: 'Kamar 102',
+    deadline: '15 mnt',
+    creatorId: '6', // Nashiruddin
+  }
+];
+
+export const initialChats: Chat[] = [];
+
+export const initialReviews: Review[] = [
+  {
+    id: 'r2',
+    questId: 'q_old_1',
+    reviewerId: '1',
+    revieweeId: '2',
+    rating: 5,
+    comment: 'Pemberi tugas yang jelas dan ramah. Pembayaran lancar.',
+    role: 'creator',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'r4',
+    questId: 'q_old_2',
+    reviewerId: '1',
+    revieweeId: '3',
+    rating: 5,
+    comment: 'Sangat komunikatif, lokasi penjemputan sangat akurat.',
+    role: 'creator',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'r5',
+    questId: 'q_old_3',
+    reviewerId: '6',
+    revieweeId: '5',
+    rating: 5,
+    comment: 'Sangat profesional dalam menangani dokumen penting. Terima kasih!',
+    role: 'adventurer',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'r6',
+    questId: 'q_old_3',
+    reviewerId: '5',
+    revieweeId: '6',
+    rating: 4,
+    comment: 'Instruksi cukup jelas, orangnya baik.',
+    role: 'creator',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'r7',
+    questId: 'q_old_4',
+    reviewerId: '2',
+    revieweeId: '3',
+    rating: 5,
+    comment: 'Penyelesaian tugas yang sempurna. Tidak ada komplain.',
+    role: 'adventurer',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'r8',
+    questId: 'q_old_5',
+    reviewerId: '5',
+    revieweeId: '2',
+    rating: 4,
+    comment: 'Respon cepat saat ditanya progres tugas.',
+    role: 'creator',
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+  }
+];
+
+export const initialMessages: Message[] = [];

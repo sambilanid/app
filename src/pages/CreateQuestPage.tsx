@@ -11,6 +11,7 @@ import { useApp } from '../store/AppContext';
 import { useDialog } from '../components/common/Dialog';
 import { DateTimePickerDialog } from '../components/common/DateTimePickerDialog';
 import { categoryConfig } from '../utils/questUtils';
+import { MapPinpointModal } from '../components/common/MapPinpointModal';
 import questFood from '../assets/quest-food.png';
 
 interface CreateQuestPageProps {
@@ -34,12 +35,32 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
     title: '',
     category: state.categories[0],
     location: '',
+    locationDetails: '',
     fromLocation: '',
+    fromLocationDetails: '',
     toLocation: '',
+    toLocationDetails: '',
     reward: '',
     deadline: '',
     description: '',
-    image: '' as string | null
+    image: '' as string | null,
+    locationCoords: undefined as { lat: number; lng: number } | undefined,
+    fromLocationCoords: undefined as { lat: number; lng: number } | undefined,
+    toLocationCoords: undefined as { lat: number; lng: number } | undefined,
+  });
+
+  const [mapConfig, setMapConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    targetField: 'location' | 'fromLocation' | 'toLocation';
+    initialValue?: string;
+    initialCoords?: { lat: number; lng: number };
+  }>({
+    isOpen: false,
+    title: '',
+    targetField: 'location',
+    initialValue: '',
+    initialCoords: undefined,
   });
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -117,8 +138,14 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
           description: formData.description,
           status: 'available' as const,
           location: formData.location || formData.fromLocation || formData.toLocation,
+          locationDetails: formData.locationDetails || formData.fromLocationDetails || formData.toLocationDetails,
           fromLocation: formData.fromLocation,
+          fromLocationDetails: formData.fromLocationDetails,
           toLocation: formData.toLocation,
+          toLocationDetails: formData.toLocationDetails,
+          locationCoords: formData.locationCoords || formData.fromLocationCoords || formData.toLocationCoords,
+          fromLocationCoords: formData.fromLocationCoords,
+          toLocationCoords: formData.toLocationCoords,
           deadline: formData.deadline || 'Hari ini',
           createdAt: new Date().toISOString(),
           creatorId: state.currentUserId!,
@@ -216,7 +243,19 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
             <select 
               className="bg-white border border-[#bdcac1] rounded-xl p-4 text-sm focus:outline-none focus:border-primary transition-colors appearance-none"
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value, fromLocation: '', toLocation: '', location: '' })}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                category: e.target.value, 
+                fromLocation: '', 
+                fromLocationDetails: '',
+                fromLocationCoords: undefined,
+                toLocation: '', 
+                toLocationDetails: '',
+                toLocationCoords: undefined,
+                location: '',
+                locationDetails: '',
+                locationCoords: undefined
+              })}
             >
               {state.categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -232,11 +271,40 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
                 <input 
                   type="text" 
                   placeholder="Pilih Lokasi"
-                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 text-sm focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 pr-28 text-sm focus:outline-none focus:border-primary transition-colors"
                   value={formData.fromLocation}
                   onChange={(e) => setFormData({ ...formData, fromLocation: e.target.value })}
                 />
+                <button
+                  type="button"
+                  onClick={() => setMapConfig({
+                    isOpen: true,
+                    title: `Pinpoint ${currentConfig.from}`,
+                    targetField: 'fromLocation',
+                    initialValue: formData.fromLocation,
+                    initialCoords: formData.fromLocationCoords
+                  })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary/20 transition-colors"
+                >
+                  Pin Peta
+                </button>
               </div>
+              {formData.fromLocationCoords && (
+                <div className="text-[10px] text-gray-400 font-mono mt-0.5 ml-1">
+                  Coords: {formData.fromLocationCoords.lat.toFixed(6)}, {formData.fromLocationCoords.lng.toFixed(6)}
+                </div>
+              )}
+              {formData.fromLocation && (
+                <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-1 duration-200">
+                  <input 
+                    type="text" 
+                    placeholder="Detail lokasi / patokan (contoh: Pagar hitam, samping Apotek)"
+                    className="w-full bg-gray-50 border border-[#bdcac1] rounded-xl p-3 text-xs focus:outline-none focus:border-primary transition-colors placeholder:text-gray-400"
+                    value={formData.fromLocationDetails}
+                    onChange={(e) => setFormData({ ...formData, fromLocationDetails: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -248,11 +316,40 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
                 <input 
                   type="text" 
                   placeholder="Pilih Lokasi"
-                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 text-sm focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 pr-28 text-sm focus:outline-none focus:border-primary transition-colors"
                   value={formData.toLocation}
                   onChange={(e) => setFormData({ ...formData, toLocation: e.target.value })}
                 />
+                <button
+                  type="button"
+                  onClick={() => setMapConfig({
+                    isOpen: true,
+                    title: `Pinpoint ${currentConfig.to}`,
+                    targetField: 'toLocation',
+                    initialValue: formData.toLocation,
+                    initialCoords: formData.toLocationCoords
+                  })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary/20 transition-colors"
+                >
+                  Pin Peta
+                </button>
               </div>
+              {formData.toLocationCoords && (
+                <div className="text-[10px] text-gray-400 font-mono mt-0.5 ml-1">
+                  Coords: {formData.toLocationCoords.lat.toFixed(6)}, {formData.toLocationCoords.lng.toFixed(6)}
+                </div>
+              )}
+              {formData.toLocation && (
+                <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-1 duration-200">
+                  <input 
+                    type="text" 
+                    placeholder="Detail lokasi / patokan (contoh: Rumah cat krem, depan masjid)"
+                    className="w-full bg-gray-50 border border-[#bdcac1] rounded-xl p-3 text-xs focus:outline-none focus:border-primary transition-colors placeholder:text-gray-400"
+                    value={formData.toLocationDetails}
+                    onChange={(e) => setFormData({ ...formData, toLocationDetails: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -264,11 +361,40 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
                 <input 
                   type="text" 
                   placeholder="Pilih Lokasi"
-                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 text-sm focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-white border border-[#bdcac1] rounded-xl p-4 pl-12 pr-28 text-sm focus:outline-none focus:border-primary transition-colors"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 />
+                <button
+                  type="button"
+                  onClick={() => setMapConfig({
+                    isOpen: true,
+                    title: `Pinpoint ${currentConfig.location}`,
+                    targetField: 'location',
+                    initialValue: formData.location,
+                    initialCoords: formData.locationCoords
+                  })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary/20 transition-colors"
+                >
+                  Pin Peta
+                </button>
               </div>
+              {formData.locationCoords && (
+                <div className="text-[10px] text-gray-400 font-mono mt-0.5 ml-1">
+                  Coords: {formData.locationCoords.lat.toFixed(6)}, {formData.locationCoords.lng.toFixed(6)}
+                </div>
+              )}
+              {formData.location && (
+                <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-1 duration-200">
+                  <input 
+                    type="text" 
+                    placeholder="Detail lokasi / patokan (contoh: Toko Sinar Jaya, dekat tiang listrik)"
+                    className="w-full bg-gray-50 border border-[#bdcac1] rounded-xl p-3 text-xs focus:outline-none focus:border-primary transition-colors placeholder:text-gray-400"
+                    value={formData.locationDetails}
+                    onChange={(e) => setFormData({ ...formData, locationDetails: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -349,6 +475,22 @@ const CreateQuestPage: React.FC<CreateQuestPageProps> = ({
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
         onSelect={(deadline) => setFormData({ ...formData, deadline })}
+      />
+
+      <MapPinpointModal
+        isOpen={mapConfig.isOpen}
+        title={mapConfig.title}
+        initialLocationName={mapConfig.initialValue}
+        initialCoords={mapConfig.initialCoords}
+        onClose={() => setMapConfig({ ...mapConfig, isOpen: false })}
+        onConfirm={(locationName, coords) => {
+          const field = mapConfig.targetField;
+          setFormData({
+            ...formData,
+            [field]: locationName,
+            [`${field}Coords`]: coords,
+          });
+        }}
       />
     </PageLayout>
   );
