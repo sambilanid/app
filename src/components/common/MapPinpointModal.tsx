@@ -124,10 +124,15 @@ export const MapPinpointModal: React.FC<MapPinpointModalProps> = ({
             const addressParts = data.display_name.split(',');
             const shortAddress = addressParts.slice(0, 3).join(',').trim();
             setSelectedAddress(shortAddress || data.display_name);
+          } else {
+            setSelectedAddress(`Kordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
           }
+        } else {
+          setSelectedAddress(`Kordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
         }
       } catch (err) {
         console.error('Failed reverse geocoding:', err);
+        setSelectedAddress(`Kordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
       } finally {
         setIsReverseGeocoding(false);
       }
