@@ -81,7 +81,7 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ onBack, onSuccess }
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-[#141d23] text-lg font-bold">Foto Selfie dengan KTP/KTM</h3>
+          <h3 className="text-[#141d23] text-lg font-bold">Foto Selfie dengan KTP</h3>
           <p className="text-[#3e4943] text-sm leading-relaxed">
             Pastikan wajah dan data pada kartu identitas Anda terlihat jelas dan tidak tertutup jari atau bayangan.
           </p>
