@@ -32,6 +32,16 @@ export const categoryConfig: Record<string, { from?: string; to?: string; locati
   'Lainnya': { location: 'Lokasi' },
 };
 
+export const categories = Object.keys(categoryConfig);
+
+export const parsePrice = (priceStr: string): number => {
+  return parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
+};
+
+export const formatIDR = (value: number): string => {
+  return `Rp${value.toLocaleString('id-ID')}`;
+};
+
 /**
  * Menerjemahkan status quest global menjadi status yang relevan bagi user tertentu.
  */

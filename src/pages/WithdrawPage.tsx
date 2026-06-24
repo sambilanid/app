@@ -20,6 +20,7 @@ import { AmountInputCard } from '../components/wallet/AmountInputCard';
 import { useApp } from '../store/AppContext';
 import { useDialog } from '../components/common/Dialog';
 import type { WithdrawalPreset } from '../types';
+import { formatIDR } from '../utils/questUtils';
 
 interface WithdrawPageProps {
   onBack: () => void;
@@ -49,11 +50,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ onBack, onSuccess }) => {
   const handleWithdrawPreset = (preset: WithdrawalPreset) => {
     if (!isAmountValid) return;
     
-    const formattedAmount = new Intl.NumberFormat('id-ID', { 
-      style: 'currency', 
-      currency: 'IDR', 
-      minimumFractionDigits: 0 
-    }).format(parseInt(amount));
+    const formattedAmount = formatIDR(parseInt(amount));
 
     showDialog({
       title: 'Konfirmasi Penarikan',

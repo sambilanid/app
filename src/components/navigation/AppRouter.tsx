@@ -78,7 +78,22 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           onAISearch={() => push("aiSearch")}
         />
       );
-    case "detail":
+    case "detail": {
+      const quest = state.allQuests.find(q => q.id === params?.questId);
+      const isCreator = quest?.creatorId === state.currentUserId;
+      if (isCreator) {
+        return (
+          <ManageQuestPage 
+            questId={params?.questId || null} 
+            onBack={pop} 
+            onChatWithApplicant={(applicantId) => {
+              const chatId = findOrCreateChat([state.currentUserId!, applicantId], params?.questId);
+              push("chatDetail", { chatId });
+            }}
+            onViewProfile={(userId) => push("otherProfile", { userId })}
+          />
+        );
+      }
       return (
         <QuestDetailPage
           questId={params?.questId || null}
@@ -95,6 +110,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           onViewProfile={(userId) => push("otherProfile", { userId })}
         />
       );
+    }
     case "otherProfile":
       return (
         <OtherProfilePage

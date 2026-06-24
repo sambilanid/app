@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { AppContext } from './AppContext';
 import type { User, Quest, AppState, AppNotification, WithdrawalPreset, Message, Chat, Review } from '../types';
+import { categories, parsePrice } from '../utils/questUtils';
 
 import {
   initialUsers,
@@ -58,18 +59,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       q.status === 'available'
     ) : [],
     completedQuests: currentUserId ? quests.filter(q => q.takerId === currentUserId && q.status === 'completed') : [],
-    categories: [
-      'Jasa pindahan',
-      'Jasa titip',
-      'Jasa antar jemput',
-      'Jasa antar ambil barang',
-      'Jasa angkut',
-      'Jasa reparasi',
-      'Antar orang sakit',
-      'Membeli obat',
-      'Jasa bersih-bersih',
-      'Lainnya'
-    ],
+    categories,
     chats,
     messages,
     reviews,
@@ -133,7 +123,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const userId = currentUserId;
     if (!userId) return;
 
-    const priceAmount = parseInt(quest.price.replace(/[^0-9]/g, '')) || 0;
+    const priceAmount = parsePrice(quest.price);
     const adminFee = 3500;
     const totalToDeduct = priceAmount + adminFee;
 
@@ -262,7 +252,7 @@ const applyForQuest = (questId: string) => {
       return;
     }
 
-    const priceAmount = parseInt(quest.price.replace(/[^0-9]/g, '')) || 0;
+    const priceAmount = parsePrice(quest.price);
     const takerId = quest.takerId;
 
     // 1. Update Quest Status

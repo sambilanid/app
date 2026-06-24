@@ -10,6 +10,7 @@ import { SearchInput } from '../components/common/SearchInput';
 import { FilterChips } from '../components/quest/FilterChips';
 import { StandardQuestCard } from '../components/quest/StandardQuestCard';
 import { useApp } from '../store/AppContext';
+import { parsePrice } from '../utils/questUtils';
 
 interface SearchPageProps {
   onBack?: () => void;
@@ -22,10 +23,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ onBack, onSelectQuest, onAISear
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('Terdekat');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
-
-  const parsePrice = (priceStr: string) => {
-    return parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
-  };
 
   const parseDistance = (distStr: string) => {
     return parseFloat(distStr.replace(/[^0-9.]/g, '')) || 0;
