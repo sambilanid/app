@@ -217,7 +217,9 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
   };
 
   const renderLocationDetails = () => {
-    if (!quest.fromLocation && !quest.toLocation) return null;
+    if (!quest.location && !quest.fromLocation && !quest.toLocation) return null;
+
+    const hasRoute = !!quest.fromLocation || !!quest.toLocation;
 
     return (
       <Card className="p-4 flex items-start gap-4">
@@ -225,6 +227,25 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
             <MapPin size={24} />
         </div>
         <div className="flex flex-col gap-3 flex-1 min-w-0">
+            {!hasRoute && quest.location && (
+              <div className="text-sm">
+                <span className="text-[#3e4943] opacity-60 font-medium block text-xs uppercase tracking-wider mb-0.5">
+                  {(categoryConfig[quest.category] || categoryConfig['Lainnya']).location || 'Lokasi'}
+                </span>
+                <span className="text-[#141d23] font-semibold block">{quest.location}</span>
+                {quest.locationDetails && (
+                  <span className="text-xs text-[#00694b] font-semibold block mt-0.5">
+                    Patokan: {quest.locationDetails}
+                  </span>
+                )}
+                {quest.locationCoords && (
+                  <span className="text-[10px] text-gray-400 font-mono block mt-0.5">
+                    Coords: {quest.locationCoords.lat.toFixed(6)}, {quest.locationCoords.lng.toFixed(6)}
+                  </span>
+                )}
+              </div>
+            )}
+
             {quest.fromLocation && (
               <div className="text-sm">
                 <span className="text-[#3e4943] opacity-60 font-medium block text-xs uppercase tracking-wider mb-0.5">

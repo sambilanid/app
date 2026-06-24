@@ -231,7 +231,7 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
               <div className="flex items-start gap-2 text-[#3e4943]">
                 <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
                 <div className="flex flex-col flex-1 min-w-0">
-                  {quest.location && (
+                  {quest.location && !quest.fromLocation && !quest.toLocation && (
                     <div>
                       <p className="text-sm font-semibold">{quest.location}</p>
                       {quest.locationDetails && (
