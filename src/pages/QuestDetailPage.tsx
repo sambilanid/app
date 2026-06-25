@@ -31,7 +31,7 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
   onGoToVerification,
   onViewProfile
 }) => {
-  const { state, applyForQuest, cancelApplication, cancelQuestEvidence, submitReview } = useApp();
+  const { state, applyForQuest, cancelApplication, cancelQuestEvidence, submitReview, reportDispute } = useApp();
   const { showDialog } = useDialog();
   const [showReviewDialog, setShowReviewDialog] = React.useState(false);
   
@@ -118,6 +118,30 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
       variant: 'danger',
       onConfirm: () => {
         cancelQuestEvidence(quest.id);
+      }
+    });
+  };
+
+  const handleReportDispute = () => {
+    if (!quest) return;
+    showDialog({
+      title: 'Laporkan Dispute?',
+      message: 'Opsi ini merupakan langkah terakhir (last-resort) dan proses mediasi oleh tim Sambilan dapat memakan waktu. Kami sangat menyarankan Anda untuk mencoba bernegosiasi melalui chat terlebih dahulu.',
+      confirmLabel: 'Laporkan Dispute',
+      cancelLabel: 'Batal',
+      variant: 'danger',
+      onConfirm: () => {
+        reportDispute(quest.id);
+        setTimeout(() => {
+          showDialog({
+            title: 'Dispute Dilaporkan',
+            message: 'Laporan Anda telah diterima oleh tim Sambilan. Kami akan meninjau bukti-bukti yang ada dan menghubungi Anda segera.',
+            confirmLabel: 'Tutup',
+            onConfirm: () => {
+              onBack();
+            }
+          });
+        }, 100);
       }
     });
   };
@@ -251,17 +275,29 @@ const QuestDetailPage: React.FC<QuestDetailPageProps> = ({
     return (
       <div className="backdrop-blur-[6px] bg-[rgba(246,250,255,0.9)] border-t border-[#bdcac1] p-4 max-w-screen-md mx-auto">
         {renderRewardAndEscrowInfo()}
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            fullWidth 
-            size="lg"
-            leftIcon={<MessageCircle size={20} />}
-            onClick={() => onChat(quest.id)}
-          >
-            Chat
-          </Button>
-          {renderActionButton()}
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              fullWidth 
+              size="lg"
+              leftIcon={<MessageCircle size={20} />}
+              onClick={() => onChat(quest.id)}
+            >
+              Chat
+            </Button>
+            {renderActionButton()}
+          </div>
+          {quest.needsRevision && (
+            <Button 
+              fullWidth 
+              variant="ghost"
+              className="text-red-500 hover:bg-red-50 text-xs py-2"
+              onClick={handleReportDispute}
+            >
+              Laporkan Dispute
+            </Button>
+          )}
         </div>
       </div>
     );

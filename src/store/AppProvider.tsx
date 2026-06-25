@@ -288,8 +288,32 @@ const applyForQuest = (questId: string) => {
       ...q, 
       status: 'pending',
       evidenceImage: image,
-      evidenceNotes: notes
+      evidenceNotes: notes,
+      needsRevision: false,
+      revisionNotes: undefined
     } : q));
+  };
+
+  const requestQuestRevision = (questId: string, notes: string) => {
+    const quest = quests.find(q => q.id === questId);
+    if (!quest) return;
+
+    // 1. Update Quest
+    setQuests(prev => prev.map(q => q.id === questId ? {
+      ...q,
+      status: 'active' as const,
+      needsRevision: true,
+      revisionNotes: notes
+    } : q));
+
+    // 2. Notify Taker
+    if (quest.takerId) {
+      addNotificationToUser(quest.takerId, {
+        type: 'quest',
+        title: 'Revisi Kerja Dibutuhkan',
+        message: `Pemilik quest meminta revisi untuk quest "${quest.title}". Catatan: "${notes}"`
+      });
+    }
   };
 
   const cancelQuestEvidence = (questId: string) => {
@@ -472,6 +496,7 @@ const applyForQuest = (questId: string) => {
       findOrCreateChat,
       completeQuest,
       reportDispute,
+      requestQuestRevision,
       submitQuestEvidence,
       cancelQuestEvidence,
       submitReview,

@@ -7,7 +7,7 @@
  * quest oleh pembuat (ManageQuestPage).
  */
 import React from 'react';
-import { MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock, AlertTriangle } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import { ProfileCard } from '../common/ProfileCard';
@@ -187,6 +187,17 @@ export const QuestDetailContent: React.FC<QuestDetailContentProps> = ({
       {renderHeroImage()}
       <div className="px-5 py-4 flex flex-col gap-6">
         {renderHeaderInfo()}
+        {quest.needsRevision && quest.revisionNotes && (
+          <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-xl flex gap-3 animate-in slide-in-from-top duration-300">
+            <AlertTriangle className="text-orange-500 shrink-0" size={20} />
+            <div className="flex flex-col gap-1 text-left">
+              <p className="text-orange-800 text-sm font-bold animate-pulse">Revisi Kerja Diminta</p>
+              <p className="text-orange-700 text-xs leading-relaxed font-semibold">
+                "{quest.revisionNotes}"
+              </p>
+            </div>
+          </div>
+        )}
         {evidenceSection}
         {renderDescription()}
         {creator && renderCreatorProfile()}

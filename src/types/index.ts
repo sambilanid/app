@@ -79,6 +79,8 @@ export interface Quest {
   evidenceNotes?: string;
   creatorReviewed?: boolean;
   takerReviewed?: boolean;
+  needsRevision?: boolean;
+  revisionNotes?: string;
 }
 
 export interface AppNotification {

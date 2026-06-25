@@ -11,6 +11,7 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { ProfileCard } from '../components/common/ProfileCard';
 import { ReviewDialog } from '../components/common/ReviewDialog';
+import { RevisionDialog } from '../components/common/RevisionDialog';
 import { QuestDetailContent } from '../components/quest/QuestDetailContent';
 
 import { useApp } from '../store/AppContext';
@@ -25,9 +26,10 @@ interface ManageQuestPageProps {
 }
 
 const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEdit, onChatWithApplicant, onViewProfile }) => {
-  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, reportDispute, submitReview } = useApp();
+  const { state, deleteQuest, acceptApplicant, rejectApplicant, completeQuest, reportDispute, submitReview, requestQuestRevision } = useApp();
   const { showDialog } = useDialog();
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
+  const [isRevisionOpen, setIsRevisionOpen] = React.useState(false);
   const quest = state.allQuests.find(q => q.id === questId);
   const applicants = quest?.applicantIds?.map(id => state.users.find(u => u.id === id)).filter(Boolean) || [];
 
@@ -114,6 +116,22 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
   const handleReviewSubmit = (rating: number, comment: string) => {
     if (quest?.takerId) {
       submitReview(quest.id, quest.takerId, rating, comment, 'adventurer');
+    }
+  };
+
+  const handleRequestRevision = (notes: string) => {
+    if (quest) {
+      requestQuestRevision(quest.id, notes);
+      setTimeout(() => {
+        showDialog({
+          title: 'Revisi Diminta',
+          message: 'Permintaan revisi telah dikirimkan ke Adventurer.',
+          confirmLabel: 'Tutup',
+          onConfirm: () => {
+            onBack();
+          }
+        });
+      }, 100);
     }
   };
 
@@ -283,22 +301,32 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             </div>
           </div>
           {quest.status === 'pending' && (
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 w-full">
+              <div className="flex gap-3 w-full">
+                <Button 
+                  fullWidth 
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setIsRevisionOpen(true)}
+                >
+                  Minta Revisi
+                </Button>
+                <Button 
+                  fullWidth 
+                  size="lg"
+                  className="flex-1"
+                  onClick={handleConfirmCompletion}
+                >
+                  Konfirmasi Selesai
+                </Button>
+              </div>
               <Button 
                 fullWidth 
-                variant="outline"
-                className="text-red-500 border-red-200 flex-1"
+                variant="ghost"
+                className="text-red-500 hover:bg-red-50 text-xs py-2"
                 onClick={handleReportDispute}
               >
                 Laporkan Dispute
-              </Button>
-              <Button 
-                fullWidth 
-                size="lg"
-                className="flex-[1.5]"
-                onClick={handleConfirmCompletion}
-              >
-                Konfirmasi Selesai
               </Button>
             </div>
           )}
@@ -330,6 +358,14 @@ const ManageQuestPage: React.FC<ManageQuestPageProps> = ({ questId, onBack, onEd
             role="adventurer"
           />
         )}
+
+        {/* Revision Dialog */}
+        <RevisionDialog 
+          isOpen={isRevisionOpen}
+          onClose={() => setIsRevisionOpen(false)}
+          onSubmit={handleRequestRevision}
+          questTitle={quest.title}
+        />
 
         {/* Dispute Banner */}
         {quest.status === 'disputed' && (

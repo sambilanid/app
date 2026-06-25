@@ -27,6 +27,7 @@ export interface AppContextType {
   findOrCreateChat: (userIds: string[], questId?: string) => string;
   completeQuest: (questId: string) => void;
   reportDispute: (questId: string) => void;
+  requestQuestRevision: (questId: string, notes: string) => void;
   submitQuestEvidence: (questId: string, image?: string, notes?: string) => void;
   cancelQuestEvidence: (questId: string) => void;
   submitReview: (questId: string, revieweeId: string, rating: number, comment: string, role: 'adventurer' | 'creator') => void;
